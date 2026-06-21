@@ -22,6 +22,10 @@ There are still lots of bugs. If you find any, feel free to give feedback. bilib
   - [His _bilibili_ account](https://space.bilibili.com/3493114293520490/)
   - [Website](https://leehxuan.pages.dev/)
 
+### Special Thanks
+- Github
+- CloudFlare
+
 #
 
 ### 简介
@@ -42,6 +46,10 @@ bug 依旧很多，发现 bug 欢迎来反馈。哔哩哔哩视频: [BV11xj66vEE
   - [他的哔哩哔哩账号](https://space.bilibili.com/3493114293520490/)
   - [网站](https://leehxuan.pages.dev/)
 
+### 特别鸣谢
+- Github
+- CloudFlare
+
 #
 
 ### 紹介
@@ -61,3 +69,7 @@ PCでブラウザが長時間フォーカスを失うと、再度プレイする
   - [彼の _GitHub_ アカウント](https://github.com/leehxuan/)
   - [彼の _bilibili_ アカウント](https://space.bilibili.com/3493114293520490/)
   - [ウェブサイト](https://leehxuan.pages.dev/)
+
+### 特別に感謝
+- Github
+- CloudFlare
