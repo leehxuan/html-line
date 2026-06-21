@@ -1014,7 +1014,7 @@ kiai time的背景亮度略微降低
       const LINE_SPEED = 240;
       const SQUARE_SIZE = 18;
       let baseLineColor = '#00b8d4';
-      const GUIDE_BOX_SIZE = SQUARE_SIZE + 6;
+      const GUIDE_BOX_SIZE = SQUARE_SIZE + 10;
       const HIT_RANGE_MULTIPLIER = 1.5;
       const HEAD_SCREEN_RATIO = 0.35;
       const MAX_RENDER_DPR = 1.25;
@@ -1565,8 +1565,9 @@ kiai time的背景亮度略微降低
         const viewport = getWorldViewport(220);
         drawGeneratedTrackAndObstacles();
         const itemSize = SQUARE_SIZE * getViewZoom();
-        for (const c of crowns) { if (!isCrownActuallyCollected(c) || !isWorldPointInViewport(c.x, c.y, viewport)) continue; const sc = worldToScreen(c.x, c.y); if (!isScreenPointInView(sc.x, sc.y, 300)) continue; const sideOffset = c.side * (currentTrackConfig ? currentTrackConfig.laneWidth / 2 + 40 : 60); drawCrownEmoji(sc.x + sideOffset, sc.y, itemSize); }
-        for (const c of crowns) { if (isCrownCollected(c) || !isWorldPointInViewport(c.x, c.y, viewport)) continue; const sc = worldToScreen(c.x, c.y); if (!isScreenPointInView(sc.x, sc.y, 180)) continue; drawCrownEmoji(sc.x, sc.y, itemSize); }
+        const crownSize = itemSize * 2;
+        for (const c of crowns) { if (!isCrownActuallyCollected(c) || !isWorldPointInViewport(c.x, c.y, viewport)) continue; const sc = worldToScreen(c.x, c.y); if (!isScreenPointInView(sc.x, sc.y, 300)) continue; const sideOffset = c.side * (currentTrackConfig ? currentTrackConfig.laneWidth / 2 + 40 : 60); drawCrownEmoji(sc.x + sideOffset, sc.y, crownSize); }
+        for (const c of crowns) { if (isCrownCollected(c) || !isWorldPointInViewport(c.x, c.y, viewport)) continue; const sc = worldToScreen(c.x, c.y); if (!isScreenPointInView(sc.x, sc.y, 180)) continue; drawCrownEmoji(sc.x, sc.y, crownSize); }
         for (const d of diamonds) { if (isDiamondCollected(d) || !isWorldPointInViewport(d.x, d.y, viewport)) continue; const sc = worldToScreen(d.x, d.y); if (!isScreenPointInView(sc.x, sc.y, 100)) continue; drawHexagon(sc.x, sc.y, itemSize / 2, currentLineColor, (now % 2500) / 2500 * Math.PI * 2); }
         for (let i = diamondEffects.length - 1; i >= 0; i--) { const de = diamondEffects[i]; const elapsed = now - de.startTime; if (elapsed > de.duration) { diamondEffects.splice(i, 1); continue; } const progress = elapsed / de.duration; const sc = worldToScreen(de.x, de.y); const alpha = 1 - progress; for (let j = 0; j < 6; j++) { const angle = Math.PI / 3 * j - Math.PI / 6; const dist = SQUARE_SIZE * 0.7 * progress; const px = sc.x + Math.cos(angle) * dist; const py = sc.y + Math.sin(angle) * dist; ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = currentLineColor; ctx.fillRect(px - 2, py - 2, 4, 4); ctx.restore(); } const dotDist = Math.max(w, h) * 0.33 * progress; const dotAngle = de.angle || 0; ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = '#fff'; ctx.shadowColor = '#fff'; ctx.shadowBlur = 12 * alpha; ctx.beginPath(); ctx.arc(sc.x + Math.cos(dotAngle) * dotDist, sc.y + Math.sin(dotAngle) * dotDist, 6 * alpha, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
         for (const marker of progressMarkers) { if (!isWorldPointInViewport(marker.x, marker.y, viewport)) continue; const sc = worldToScreen(marker.x, marker.y); ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '60px "PingFang SC","Microsoft YaHei",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(marker.pct + '%', sc.x, sc.y); }
@@ -1798,5 +1799,4 @@ kiai time的背景亮度略微降低
 </body>
 
 </html>
-
 
