@@ -1,8 +1,8 @@
+[English](#IIntroduction) [中文](#简介) [日本語](#紹介)
+
 <img width="1024" height="205" alt="image" src="https://github.com/user-attachments/assets/e630ce08-961a-41ef-a3e9-07f5c57f41e7" />
 
-[English](#IIntroduction) [中文](#简介) [日本語](#紹介)
 # HTML-Line
-
 
 ### Introduction
 A Dancing Line simulator where you can import _osu!_ beatmaps to generate tracks, letting players play their favorite songs and challenge their limits.<br />
