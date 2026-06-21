@@ -1,7 +1,4 @@
 [English](#IIntroduction) [中文](#简介) [日本語](#紹介)
-
-#
-
 # HTML-Line
 
 ### Introduction
