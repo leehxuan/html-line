@@ -1,4 +1,4 @@
-[English](#IIntroduction) [中文](#简介) [日本語](README_ja.md)
+[English](#IIntroduction) [中文](#简介) [日本語](#紹介)
 
 ---
 
