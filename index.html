@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -908,8 +908,8 @@
         </select>
         <div class="difficulty-desc" id="obstacle-difficulty-desc">自动模式会根据谱面音符密度推断轨道宽度和障碍物密度。</div>
       </div><label for="osz-file">选择 .osz / .zip 谱面包</label><input type="file" id="osz-file"
-        accept=".osz,.zip,application/zip,application/x-zip-compressed,*/*"><label for="osu-file">单独选择 .osu
-        文件</label><input type="file" id="osu-file" accept=".osu,text/plain,*/*"><label for="audio-file">
+        accept=".osz,.zip,application/zip,application/x-zip-compressed,*/*"><label for="osu-file">📄 单独选择 .osu
+        文件</label><input type="file" id="osu-file" accept=".osu,text/plain,*/*"><label for="audio-file">🎵
         选择mp3文件</label><input type="file" id="audio-file" accept="audio/*,*/*">
       <div id="import-status"></div><button id="close-modal-btn">关闭</button>
     </div>
@@ -947,6 +947,10 @@
 有问题目前可以先去B站 BV11xj66vEEz 来反映哦
 
 更新记录：
+2026/6/21 beta0.2.2
+对不起！我们bug太多了！
+修复在手机上玩会严重音画不同步的bug（应该修好了吧
+
 2026/6/21 beta0.2.1
 微调了一些按钮，看起来更完美
 kiai time的背景亮度略微降低
@@ -1077,6 +1081,9 @@ kiai time的背景亮度略微降低
       let kiaiSquareDrawIdx = 0;
 
       let audioCtx = null, audioSourceNode = null, audioSourceElement = null;
+      let audioBuffer = null, audioBlobUrl = null;
+      let audioStartAtCtxTime = 0, audioStartOffsetMs = 0;
+      let audioIsPlaying = false, audioEndedByPlayback = false;
       let backgroundPhase = 0;
       let musicFallbackScanIndex = 0, bigNoteScanIndex = 0, allNoteScanIndex = 0;
 
@@ -1089,7 +1096,140 @@ kiai time的背景亮度略微降低
       function isBigNote(type) { return (type & 4) !== 0; }
       function getDelayMs() { const v = parseInt(delayInput.value); return isNaN(v) ? 0 : v; }
       function getVolumeValue() { const v = parseInt(volumeInput.value); return Math.max(0, Math.min(1, (isNaN(v) ? 100 : v) / 100)); }
-      function applyAudioVolume() { if (audioElement) audioElement.volume = getVolumeValue(); }
+      function applyAudioVolume() {
+        if (audioElement) audioElement.volume = getVolumeValue();
+        if (audioSourceNode && audioSourceNode.gain) audioSourceNode.gain.value = getVolumeValue();
+      }
+      function getAudioContextInstance() {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return null;
+        if (!audioCtx) audioCtx = new Ctx();
+        return audioCtx;
+      }
+      function destroyCurrentAudioSource() {
+        if (audioSourceElement) {
+          try { audioSourceElement.pause(); } catch (_) { }
+          try { audioSourceElement.removeAttribute('src'); audioSourceElement.load(); } catch (_) { }
+          audioSourceElement = null;
+        }
+        if (audioSourceNode) {
+          try { audioSourceNode.disconnect(); } catch (_) { }
+          audioSourceNode = null;
+        }
+      }
+      function stopDecodedAudioPlayback() {
+        if (audioCtx && audioSourceNode && audioSourceNode.source) {
+          try { audioSourceNode.source.onended = null; } catch (_) { }
+          try { audioSourceNode.source.stop(); } catch (_) { }
+        }
+        if (audioSourceNode) {
+          try { audioSourceNode.disconnect(); } catch (_) { }
+          audioSourceNode = null;
+        }
+        audioIsPlaying = false;
+      }
+      function releaseAudioResources() {
+        stopDecodedAudioPlayback();
+        destroyCurrentAudioSource();
+        if (audioBlobUrl) {
+          try { URL.revokeObjectURL(audioBlobUrl); } catch (_) { }
+          audioBlobUrl = null;
+        }
+        audioElement = null;
+        audioBuffer = null;
+        audioEndedByPlayback = false;
+      }
+      async function decodeAudioBlob(blob) {
+        const ctx = getAudioContextInstance();
+        if (!ctx || !blob) return null;
+        try {
+          const arrayBuffer = await blob.arrayBuffer();
+          return await new Promise((resolve, reject) => {
+            ctx.decodeAudioData(arrayBuffer.slice(0), resolve, reject);
+          });
+        } catch (_) {
+          return null;
+        }
+      }
+      function getDecodedAudioCurrentTimeMs() {
+        if (!audioCtx) return audioResumeAnchorMs;
+        if (paused || !audioIsPlaying) return audioResumeAnchorMs;
+        const elapsed = (audioCtx.currentTime - audioStartAtCtxTime) * 1000;
+        const durationMs = audioBuffer ? audioBuffer.duration * 1000 : Infinity;
+        return Math.max(0, Math.min(audioStartOffsetMs + elapsed, durationMs));
+      }
+      async function playDecodedAudioFromMs(timeMs) {
+        const ctx = getAudioContextInstance();
+        if (!ctx || !audioBuffer) return false;
+        try { if (ctx.state === 'suspended') await ctx.resume(); } catch (_) { }
+        stopDecodedAudioPlayback();
+        const gainNode = ctx.createGain();
+        gainNode.gain.value = getVolumeValue();
+        const source = ctx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        const offsetSec = Math.max(0, Math.min((timeMs || 0) / 1000, Math.max(0, audioBuffer.duration - 0.001)));
+        audioStartOffsetMs = offsetSec * 1000;
+        audioStartAtCtxTime = ctx.currentTime;
+        audioResumeAnchorMs = audioStartOffsetMs;
+        audioEndedByPlayback = false;
+        source.onended = () => {
+          if (!audioIsPlaying) return;
+          const currentMs = getDecodedAudioCurrentTimeMs();
+          const endedNaturally = audioBuffer && currentMs >= audioBuffer.duration * 1000 - 30;
+          audioIsPlaying = false;
+          if (endedNaturally) audioEndedByPlayback = true;
+        };
+        source.start(0, offsetSec);
+        audioSourceNode = { source, gain: gainNode };
+        audioIsPlaying = true;
+        return true;
+      }
+      function pauseDecodedAudioAtCurrentPoint() {
+        if (!canUseDecodedAudio()) return;
+        audioResumeAnchorMs = getDecodedAudioCurrentTimeMs();
+        stopDecodedAudioPlayback();
+      }
+      function seekDecodedAudioToMs(timeMs) {
+        audioResumeAnchorMs = Math.max(0, timeMs || 0);
+        audioStartOffsetMs = audioResumeAnchorMs;
+      }
+      async function startAudioPlaybackFromMs(timeMs) {
+        if (canUseDecodedAudio()) return await playDecodedAudioFromMs(timeMs);
+        if (audioElement) {
+          audioElement.currentTime = Math.max(0, (timeMs || 0) / 1000);
+          audioResumeAnchorMs = Math.max(0, timeMs || 0);
+          try {
+            const p = audioElement.play();
+            if (p && typeof p.then === 'function') await p;
+            return true;
+          } catch (_) {
+            return false;
+          }
+        }
+        return false;
+      }
+      function pauseAudioPlayback() {
+        if (canUseDecodedAudio()) { pauseDecodedAudioAtCurrentPoint(); return; }
+        if (audioElement) {
+          pausedAudioTime = audioElement.currentTime;
+          audioResumeAnchorMs = pausedAudioTime * 1000;
+          try { audioElement.pause(); } catch (_) { }
+        }
+      }
+      function seekAudioToMs(timeMs) {
+        if (canUseDecodedAudio()) { seekDecodedAudioToMs(timeMs); return; }
+        if (audioElement) {
+          try { audioElement.currentTime = Math.max(0, (timeMs || 0) / 1000); } catch (_) { }
+        }
+        audioResumeAnchorMs = Math.max(0, timeMs || 0);
+      }
+      function isAudioPlaybackEnded() {
+        if (canUseDecodedAudio()) return audioEndedByPlayback;
+        return !!(audioElement && audioElement.ended);
+      }
+      function canUseDecodedAudio() { return !!(audioBuffer && getAudioContextInstance()); }
       function getBrightenedLineColor(color, amount = 0.16) {
         if (!color) return '#8cf4ff';
         const hexMatch = color.match(/^#([0-9a-f]{6})$/i);
@@ -1319,7 +1459,7 @@ kiai time的背景亮度略微降低
           if (laneSegments.length === 0) generateTrackAndObstaclesFromBeatmap(beatmapData);
         } else { guideBoxes = []; totalBoxes = 0; progressMarkers = []; kiaiSquares = []; laneSegments = []; trackPoints = []; obstacles = []; currentTrackConfig = null; trackRenderCache = null; trackRenderCacheKey = ''; kiaiPeriods = []; }
         for (const box of guideBoxes) box._autoTriggered = false;
-        if (fullReset && audioElement) { audioElement.pause(); audioElement.currentTime = 0; }
+        if (fullReset) { pauseAudioPlayback(); seekAudioToMs(0); audioEndedByPlayback = false; }
         drawFrame(); updateInfoText();
       }
 
@@ -1355,7 +1495,7 @@ kiai time的背景亮度略微降低
         gameStarted = false; gameStartTime = 0; lineMoving = false;
         delayMs = 0; totalPauseTime = 0; pauseStartTime = 0; pausedAudioTime = 0; audioResumeAnchorMs = reviveTimeMs;
         pauseOverlay.classList.remove('active'); pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停(P)';
-        if (audioElement) { audioElement.pause(); audioElement.currentTime = reviveTimeMs / 1000; }
+        pauseAudioPlayback(); seekAudioToMs(reviveTimeMs); audioEndedByPlayback = false;
         kiaiTransitionFactor = getCurrentKiaiFactor(reviveTimeMs);
         kiaiSquareDrawIdx = 0;
         wasInsideTrack = false;
@@ -1372,29 +1512,25 @@ kiai time的背景亮度略微降低
       }
 
       function toggleRockMode() { if (gameStarted && !gameFinished) return; rockMode = !rockMode; rockBtn.textContent = rockMode ? '摇滚模式: 开' : '摇滚模式: 关'; rockBtn.classList.toggle('active', rockMode); updateInfoText(); resetGame(); }
-      function exitAutoplay() { if (!autoplayMode) return; autoplayMode = false; if (gameStarted && animFrameId) { cancelAnimationFrame(animFrameId); } if (audioElement) audioElement.pause(); resetGame(); autoplayBtn.textContent = '自动游玩'; autoplayBtn.classList.remove('active'); updateAutoplayVisibility(); updateInfoText(); drawFrame(); }
+      function exitAutoplay() { if (!autoplayMode) return; autoplayMode = false; if (gameStarted && animFrameId) { cancelAnimationFrame(animFrameId); } pauseAudioPlayback(); resetGame(); autoplayBtn.textContent = '自动游玩'; autoplayBtn.classList.remove('active'); updateAutoplayVisibility(); updateInfoText(); drawFrame(); }
       function toggleAutoplay() { if (gameStarted && !gameFinished) return; autoplayMode = !autoplayMode; autoplayBtn.textContent = autoplayMode ? '自动游玩: 开' : '自动游玩: 关'; autoplayBtn.classList.toggle('active', autoplayMode); updateAutoplayVisibility(); updateInfoText(); if (!gameStarted) drawFrame(); }
       function togglePause() {
         if (!gameStarted || gameFinished) return;
         paused = !paused;
         if (paused) {
           pauseStartTime = performance.now();
-          pausedAudioTime = audioElement ? audioElement.currentTime : Math.max(0, getCurrentGameTimeMs(pauseStartTime) / 1000);
+          pausedAudioTime = Math.max(0, getCurrentGameTimeMs(pauseStartTime) / 1000);
           audioResumeAnchorMs = pausedAudioTime * 1000;
           pauseOverlay.classList.add('active');
           pauseBtn.textContent = '继续';
-          if (audioElement) {
-            audioElement.pause();
-            audioElement.currentTime = Math.max(0, audioResumeAnchorMs / 1000);
-          }
+          pauseAudioPlayback();
         } else {
           const resumeNow = performance.now();
+          totalPauseTime += resumeNow - pauseStartTime;
           pauseOverlay.classList.remove('active');
           pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (P)';
-          if (audioElement && beatmapData) {
-            audioElement.pause();
-            audioElement.currentTime = Math.max(0, audioResumeAnchorMs / 1000);
-            audioElement.play().catch(() => { });
+          if ((audioElement || canUseDecodedAudio()) && beatmapData) {
+            startAudioPlaybackFromMs(audioResumeAnchorMs).catch(() => { });
           }
           lastFrameTime = resumeNow;
         }
@@ -1417,7 +1553,11 @@ kiai time的背景亮度略微降低
         kiaiTransitionFactor = 0;
         wasInsideTrack = false;
         updateAutoplayVisibility(); updateHelpVisibility();
-        if (audioElement && beatmapData) { audioElement.currentTime = Math.max(0, gameTimeOffset / 1000); audioResumeAnchorMs = gameTimeOffset; audioElement.onended = () => { if (!gameFinished && gameStarted) { gameFinished = true; lastResultReason = 'complete'; showResults(100); } }; audioElement.play().catch(() => { }); }
+        if (beatmapData && (audioElement || canUseDecodedAudio())) {
+          audioResumeAnchorMs = gameTimeOffset;
+          audioEndedByPlayback = false;
+          startAudioPlaybackFromMs(gameTimeOffset).catch(() => { });
+        }
         animFrameId = requestAnimationFrame(gameLoop);
       }
 
@@ -1478,6 +1618,10 @@ kiai time的背景亮度略微降低
         if (!gameStarted) return gameTimeOffset;
         if (beatmapData) {
           if (paused) return audioResumeAnchorMs;
+          if (audioBuffer) {
+            audioResumeAnchorMs = getDecodedAudioCurrentTimeMs();
+            return audioResumeAnchorMs;
+          }
           if (audioElement) {
             audioResumeAnchorMs = audioElement.currentTime * 1000;
             return audioResumeAnchorMs;
@@ -1507,7 +1651,7 @@ kiai time的背景亮度略微降低
 
         if (!gameFinished && totalBoxes > 0) {
           if (!gameFinished && laneSegments.length > 0) { const lastLane = laneSegments[laneSegments.length - 1]; if (gameTimeMs > lastLane.endTime + 120) { gameFinished = true; lastResultReason = 'end'; showResults(getCurrentProgressPercent()); } }
-          if (audioElement && audioElement.ended && !gameFinished) { gameFinished = true; lastResultReason = 'complete'; showResults(100); }
+          if (isAudioPlaybackEnded() && !gameFinished) { gameFinished = true; lastResultReason = 'complete'; showResults(100); }
         }
         if (!gameFinished || lastResultReason === 'complete') { squareX += currentDir.dx * LINE_SPEED * dt; squareY += currentDir.dy * LINE_SPEED * dt; if (!gameFinished) checkTrackBoundaryCollision(timestamp); }
 
@@ -1587,7 +1731,7 @@ kiai time的背景亮度略微降低
         ctx.font = '10px monospace';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'top';
-        ctx.fillText('HTML Line beta0.2.1', w - 10, 10);
+        ctx.fillText('HTML Line b0.2.2', w - 10, 10);
       }
 
       function getGuideBoxDrawRange() { if (!guideBoxes || guideBoxes.length === 0) return { first: 0, last: -1 }; if (!gameStarted || !lineMoving) return { first: 0, last: Math.min(guideBoxes.length - 1, 50) }; const seg = getExpectedLaneSegmentByTime(getCurrentGameTimeMs()); const idx = seg ? Math.max(0, seg.index) : 0; return { first: Math.max(0, idx - 14), last: Math.min(guideBoxes.length - 1, idx + 105) }; }
@@ -1612,7 +1756,23 @@ kiai time的背景亮度略微降低
       function processOszFile(file) { importStatus.textContent = '正在解压谱面包...'; importStatus.style.color = '#ff9800'; const reader = new FileReader(); reader.onload = function (e) { JSZip.loadAsync(e.target.result).then(function (zip) { const osuFiles = [], audioFiles = [], imageFiles = [], promises = []; zip.forEach(function (rp, entry) { const name = rp.split('/').pop(); if (name.endsWith('.osu')) promises.push(entry.async('string').then(c => osuFiles.push({ name, content: c }))); else if (name.match(/\.(mp3|ogg|wav|m4a|aac)$/i)) promises.push(entry.async('blob').then(b => audioFiles.push({ name, blob: b }))); else if (name.match(/\.(jpg|jpeg|png|gif|bmp)$/i)) promises.push(entry.async('blob').then(b => imageFiles.push({ name, blob: b }))); }); Promise.all(promises).then(async () => { importStatus.textContent = `找到 ${osuFiles.length} 个谱面, ${audioFiles.length} 个音频`; importStatus.style.color = '#4caf50'; const allBeatmaps = []; for (const osuFile of osuFiles) { const bm = parseBeatmap(osuFile.content, osuFile.name); let matchedAudio = null; if (bm.audioFilename && audioFiles.length > 0) { const an = bm.audioFilename.replace(/^.*[\\\/]/, ''); matchedAudio = audioFiles.find(a => a.name === an || a.name === bm.audioFilename); if (!matchedAudio && audioFiles.length === 1) matchedAudio = audioFiles[0]; } let matchedImage = null; if (bm.backgroundFilename && imageFiles.length > 0) { const iname = bm.backgroundFilename.replace(/^.*[\\\/]/, ''); matchedImage = imageFiles.find(img => img.name === iname); } if (matchedImage) importedBackgroundBlobs[bm.filename + '|' + bm.version] = matchedImage.blob; allBeatmaps.push({ ...bm, osuContent: osuFile.content, audioBlob: matchedAudio ? matchedAudio.blob : null, audioFileName: matchedAudio ? matchedAudio.name : null, backgroundBlob: matchedImage ? matchedImage.blob : null }); } importedBeatmaps = allBeatmaps; importModal.classList.remove('active'); showBeatmapSelect(); }); }).catch(err => { importStatus.textContent = '解压失败: ' + err.message; importStatus.style.color = '#f44336'; }); }; reader.readAsArrayBuffer(file); }
       function checkManualImport() { if (pendingOsuContent) { const beatmap = parseBeatmap(pendingOsuContent, osuFileInput.files[0]?.name || 'unknown.osu'); const entry = { ...beatmap, osuContent: pendingOsuContent, audioBlob: pendingAudioFile, audioFileName: pendingAudioFile?.name || null }; const existing = importedBeatmaps.findIndex(b => b.filename === entry.filename); if (existing >= 0) importedBeatmaps[existing] = entry; else importedBeatmaps.push(entry); importStatus.textContent = '✅ 谱面已就绪' + (pendingAudioFile ? ' (含音频)' : ' (无音频)'); importStatus.style.color = '#4caf50'; importModal.classList.remove('active'); showBeatmapSelect(); pendingOsuContent = null; pendingAudioFile = null; osuFileInput.value = ''; audioFileInput.value = ''; } }
       function showBeatmapSelect() { beatmapList.innerHTML = ''; const list = importedBeatmaps; if (list.length === 0) { beatmapList.innerHTML = '<p style="text-align:center;color:rgba(255,255,255,0.4);">未找到谱面，请先导入 .osz 或 .osu 文件</p>'; } for (const bm of list) { const div = document.createElement('div'); div.className = 'beatmap-item'; if (beatmapData && bm.filename === beatmapData.filename && bm.version === beatmapData.version) div.classList.add('current'); const modeLabel = bm.mode === 1 ? 'Taiko' : (bm.mode === 0 ? 'osu!' : '模式' + bm.mode); const densityInfo = getBeatmapDensityInfo(bm); const densityText = densityInfo.notesPerSecond > 0 ? densityInfo.notesPerSecond.toFixed(1) + ' 次/秒' : '无数据'; div.innerHTML = `<div class="version">${bm.version || 'Unknown'} ${beatmapData && bm.filename === beatmapData.filename && bm.version === beatmapData.version ? '👈 当前' : ''}</div><div class="meta">${bm.artist || 'Unknown'} - ${bm.title || 'Unknown'}</div><div class="notes">音符: ${bm.hitObjects.length} | ${bm.audioBlob ? '🎵 ' + (bm.audioFileName || '有音频') : '🔇 无音频'} | ${modeLabel} <span class="density-info">| 密度: ${densityText}</span></div>`; div.addEventListener('click', () => selectBeatmap(bm)); beatmapList.appendChild(div); } beatmapSelect.classList.add('active'); }
-      async function selectBeatmap(beatmap) { if (preparingTrack) return; beatmapData = beatmap; guideBoxes = generateGuideBoxes(beatmapData); totalBoxes = guideBoxes.length; progressMarkers = generateProgressMarkers(beatmapData); kiaiSquares = generateKiaiSquares(beatmapData, guideBoxes); generateCollectibles(beatmapData); kiaiPeriods = beatmap.kiaiPeriods || []; kiaiTransitionFactor = 0; beatmapSelect.classList.remove('active'); if (audioElement) { audioElement.pause(); if (audioElement.src.startsWith('blob:')) URL.revokeObjectURL(audioElement.src); audioElement = null; } if (beatmap.audioBlob) { audioElement = new Audio(URL.createObjectURL(beatmap.audioBlob)); audioElement.preload = 'auto'; applyAudioVolume(); audioElement.load(); } customLineColor = null; if (beatmap.backgroundBlob) { customLineColor = await extractLineColorFromImage(beatmap.backgroundBlob); baseLineColor = customLineColor || '#00b8d4'; } else baseLineColor = '#00b8d4'; await prepareSelectedBeatmapAsync(beatmapData); resetGame(); updateInfoText(); drawFrame(); }
+      async function selectBeatmap(beatmap) {
+        if (preparingTrack) return;
+        beatmapData = beatmap; guideBoxes = generateGuideBoxes(beatmapData); totalBoxes = guideBoxes.length; progressMarkers = generateProgressMarkers(beatmapData); kiaiSquares = generateKiaiSquares(beatmapData, guideBoxes); generateCollectibles(beatmapData); kiaiPeriods = beatmap.kiaiPeriods || []; kiaiTransitionFactor = 0; beatmapSelect.classList.remove('active');
+        releaseAudioResources();
+        if (beatmap.audioBlob) {
+          audioBlobUrl = URL.createObjectURL(beatmap.audioBlob);
+          audioElement = new Audio(audioBlobUrl);
+          audioElement.preload = 'auto';
+          applyAudioVolume();
+          audioElement.load();
+          audioBuffer = await decodeAudioBlob(beatmap.audioBlob);
+          audioEndedByPlayback = false;
+        }
+        customLineColor = null;
+        if (beatmap.backgroundBlob) { customLineColor = await extractLineColorFromImage(beatmap.backgroundBlob); baseLineColor = customLineColor || '#00b8d4'; } else baseLineColor = '#00b8d4';
+        await prepareSelectedBeatmapAsync(beatmapData); resetGame(); updateInfoText(); drawFrame();
+      }
       async function prepareSelectedBeatmapAsync(beatmap) { preparingTrack = true; try { showPreloadPanel('正在载入谱面', '正在解析引导框和障碍物...', 4); await nextPaintFrame(); generateTrackAndObstaclesFromBeatmap(beatmap); await buildTrackRenderCacheAsync(beatmap); } catch (e) { console.error('谱面载入出错:', e); } finally { preparingTrack = false; hidePreloadPanel(); } }
       function nextPaintFrame() { return new Promise(res => requestAnimationFrame(() => res())); }
       function showPreloadPanel(title, detail, progress) { if (!preloadPanel) return; preloadPanel.classList.add('active'); preloadTitle.textContent = title || '正在预渲染轨道'; preloadDetail.textContent = detail || '请稍候...'; preloadBarFill.style.width = `${Math.max(0, Math.min(100, progress || 0))}%`; }
@@ -1799,4 +1959,3 @@ kiai time的背景亮度略微降低
 </body>
 
 </html>
-
