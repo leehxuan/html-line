@@ -17,6 +17,7 @@ There are still lots of bugs. If you find any, feel free to give feedback. bilib
 - leehxuan
   - [His _Github_ account](https://github.com/leehxuan/)
   - [His _bilibili_ account](https://space.bilibili.com/3493114293520490/)
+  - [Website](https://leeehxuan.pages.dev/)
 
 #
 
@@ -36,6 +37,7 @@ bug 依旧很多，发现 bug 欢迎来反馈。哔哩哔哩视频: [BV11xj66vEE
 - leehxuan
   - [他的 _Github_ 账号](https://github.com/leehxuan/)
   - [他的哔哩哔哩账号](https://space.bilibili.com/3493114293520490/)
+  - [网站](https://leeehxuan.pages.dev/)
 
 #
 
@@ -55,3 +57,4 @@ PCでブラウザが長時間フォーカスを失うと、再度プレイする
 - leehxuan
   - [彼の _GitHub_ アカウント](https://github.com/leehxuan/)
   - [彼の _bilibili_ アカウント](https://space.bilibili.com/3493114293520490/)
+  - [ウェブサイト](https://leeehxuan.pages.dev/)
