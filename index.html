@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -185,8 +185,31 @@
       top: calc(58% + 48px);
     }
 
+    #menu-btn {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 21;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.85);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
     #help-btn:hover,
     #intro-import-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    #menu-btn:hover {
       background: rgba(255, 255, 255, 0.15);
       color: #fff;
       border-color: rgba(255, 255, 255, 0.4);
@@ -436,7 +459,8 @@
 
     #import-modal,
     #beatmap-select,
-    #help-modal {
+    #help-modal,
+    #more-modal {
       display: none;
       position: fixed;
       top: 0;
@@ -451,13 +475,15 @@
 
     #import-modal.active,
     #beatmap-select.active,
-    #help-modal.active {
+    #help-modal.active,
+    #more-modal.active {
       display: flex;
     }
 
     #import-panel,
     #beatmap-panel,
-    #help-panel {
+    #help-panel,
+    #more-panel {
       background: #1a1a2e;
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 12px;
@@ -480,6 +506,31 @@
     #help-panel a {
       color: #00e5ff;
       text-decoration: underline;
+    }
+
+    #more-panel p {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.8;
+      text-align: left;
+      min-height: 0;
+      margin: 0;
+      white-space: pre-line;
+    }
+
+    #more-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #more-content {
+      flex: 1 1 auto;
+      min-height: 160px;
+      max-height: calc(80vh - 120px);
+      overflow-y: auto;
+      margin-top: 6px;
+      padding-right: 6px;
     }
 
     #import-panel .desc {
@@ -519,7 +570,8 @@
 
     #close-modal-btn,
     #close-beatmap-btn,
-    #close-help-btn {
+    #close-help-btn,
+    #close-more-btn {
       margin-top: 14px;
       padding: 10px 28px;
       background: rgba(255, 255, 255, 0.1);
@@ -536,7 +588,8 @@
 
     #close-modal-btn:hover,
     #close-beatmap-btn:hover,
-    #close-help-btn:hover {
+    #close-help-btn:hover,
+    #close-more-btn:hover {
       background: rgba(255, 255, 255, 0.2);
     }
 
@@ -752,6 +805,13 @@
         font-size: 12px;
       }
 
+      #menu-btn {
+        top: 12px;
+        left: 12px;
+        padding: 7px 12px;
+        font-size: 12px;
+      }
+
       #intro-import-btn {
         top: calc(58% + 42px);
       }
@@ -763,6 +823,7 @@
   <div id="app">
     <div id="canvas-area">
       <canvas id="gameCanvas"></canvas>
+      <button id="menu-btn">更多</button>
       <button id="pause-btn">暂停</button>
       <button id="autoplay-btn">自动游玩: 关</button>
       <button id="autoplay-exit-btn">退出</button>
@@ -792,7 +853,6 @@
       </div>
     </div>
     <div id="controls">
-      <button id="restart-btn">重来</button>
       <button id="beatmap-btn" class="primary">选择难度</button>
       <button id="load-btn">导入谱面</button>
       <button id="rock-btn" class="rock">摇滚模式: 关</button>
@@ -809,7 +869,7 @@
           <option value="extreme">贼难</option>
           <option value="washpool">洗笔池</option>
         </select></div>
-      <div id="info-text">点击屏幕以开始 | 空格或上箭头转弯 | R 重开 | F 复活 | P 暂停 | bilibili@DLmember、bilibili@UnsignedWRLD 开发</div>
+      <div id="info-text">点击屏幕以开始 | 空格或上箭头转弯 | R 重开 | F 复活 | P 暂停</div>
     </div>
   </div>
   <div id="import-modal">
@@ -856,6 +916,26 @@
       <button id="close-help-btn">关闭</button>
     </div>
   </div>
+  <div id="more-modal">
+    <div id="more-panel">
+      <h3>更多</h3>
+      <div id="more-content">
+        <p>开发：DLmember  UnsignedWRLD  不再永夜
+网站：不再永夜
+测试：地下老铁  风暴是只喵  Neon  irryan  AirRain-小五  潺水如溪兮  zifya  等等
+有问题目前可以先去B站 BV11xj66vEEz 来反映哦
+
+更新记录：
+2026/6/21 beta0.2
+优化了性能，以及删掉了以前的动态背景
+很多玩家之前都说玩起来很卡，咱真的非常非常非常抱歉😭现在努力进行了修复，提升了一些性能，不敢说完全不会卡，但是应该会比以前好
+
+2026/6/19 beta0.1
+发布了第一个beta版，终于是可以玩了</p>
+      </div>
+      <button id="close-more-btn">关闭</button>
+    </div>
+  </div>
 
   <script>
     (function () {
@@ -864,13 +944,13 @@
       const canvasArea = document.getElementById('canvas-area');
       const controls = document.getElementById('controls');
       const pauseBtn = document.getElementById('pause-btn');
+      const menuBtn = document.getElementById('menu-btn');
       const autoplayBtn = document.getElementById('autoplay-btn');
       const autoplayExitBtn = document.getElementById('autoplay-exit-btn');
       const reviveBtn = document.getElementById('revive-btn');
       const helpBtn = document.getElementById('help-btn');
       const introImportBtn = document.getElementById('intro-import-btn');
       const pauseOverlay = document.getElementById('pause-overlay');
-      const restartBtn = document.getElementById('restart-btn');
       const loadBtn = document.getElementById('load-btn');
       const beatmapBtn = document.getElementById('beatmap-btn');
       const rockBtn = document.getElementById('rock-btn');
@@ -898,6 +978,7 @@
       const importModal = document.getElementById('import-modal');
       const beatmapSelect = document.getElementById('beatmap-select');
       const helpModal = document.getElementById('help-modal');
+      const moreModal = document.getElementById('more-modal');
       const oszFileInput = document.getElementById('osz-file');
       const osuFileInput = document.getElementById('osu-file');
       const audioFileInput = document.getElementById('audio-file');
@@ -971,15 +1052,8 @@
       let kiaiSquareDrawIdx = 0;
 
       let audioCtx = null, audioSourceNode = null, audioSourceElement = null;
-      let analyserNode = null, frequencyData = null;
-      let musicEnergy = 0, musicBass = 0, musicMid = 0, musicTreble = 0;
-      let musicBeatPulse = 0, musicPeakHold = 0, backgroundPhase = 0;
-      let musicAnalysisFrame = 0, musicFallbackScanIndex = 0, bigNoteScanIndex = 0, allNoteScanIndex = 0;
-      const BACKGROUND_RENDER_SCALE = 0.58;
-      const BACKGROUND_UPDATE_INTERVAL = 2;
-      const backgroundCanvas = document.createElement('canvas');
-      const backgroundCtx = backgroundCanvas.getContext('2d');
-      let backgroundRenderFrame = 0, backgroundCacheValid = false;
+      let backgroundPhase = 0;
+      let musicFallbackScanIndex = 0, bigNoteScanIndex = 0, allNoteScanIndex = 0;
 
       let customLineColor = null;
       let importedBackgroundBlobs = {};
@@ -1017,12 +1091,13 @@
         return color;
       }
       function setControlsHidden(hidden) { if (!controls) return; controls.classList.toggle('hidden', !!hidden); canvasArea.style.height = hidden ? '100%' : `calc(100% - ${controls.offsetHeight}px)`; requestAnimationFrame(resizeCanvas); }
-      function updateHelpVisibility() { const visible = (!beatmapData && !gameStarted) ? 'block' : 'none'; if (helpBtn) helpBtn.style.display = visible; if (introImportBtn) introImportBtn.style.display = visible; }
+      function updateHelpVisibility() { const visible = (!beatmapData && !gameStarted) ? 'block' : 'none'; if (helpBtn) helpBtn.style.display = visible; if (introImportBtn) introImportBtn.style.display = visible; if (menuBtn) menuBtn.style.display = visible; }
       function updateAutoplayVisibility() { if (autoplayBtn) autoplayBtn.style.display = gameStarted ? 'none' : 'block'; if (autoplayExitBtn) autoplayExitBtn.style.display = (gameStarted && !gameFinished && (autoplayMode || !beatmapData)) ? 'block' : 'none'; }
 
       function resizeCanvas() { const rect = canvasArea.getBoundingClientRect(); const dpr = getCanvasDpr(); canvas.width = rect.width * dpr; canvas.height = rect.height * dpr; canvasWidth = canvas.width; canvasHeight = canvas.height; drawFrame(); }
       function getCameraOffsetY() { const dpr = getCanvasDpr(); const sh = canvasHeight / dpr; return sh / 2 - sh * HEAD_SCREEN_RATIO; }
-      function worldToScreen(wx, wy) { const dpr = getCanvasDpr(); const scx = canvasWidth / dpr / 2; const scy = canvasHeight / dpr / 2; const oy = getCameraOffsetY(); return { x: (wx - cameraX) + scx, y: (wy - cameraY) + scy + oy }; }
+      function getViewZoom() { return !IS_MOBILE_UI ? 1.7 : 1; }
+      function worldToScreen(wx, wy) { const dpr = getCanvasDpr(); const scx = canvasWidth / dpr / 2; const scy = canvasHeight / dpr / 2; const oy = getCameraOffsetY(); const zoom = getViewZoom(); return { x: (wx - cameraX) * zoom + scx, y: (wy - cameraY) * zoom + scy + oy }; }
 
       function parseKiaiPeriods(timingPoints) {
         const periods = [];
@@ -1208,7 +1283,7 @@
         ignoreMouseUntil = 0;
         hitEffects = []; boundaryCrashEffects = []; lastResultReason = null; resultFlashStartTime = 0;
         setControlsHidden(false);
-        resetMusicReactiveValues(); backgroundCacheValid = false; hitCount = 0;
+        resetMusicReactiveValues(); hitCount = 0;
         resultPanel.classList.remove('active'); pauseOverlay.classList.remove('active'); pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (P)';
         reviveBtn.style.display = 'none';
         updateAutoplayVisibility(); updateHelpVisibility();
@@ -1268,7 +1343,7 @@
         if (beatmapData) {
           const obsText = currentTrackConfig ? ` | 路宽: ${currentTrackConfig.label}` : '';
           infoText.textContent = `${beatmapData.artist} - ${beatmapData.title} [${beatmapData.version}]${modeText}${autoText} | 钻石: ${collectedDiamondSet.size}/10 皇冠: ${collectedCrownSet.size}/3${obsText}`;
-        } else { infoText.textContent = IS_MOBILE_UI ? ('点击屏幕以开始' + modeText + autoText) : ('点击屏幕以开始 | 空格或上箭头转弯 | R 重开 | F 复活 | P 暂停 | bilibili@DLmember、bilibili@UnsignedWRLD 开发' + modeText + autoText); }
+        } else { infoText.textContent = IS_MOBILE_UI ? ('点击屏幕以开始' + modeText + autoText) : ('点击屏幕以开始 | 空格或上箭头转弯 | R 重开 | F 复活 | P 暂停' + modeText + autoText); }
       }
 
       function toggleRockMode() { if (gameStarted && !gameFinished) return; rockMode = !rockMode; rockBtn.textContent = rockMode ? '摇滚模式: 开' : '摇滚模式: 关'; rockBtn.classList.toggle('active', rockMode); updateInfoText(); resetGame(); }
@@ -1294,7 +1369,6 @@
           if (audioElement && beatmapData) {
             audioElement.pause();
             audioElement.currentTime = Math.max(0, audioResumeAnchorMs / 1000);
-            ensureAudioAnalyzer();
             audioElement.play().catch(() => { });
           }
           lastFrameTime = resumeNow;
@@ -1311,14 +1385,14 @@
         lastFrameTime = performance.now(); audioResumeAnchorMs = gameTimeOffset;
         hitEffects = []; boundaryCrashEffects = []; lastResultReason = null;
         setControlsHidden(true);
-        resetMusicReactiveValues(); backgroundCacheValid = false;
+        resetMusicReactiveValues();
         for (const box of guideBoxes) box._autoTriggered = false;
         resultPanel.classList.remove('active'); pauseOverlay.classList.remove('active'); pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (P)';
         reviveBtn.style.display = 'none';
         kiaiTransitionFactor = 0;
         wasInsideTrack = false;
         updateAutoplayVisibility(); updateHelpVisibility();
-        if (audioElement && beatmapData) { audioElement.currentTime = Math.max(0, gameTimeOffset / 1000); audioResumeAnchorMs = gameTimeOffset; audioElement.onended = () => { if (!gameFinished && gameStarted) { gameFinished = true; lastResultReason = 'complete'; showResults(100); } }; ensureAudioAnalyzer(); audioElement.play().catch(() => { }); }
+        if (audioElement && beatmapData) { audioElement.currentTime = Math.max(0, gameTimeOffset / 1000); audioResumeAnchorMs = gameTimeOffset; audioElement.onended = () => { if (!gameFinished && gameStarted) { gameFinished = true; lastResultReason = 'complete'; showResults(100); } }; audioElement.play().catch(() => { }); }
         animFrameId = requestAnimationFrame(gameLoop);
       }
 
@@ -1422,13 +1496,8 @@
         drawFrame(); animFrameId = requestAnimationFrame(gameLoop);
       }
 
-      function clamp01(v) { return Math.max(0, Math.min(1, v)); }
-      function resetMusicReactiveValues() { musicEnergy = 0; musicBass = 0; musicMid = 0; musicTreble = 0; musicBeatPulse = 0; musicPeakHold = 0; backgroundPhase = 0; }
-      function detachAudioAnalyzer() { if (audioSourceNode) try { audioSourceNode.disconnect(); } catch (e) { } if (analyserNode) try { analyserNode.disconnect(); } catch (e) { } audioSourceNode = null; audioSourceElement = null; analyserNode = null; frequencyData = null; }
-      function ensureAudioAnalyzer() { if (!audioElement) return false; const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false; if (!audioCtx) audioCtx = new AC(); if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => { }); if (audioSourceElement === audioElement && analyserNode && frequencyData) return true; try { detachAudioAnalyzer(); audioSourceNode = audioCtx.createMediaElementSource(audioElement); analyserNode = audioCtx.createAnalyser(); analyserNode.fftSize = 256; analyserNode.smoothingTimeConstant = 0.72; frequencyData = new Uint8Array(analyserNode.frequencyBinCount); audioSourceNode.connect(analyserNode); analyserNode.connect(audioCtx.destination); audioSourceElement = audioElement; return true; } catch (e) { detachAudioAnalyzer(); return false; } }
-      function averageBins(d, s, e) { if (!d || d.length === 0) return 0; const a = Math.max(0, Math.floor(d.length * s)), b = Math.min(d.length, Math.max(a + 1, Math.floor(d.length * e))); let sum = 0; for (let i = a; i < b; i++) sum += d[i]; return sum / ((b - a) * 255); }
-      function updateMusicReactiveValues(now) { if (analyserNode && frequencyData && gameStarted && audioElement && !audioElement.paused) { musicAnalysisFrame++; if ((musicAnalysisFrame & 1) === 0) { analyserNode.getByteFrequencyData(frequencyData); const bass = averageBins(frequencyData, 0.00, 0.12); const mid = averageBins(frequencyData, 0.12, 0.46); const treble = averageBins(frequencyData, 0.46, 1.00); const energy = clamp01(bass * 0.54 + mid * 0.34 + treble * 0.12); const attack = energy > musicEnergy ? 0.30 : 0.08; musicEnergy += (energy - musicEnergy) * attack; musicBass += (bass - musicBass) * (bass > musicBass ? 0.36 : 0.10); musicMid += (mid - musicMid) * 0.14; musicTreble += (treble - musicTreble) * 0.12; const transient = Math.max(0, bass - musicPeakHold); if (transient > 0.11) musicBeatPulse = Math.min(1, musicBeatPulse + transient * 2.0); musicPeakHold = Math.max(bass, musicPeakHold * 0.955); } } else if (gameStarted && lineMoving && beatmapData) { const elapsed = getCurrentGameTimeMs(now); const objs = beatmapData.hitObjects; while (musicFallbackScanIndex < objs.length - 1 && objs[musicFallbackScanIndex].time < elapsed - 160) musicFallbackScanIndex++; let nearest = 999999; for (let i = musicFallbackScanIndex; i < Math.min(objs.length, musicFallbackScanIndex + 12); i++) { const d = Math.abs(objs[i].time - elapsed); if (d < nearest) nearest = d; if (objs[i].time > elapsed + 180) break; } const fallbackPulse = nearest < 90 ? 1 - nearest / 90 : 0; musicEnergy += (fallbackPulse * 0.28 - musicEnergy) * 0.06; musicBass += (fallbackPulse * 0.48 - musicBass) * 0.10; musicMid *= 0.95; musicTreble *= 0.95; musicBeatPulse = Math.max(musicBeatPulse, fallbackPulse * 0.48); } else { musicEnergy *= 0.94; musicBass *= 0.92; musicMid *= 0.92; musicTreble *= 0.92; } musicBeatPulse *= 0.88; backgroundPhase += 0.005 + musicEnergy * 0.020 + musicBass * 0.018; }
-      function drawMusicReactiveBackground(w, h, now) { updateMusicReactiveValues(now); backgroundRenderFrame++; const bw = Math.max(1, Math.ceil(w * BACKGROUND_RENDER_SCALE)), bh = Math.max(1, Math.ceil(h * BACKGROUND_RENDER_SCALE)); if (backgroundCanvas.width !== bw || backgroundCanvas.height !== bh) { backgroundCanvas.width = bw; backgroundCanvas.height = bh; backgroundCacheValid = false; } const shouldRedraw = !backgroundCacheValid || (backgroundRenderFrame % BACKGROUND_UPDATE_INTERVAL === 0) || musicBeatPulse > 0.18; if (shouldRedraw) { const c = backgroundCtx; c.setTransform(BACKGROUND_RENDER_SCALE, 0, 0, BACKGROUND_RENDER_SCALE, 0, 0); c.clearRect(0, 0, w, h); const kiaiFactor = kiaiTransitionFactor; const kiaiBoost = 0.72 * kiaiFactor; const pulse = clamp01(musicEnergy * (1.15 + kiaiBoost * 0.34) + musicBass * (0.85 + kiaiBoost * 0.36) + musicBeatPulse * (0.75 + kiaiBoost * 0.52)); const bass = clamp01(musicBass * (1.25 + kiaiBoost * 0.40) + musicBeatPulse * (0.40 + kiaiBoost * 0.22)); const mid = clamp01(musicMid * (1.1 + kiaiBoost * 0.25)); const treble = clamp01(musicTreble * (1.2 + kiaiBoost * 0.22)); const cx = w * (0.50 + Math.sin(backgroundPhase * 0.7) * 0.05); const cy = h * (0.34 + Math.cos(backgroundPhase * 0.5) * 0.04); const radius = Math.max(w, h) * (0.74 + pulse * 0.28 + kiaiFactor * 0.07); const bg = c.createRadialGradient(cx, cy, 0, cx, cy, radius); const b1 = Math.round(34 + 88 * pulse + (215 - 34) * kiaiFactor * 0.62); const g1 = Math.round(21 + 62 * mid + (225 - 21) * kiaiFactor * 0.58); const r1 = Math.round(9 + 18 * bass + (235 - 9) * kiaiFactor * 0.48); bg.addColorStop(0, `rgb(${r1},${g1},${b1})`); const r2 = 9 + Math.round(18 * bass + (200 - 9) * kiaiFactor * 0.46); const g2 = 16 + Math.round(38 * mid + (210 - 16) * kiaiFactor * 0.52); const b2 = 32 + Math.round(54 * pulse + (225 - 32) * kiaiFactor * 0.55); bg.addColorStop(0.46, `rgb(${r2},${g2},${b2})`); const endR = Math.round(8 + (225 - 8) * kiaiFactor * 0.82); const endG = Math.round(9 + (230 - 9) * kiaiFactor * 0.82); const endB = Math.round(20 + (220 - 20) * kiaiFactor * 0.82); bg.addColorStop(1, `rgb(${endR},${endG},${endB})`); c.fillStyle = bg; c.fillRect(0, 0, w, h); const ringAlpha = 0.05 + bass * 0.24 + kiaiFactor * 0.10; const ringR = Math.max(w, h) * (0.18 + (backgroundPhase % 1) * 0.45 + bass * 0.12 + kiaiFactor * 0.05); c.save(); c.globalAlpha = ringAlpha; c.strokeStyle = 'rgba(0,229,255,0.70)'; c.lineWidth = 2 + bass * 8 + kiaiFactor * 3.2; c.beginPath(); c.arc(cx, cy, ringR, 0, Math.PI * 2); c.stroke(); c.restore(); if (kiaiFactor > 0.04) { c.save(); c.globalAlpha = 0.04 + kiaiFactor * 0.12 + musicBeatPulse * 0.06; c.strokeStyle = 'rgba(255,255,255,0.52)'; c.lineWidth = 1.4 + kiaiFactor * 2.1; c.beginPath(); c.arc(cx, cy, ringR * (1.10 + kiaiFactor * 0.09), 0, Math.PI * 2); c.stroke(); c.restore(); c.save(); c.globalAlpha = 0.02 + kiaiFactor * 0.07; c.strokeStyle = 'rgba(120,240,255,0.42)'; c.lineWidth = 1 + kiaiFactor * 1.6; c.beginPath(); c.arc(cx, cy, ringR * (0.72 + kiaiFactor * 0.06), 0, Math.PI * 2); c.stroke(); c.restore(); } c.save(); c.globalAlpha = 0.05 + pulse * 0.13 + kiaiFactor * 0.06; c.strokeStyle = 'rgba(90,220,255,0.68)'; c.lineWidth = 1 + treble * 2 + kiaiFactor * 0.9; const gap = Math.max(48, 86 - Math.round(mid * 28) - Math.round(kiaiFactor * 16)); const shift = (now * (0.018 + musicEnergy * 0.035 + kiaiFactor * 0.020)) % gap; for (let x = -h; x < w + h; x += gap) { c.beginPath(); c.moveTo(x + shift, h + 30); c.lineTo(x + shift + h * 0.75, -30); c.stroke(); } c.restore(); if (musicBeatPulse > 0.04 || kiaiFactor > 0.05) { c.save(); c.globalAlpha = Math.min(0.30, musicBeatPulse * 0.20 + kiaiFactor * 0.12); c.fillStyle = 'rgba(0,229,255,1)'; c.fillRect(0, 0, w, h); c.restore(); } const vignette = c.createRadialGradient(w / 2, h * 0.45, Math.min(w, h) * 0.20, w / 2, h * 0.45, Math.max(w, h) * 0.80); const vignetteAlpha = 0.48 * (1 - kiaiFactor * 0.78); vignette.addColorStop(0, 'rgba(0,0,0,0)'); vignette.addColorStop(1, `rgba(0,0,0,${vignetteAlpha})`); c.fillStyle = vignette; c.fillRect(0, 0, w, h); c.setTransform(1, 0, 0, 1, 0, 0); backgroundCacheValid = true; } ctx.drawImage(backgroundCanvas, 0, 0, w, h); }
+      function resetMusicReactiveValues() { backgroundPhase = 0; }
+      function drawMusicReactiveBackground(w, h, now) { const kiaiFactor = kiaiTransitionFactor; const topR = Math.round(36 + (113 - 36) * kiaiFactor); const topG = Math.round(70 + (190 - 70) * kiaiFactor); const topB = Math.round(120 + (222 - 120) * kiaiFactor); const bottomR = Math.round(28 + (105 - 28) * kiaiFactor); const bottomG = Math.round(60 + (182 - 60) * kiaiFactor); const bottomB = Math.round(110 + (215 - 110) * kiaiFactor); const bg = ctx.createLinearGradient(0, 0, 0, h); bg.addColorStop(0, `rgb(${topR},${topG},${topB})`); bg.addColorStop(1, `rgb(${bottomR},${bottomG},${bottomB})`); ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h); ctx.save(); ctx.strokeStyle = `rgba(255,255,255,${0.05 + kiaiFactor * 0.10})`; ctx.lineWidth = 2; const gap = Math.max(72, Math.min(118, w * 0.18)); const slant = h * 0.42; const shift = (now * 0.018) % gap; for (let x = -slant - gap; x < w + slant + gap; x += gap) { ctx.beginPath(); ctx.moveTo(x + shift, h); ctx.lineTo(x + shift + slant, 0); ctx.stroke(); } ctx.restore(); backgroundPhase += 0.012 + kiaiFactor * 0.018; }
 
       function drawHexagon(x, y, size, fillColor, rotation = 0) {
         ctx.save(); ctx.translate(x, y); ctx.rotate(rotation); ctx.beginPath();
@@ -1468,18 +1537,20 @@
         const currentLineColor = baseLineColor;
         const currentKiaiSquareColor = getBrightenedLineColor(currentLineColor, 0.14);
         const gameTimeMs = getCurrentGameTimeMs(now);
+        const viewport = getWorldViewport(220);
         drawGeneratedTrackAndObstacles();
-        for (const c of crowns) { if (!isCrownActuallyCollected(c)) continue; const sc = worldToScreen(c.x, c.y); if (!isScreenPointInView(sc.x, sc.y, 300)) continue; const sideOffset = c.side * (currentTrackConfig ? currentTrackConfig.laneWidth / 2 + 40 : 60); drawCrownEmoji(sc.x + sideOffset, sc.y, 40); }
-        for (const c of crowns) { if (isCrownCollected(c)) continue; const sc = worldToScreen(c.x, c.y); if (!isScreenPointInView(sc.x, sc.y, 180)) continue; drawCrownEmoji(sc.x, sc.y, 24); }
-        for (const d of diamonds) { if (isDiamondCollected(d)) continue; const sc = worldToScreen(d.x, d.y); if (!isScreenPointInView(sc.x, sc.y, 100)) continue; drawHexagon(sc.x, sc.y, SQUARE_SIZE / 2, currentLineColor, (now % 2500) / 2500 * Math.PI * 2); }
+        const itemSize = SQUARE_SIZE * getViewZoom();
+        for (const c of crowns) { if (!isCrownActuallyCollected(c) || !isWorldPointInViewport(c.x, c.y, viewport)) continue; const sc = worldToScreen(c.x, c.y); if (!isScreenPointInView(sc.x, sc.y, 300)) continue; const sideOffset = c.side * (currentTrackConfig ? currentTrackConfig.laneWidth / 2 + 40 : 60); drawCrownEmoji(sc.x + sideOffset, sc.y, itemSize); }
+        for (const c of crowns) { if (isCrownCollected(c) || !isWorldPointInViewport(c.x, c.y, viewport)) continue; const sc = worldToScreen(c.x, c.y); if (!isScreenPointInView(sc.x, sc.y, 180)) continue; drawCrownEmoji(sc.x, sc.y, itemSize); }
+        for (const d of diamonds) { if (isDiamondCollected(d) || !isWorldPointInViewport(d.x, d.y, viewport)) continue; const sc = worldToScreen(d.x, d.y); if (!isScreenPointInView(sc.x, sc.y, 100)) continue; drawHexagon(sc.x, sc.y, itemSize / 2, currentLineColor, (now % 2500) / 2500 * Math.PI * 2); }
         for (let i = diamondEffects.length - 1; i >= 0; i--) { const de = diamondEffects[i]; const elapsed = now - de.startTime; if (elapsed > de.duration) { diamondEffects.splice(i, 1); continue; } const progress = elapsed / de.duration; const sc = worldToScreen(de.x, de.y); const alpha = 1 - progress; for (let j = 0; j < 6; j++) { const angle = Math.PI / 3 * j - Math.PI / 6; const dist = SQUARE_SIZE * 0.7 * progress; const px = sc.x + Math.cos(angle) * dist; const py = sc.y + Math.sin(angle) * dist; ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = currentLineColor; ctx.fillRect(px - 2, py - 2, 4, 4); ctx.restore(); } const dotDist = Math.max(w, h) * 0.33 * progress; const dotAngle = de.angle || 0; ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = '#fff'; ctx.shadowColor = '#fff'; ctx.shadowBlur = 12 * alpha; ctx.beginPath(); ctx.arc(sc.x + Math.cos(dotAngle) * dotDist, sc.y + Math.sin(dotAngle) * dotDist, 6 * alpha, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
-        for (const marker of progressMarkers) { const sc = worldToScreen(marker.x, marker.y); ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '60px "PingFang SC","Microsoft YaHei",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(marker.pct + '%', sc.x, sc.y); }
+        for (const marker of progressMarkers) { if (!isWorldPointInViewport(marker.x, marker.y, viewport)) continue; const sc = worldToScreen(marker.x, marker.y); ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '60px "PingFang SC","Microsoft YaHei",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(marker.pct + '%', sc.x, sc.y); }
         const headX = lineMoving ? squareX : trailPoints[0].x; const headY = lineMoving ? squareY : trailPoints[0].y;
         if (showGuideBoxes) { for (const effect of hitEffects) { const elapsed = now - effect.startTime; if (elapsed > effect.duration) continue; const progress = elapsed / effect.duration; const sc = worldToScreen(effect.x, effect.y); const size = GUIDE_BOX_SIZE + progress * 40; ctx.save(); ctx.globalAlpha = 1 - progress; ctx.translate(sc.x, sc.y); ctx.rotate(effect.angle || DIR_UP_RIGHT.angle); ctx.fillStyle = '#ffd700'; ctx.fillRect(-size / 2, -size / 2, size, size); ctx.restore(); } }
         if (showGuideBoxes) { const gdr = getGuideBoxDrawRange(); for (let bi = gdr.first; bi <= gdr.last; bi++) { const box = guideBoxes[bi]; if (!box || !box.active) continue; const sc = worldToScreen(box.x, box.y); if (!isScreenPointInView(sc.x, sc.y, 120)) continue; const halfGB = GUIDE_BOX_SIZE / 2; ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(box.angle); ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 2; ctx.strokeRect(-halfGB, -halfGB, GUIDE_BOX_SIZE, GUIDE_BOX_SIZE); ctx.restore(); } }
         drawPlayerTrailFast(headX, headY, currentLineColor);
-        const sc = worldToScreen(headX, headY); ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(currentDir.angle); ctx.fillStyle = currentLineColor; ctx.fillRect(-SQUARE_SIZE / 2, -SQUARE_SIZE / 2, SQUARE_SIZE, SQUARE_SIZE); if (!lineMoving) { const arrowOffset = SQUARE_SIZE * 1.1, arrowSize = SQUARE_SIZE * 0.56; ctx.beginPath(); ctx.moveTo(arrowOffset + arrowSize, 0); ctx.lineTo(arrowOffset - arrowSize * 0.45, -arrowSize * 0.72); ctx.lineTo(arrowOffset - arrowSize * 0.45, -arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 1.05, -arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 1.05, arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 0.45, arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 0.45, arrowSize * 0.72); ctx.closePath(); ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.shadowColor = 'rgba(255,255,255,0.65)'; ctx.shadowBlur = 10; ctx.fill(); ctx.lineWidth = 1.2; ctx.strokeStyle = 'rgba(0,184,212,0.9)'; ctx.stroke(); } ctx.restore();
-        if (kiaiSquares.length > 0) { while (kiaiSquareDrawIdx < kiaiSquares.length) { const sq = kiaiSquares[kiaiSquareDrawIdx]; if (gameTimeMs < sq.appearTime + 4000) break; const sqSc = worldToScreen(sq.x, sq.y); if (!isScreenPointInView(sqSc.x, sqSc.y, 260)) { kiaiSquareDrawIdx++; } else break; } for (let i = kiaiSquareDrawIdx; i < kiaiSquares.length; i++) { const sq = kiaiSquares[i]; if (gameTimeMs < sq.appearTime) continue; if (sq.appearTime > gameTimeMs + 3000) break; const sqSc = worldToScreen(sq.x, sq.y); if (!isScreenPointInView(sqSc.x, sqSc.y, 180)) continue; ctx.save(); ctx.globalAlpha = 0.8; ctx.translate(sqSc.x, sqSc.y); ctx.rotate(sq.rotation + backgroundPhase * 0.22); ctx.shadowColor = 'rgba(0,0,0,0.32)'; ctx.shadowBlur = 8; ctx.shadowOffsetX = 1.5; ctx.shadowOffsetY = 2.5; ctx.fillStyle = currentKiaiSquareColor; ctx.fillRect(-sq.size / 2, -sq.size / 2, sq.size, sq.size); ctx.restore(); } }
+        const zoom = getViewZoom(); const sc = worldToScreen(headX, headY); ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(currentDir.angle); ctx.fillStyle = currentLineColor; ctx.fillRect(-SQUARE_SIZE / 2 * zoom, -SQUARE_SIZE / 2 * zoom, SQUARE_SIZE * zoom, SQUARE_SIZE * zoom); if (!lineMoving) { const arrowOffset = SQUARE_SIZE * 1.1 * zoom, arrowSize = SQUARE_SIZE * 0.56 * zoom; ctx.beginPath(); ctx.moveTo(arrowOffset + arrowSize, 0); ctx.lineTo(arrowOffset - arrowSize * 0.45, -arrowSize * 0.72); ctx.lineTo(arrowOffset - arrowSize * 0.45, -arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 1.05, -arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 1.05, arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 0.45, arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 0.45, arrowSize * 0.72); ctx.closePath(); ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.shadowColor = 'rgba(255,255,255,0.65)'; ctx.shadowBlur = 10; ctx.fill(); ctx.lineWidth = 1.2; ctx.strokeStyle = 'rgba(0,184,212,0.9)'; ctx.stroke(); } ctx.restore();
+        if (kiaiSquares.length > 0) { while (kiaiSquareDrawIdx < kiaiSquares.length) { const sq = kiaiSquares[kiaiSquareDrawIdx]; if (gameTimeMs < sq.appearTime + 4000) break; if (!isWorldPointInViewport(sq.x, sq.y, viewport)) { kiaiSquareDrawIdx++; } else break; } for (let i = kiaiSquareDrawIdx; i < kiaiSquares.length; i++) { const sq = kiaiSquares[i]; if (gameTimeMs < sq.appearTime) continue; if (sq.appearTime > gameTimeMs + 3000) break; if (!isWorldPointInViewport(sq.x, sq.y, viewport)) continue; const sqSc = worldToScreen(sq.x, sq.y); if (!isScreenPointInView(sqSc.x, sqSc.y, 180)) continue; ctx.save(); ctx.globalAlpha = 0.8; ctx.translate(sqSc.x, sqSc.y); ctx.rotate(sq.rotation + backgroundPhase * 0.22); ctx.shadowColor = 'rgba(0,0,0,0.32)'; ctx.shadowBlur = 8; ctx.shadowOffsetX = 1.5; ctx.shadowOffsetY = 2.5; ctx.fillStyle = currentKiaiSquareColor; ctx.fillRect(-sq.size / 2, -sq.size / 2, sq.size, sq.size); ctx.restore(); } }
         if (kiaiTurnParticles.length) { const alive = []; for (const p of kiaiTurnParticles) { const elapsed = now - p.startTime; if (elapsed >= p.duration) continue; const t = elapsed / p.duration; const sec = elapsed / 1000; const px = p.x + p.vx * sec; const py = p.y + p.vy * sec + 220 * sec * sec; const psc = worldToScreen(px, py); if (!isScreenPointInView(psc.x, psc.y, 140)) { if (t < 0.72) alive.push(p); continue; } ctx.save(); ctx.globalAlpha = (1 - t) * 0.85; ctx.translate(psc.x, psc.y); ctx.rotate(p.rotation + p.vr * sec); ctx.fillStyle = p.color; ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.restore(); alive.push(p); } kiaiTurnParticles = alive; }
         drawBoundaryCrashEffects(now); ctx.restore();
         if (resultFlashStartTime) { const flashElapsed = now - resultFlashStartTime; if (flashElapsed < resultFlashDuration) { ctx.save(); ctx.globalAlpha = Math.max(0, 1 - flashElapsed / resultFlashDuration); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h); ctx.restore(); } else { resultFlashStartTime = 0; } }
@@ -1490,15 +1561,17 @@
         ctx.font = '10px monospace';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'top';
-        ctx.fillText('HTML Line b0.1', w - 10, 10);
+        ctx.fillText('HTML Line b0.2', w - 10, 10);
       }
 
       function getGuideBoxDrawRange() { if (!guideBoxes || guideBoxes.length === 0) return { first: 0, last: -1 }; if (!gameStarted || !lineMoving) return { first: 0, last: Math.min(guideBoxes.length - 1, 50) }; const seg = getExpectedLaneSegmentByTime(getCurrentGameTimeMs()); const idx = seg ? Math.max(0, seg.index) : 0; return { first: Math.max(0, idx - 14), last: Math.min(guideBoxes.length - 1, idx + 105) }; }
       function isScreenPointInView(x, y, pad = 260) { const s = getScreenSizeCss(); return x >= -pad && x <= s.w + pad && y >= -pad && y <= s.h + pad; }
       function getScreenSizeCss() { const dpr = getCanvasDpr(); return { w: canvasWidth / dpr, h: canvasHeight / dpr }; }
+      function getWorldViewport(pad = 0) { const size = getScreenSizeCss(); const zoom = getViewZoom(); const offY = getCameraOffsetY(); const halfW = size.w / (2 * zoom); const halfH = size.h / (2 * zoom); return { minX: cameraX - halfW - pad, maxX: cameraX + halfW + pad, minY: cameraY - halfH - offY / zoom - pad, maxY: cameraY + halfH - offY / zoom + pad }; }
+      function isWorldPointInViewport(x, y, viewport) { return x >= viewport.minX && x <= viewport.maxX && y >= viewport.minY && y <= viewport.maxY; }
       function getExpectedLaneSegmentByTime(timeMs) { if (laneSegments.length === 0) return null; let lo = 0, hi = laneSegments.length - 1; while (lo <= hi) { const mid = (lo + hi) >> 1; const seg = laneSegments[mid]; if (timeMs < seg.startTime) hi = mid - 1; else if (timeMs > seg.endTime) lo = mid + 1; else return seg; } return laneSegments[Math.max(0, Math.min(laneSegments.length - 1, lo))]; }
-      function drawPlayerTrailFast(hx, hy, col) { if (!trailPoints || trailPoints.length === 0) return; if (trailPoints.length < 2 && !lineMoving) return; const tr = { tx: canvasWidth / getCanvasDpr() / 2 - cameraX, ty: canvasHeight / getCanvasDpr() / 2 - cameraY + getCameraOffsetY() }; ctx.save(); ctx.translate(tr.tx, tr.ty); ctx.lineWidth = SQUARE_SIZE; ctx.lineCap = 'butt'; ctx.lineJoin = 'miter'; ctx.miterLimit = 2.0; ctx.shadowColor = 'rgba(0,0,0,0.28)'; ctx.shadowBlur = Math.max(10, SQUARE_SIZE * 0.22); ctx.shadowOffsetX = 0; ctx.shadowOffsetY = Math.max(5, SQUARE_SIZE * 0.16); ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(trailPoints[0].x, trailPoints[0].y); for (let i = 1; i < trailPoints.length; i++) ctx.lineTo(trailPoints[i].x, trailPoints[i].y); if (lineMoving) ctx.lineTo(hx, hy); ctx.stroke(); ctx.restore(); }
-      function drawBoundaryCrashEffects(now) { if (!boundaryCrashEffects.length) return; const n = []; for (const p of boundaryCrashEffects) { const e = now - p.startTime; if (e >= p.duration) continue; const t = e / p.duration, sec = e / 1000, x = p.x + p.vx * sec, y = p.y + p.vy * sec + 150 * sec * sec, alpha = Math.max(0, 1 - t); const sc = worldToScreen(x, y); ctx.save(); ctx.globalAlpha = alpha; ctx.translate(sc.x, sc.y); ctx.rotate(p.rot + p.vr * sec); ctx.fillStyle = '#00e5ff'; ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1; ctx.strokeRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.restore(); n.push(p); } boundaryCrashEffects = n; }
+      function drawPlayerTrailFast(hx, hy, col) { if (!trailPoints || trailPoints.length === 0) return; if (trailPoints.length < 2 && !lineMoving) return; const zoom = getViewZoom(); const tr = { tx: canvasWidth / getCanvasDpr() / 2, ty: canvasHeight / getCanvasDpr() / 2 + getCameraOffsetY() }; const viewport = getWorldViewport(220); let startIdx = 0; const endIdx = trailPoints.length - 1; while (startIdx < endIdx) { const a = trailPoints[startIdx], b = trailPoints[startIdx + 1]; const segMinX = Math.min(a.x, b.x), segMaxX = Math.max(a.x, b.x), segMinY = Math.min(a.y, b.y), segMaxY = Math.max(a.y, b.y); if (segMaxX >= viewport.minX && segMinX <= viewport.maxX && segMaxY >= viewport.minY && segMinY <= viewport.maxY) break; startIdx++; } if (startIdx >= endIdx && !lineMoving) return; if (startIdx > 2) startIdx = Math.max(0, startIdx - 2); ctx.save(); ctx.translate(tr.tx, tr.ty); ctx.scale(zoom, zoom); ctx.translate(-cameraX, -cameraY); ctx.lineWidth = SQUARE_SIZE; ctx.lineCap = 'butt'; ctx.lineJoin = 'miter'; ctx.miterLimit = 2.0; ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0; ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(trailPoints[startIdx].x, trailPoints[startIdx].y); for (let i = startIdx + 1; i < trailPoints.length; i++) ctx.lineTo(trailPoints[i].x, trailPoints[i].y); if (lineMoving) ctx.lineTo(hx, hy); ctx.stroke(); ctx.restore(); }
+      function drawBoundaryCrashEffects(now) { if (!boundaryCrashEffects.length) return; const n = []; for (const p of boundaryCrashEffects) { const e = now - p.startTime; if (e >= p.duration) continue; const t = e / p.duration, sec = e / 1000, x = p.x + p.vx * sec, y = p.y + p.vy * sec + 150 * sec * sec, alpha = Math.max(0, 1 - t); const sc = worldToScreen(x, y); if (!isScreenPointInView(sc.x, sc.y, 120)) { if (t < 0.72) n.push(p); continue; } ctx.save(); ctx.globalAlpha = alpha; ctx.translate(sc.x, sc.y); ctx.rotate(p.rot + p.vr * sec); ctx.fillStyle = '#00e5ff'; ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1; ctx.strokeRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.restore(); n.push(p); } boundaryCrashEffects = n; }
 
       function generateTrackAndObstaclesFromBeatmap(beatmap) { laneSegments = []; trackPoints = []; obstacles = []; currentTrackConfig = null; trackRenderCache = null; trackRenderCacheKey = ''; if (!beatmap || beatmap.hitObjects.length === 0) return; const cfg = OBSTACLE_DIFFICULTY_CONFIG[resolveObstacleDifficulty(beatmap)]; currentTrackConfig = { ...cfg, resolvedDifficulty: resolveObstacleDifficulty(beatmap) }; let cx = 0, cy = 0, di = 0, pt = 0, lot = -Infinity; const seed = hashString(`${beatmap.filename}|${beatmap.title}|${beatmap.version}|${currentTrackConfig.resolvedDifficulty}|${beatmap.hitObjects.length}`); const rng = createSeededRandom(seed); trackPoints.push({ x: 0, y: 0, time: 0, index: -1 }); const BACKWARD_EXTEND_MS = 5000; const bwDist = LINE_SPEED * BACKWARD_EXTEND_MS / 1000; const bd0 = DIRS[0]; laneSegments.push({ x1: -bd0.dx * bwDist, y1: -bd0.dy * bwDist, x2: 0, y2: 0, width: cfg.laneWidth, angle: bd0.angle, index: -1, startTime: -BACKWARD_EXTEND_MS, endTime: 0, length: bwDist }); for (let i = 0; i < beatmap.hitObjects.length; i++) { const obj = beatmap.hitObjects[i], d = DIRS[di], dt = Math.max(0, (obj.time - pt) / 1000), dist = LINE_SPEED * dt; const sx = cx, sy = cy, ex = cx + d.dx * dist, ey = cy + d.dy * dist; if (dist > 1) { laneSegments.push({ x1: sx, y1: sy, x2: ex, y2: ey, width: cfg.laneWidth, angle: d.angle, index: i, startTime: pt, endTime: obj.time, length: dist }); trackPoints.push({ x: ex, y: ey, time: obj.time, index: i }); } if (dist > 25 && obj.time - lot >= cfg.minSpacingMs && rng() < cfg.obstacleProbability) { const t = 0.25 + rng() * 0.5, bx = sx + (ex - sx) * t, by = sy + (ey - sy) * t, px = -d.dy, py = d.dx, side = rng() < 0.5 ? -1 : 1, offset = side * (cfg.laneWidth / 2 + cfg.sideGap + rng() * 22), size = cfg.obstacleSize * (0.85 + rng() * 0.35); obstacles.push({ x: bx + px * offset, y: by + py * offset, size, angle: d.angle, kind: isBigNote(obj.type) ? 'big' : 'normal' }); lot = obj.time; } cx = ex; cy = ey; di = 1 - di; pt = obj.time; } if (beatmap.hitObjects.length > 0) { const lo = beatmap.hitObjects[beatmap.hitObjects.length - 1], ld = DIRS[di], et = 2000, ed = LINE_SPEED * (et / 1000), ex = cx + ld.dx * ed, ey = cy + ld.dy * ed; laneSegments.push({ x1: cx, y1: cy, x2: ex, y2: ey, width: currentTrackConfig.laneWidth, angle: ld.angle, index: beatmap.hitObjects.length, startTime: lo.time, endTime: lo.time + et, length: ed }); trackPoints.push({ x: ex, y: ey, time: lo.time + et, index: beatmap.hitObjects.length }); } updateObstacleDifficultyDesc(); }
       const OBSTACLE_DIFFICULTY_CONFIG = { easy: { label: '不难', laneWidth: 130, obstacleProbability: 0.10, obstacleSize: 15, sideGap: 42, minSpacingMs: 900 }, normal: { label: '还行', laneWidth: 105, obstacleProbability: 0.18, obstacleSize: 19, sideGap: 34, minSpacingMs: 650 }, hard: { label: '好难', laneWidth: 82, obstacleProbability: 0.30, obstacleSize: 23, sideGap: 26, minSpacingMs: 450 }, extreme: { label: '贼难', laneWidth: 62, obstacleProbability: 0.42, obstacleSize: 27, sideGap: 18, minSpacingMs: 300 }, washpool: { label: '洗笔池', laneWidth: SQUARE_SIZE * 1.25, obstacleProbability: 0.50, obstacleSize: 29, sideGap: 14, minSpacingMs: 260 } };
@@ -1513,20 +1586,123 @@
       function processOszFile(file) { importStatus.textContent = '正在解压谱面包...'; importStatus.style.color = '#ff9800'; const reader = new FileReader(); reader.onload = function (e) { JSZip.loadAsync(e.target.result).then(function (zip) { const osuFiles = [], audioFiles = [], imageFiles = [], promises = []; zip.forEach(function (rp, entry) { const name = rp.split('/').pop(); if (name.endsWith('.osu')) promises.push(entry.async('string').then(c => osuFiles.push({ name, content: c }))); else if (name.match(/\.(mp3|ogg|wav|m4a|aac)$/i)) promises.push(entry.async('blob').then(b => audioFiles.push({ name, blob: b }))); else if (name.match(/\.(jpg|jpeg|png|gif|bmp)$/i)) promises.push(entry.async('blob').then(b => imageFiles.push({ name, blob: b }))); }); Promise.all(promises).then(async () => { importStatus.textContent = `找到 ${osuFiles.length} 个谱面, ${audioFiles.length} 个音频`; importStatus.style.color = '#4caf50'; const allBeatmaps = []; for (const osuFile of osuFiles) { const bm = parseBeatmap(osuFile.content, osuFile.name); let matchedAudio = null; if (bm.audioFilename && audioFiles.length > 0) { const an = bm.audioFilename.replace(/^.*[\\\/]/, ''); matchedAudio = audioFiles.find(a => a.name === an || a.name === bm.audioFilename); if (!matchedAudio && audioFiles.length === 1) matchedAudio = audioFiles[0]; } let matchedImage = null; if (bm.backgroundFilename && imageFiles.length > 0) { const iname = bm.backgroundFilename.replace(/^.*[\\\/]/, ''); matchedImage = imageFiles.find(img => img.name === iname); } if (matchedImage) importedBackgroundBlobs[bm.filename + '|' + bm.version] = matchedImage.blob; allBeatmaps.push({ ...bm, osuContent: osuFile.content, audioBlob: matchedAudio ? matchedAudio.blob : null, audioFileName: matchedAudio ? matchedAudio.name : null, backgroundBlob: matchedImage ? matchedImage.blob : null }); } importedBeatmaps = allBeatmaps; importModal.classList.remove('active'); showBeatmapSelect(); }); }).catch(err => { importStatus.textContent = '解压失败: ' + err.message; importStatus.style.color = '#f44336'; }); }; reader.readAsArrayBuffer(file); }
       function checkManualImport() { if (pendingOsuContent) { const beatmap = parseBeatmap(pendingOsuContent, osuFileInput.files[0]?.name || 'unknown.osu'); const entry = { ...beatmap, osuContent: pendingOsuContent, audioBlob: pendingAudioFile, audioFileName: pendingAudioFile?.name || null }; const existing = importedBeatmaps.findIndex(b => b.filename === entry.filename); if (existing >= 0) importedBeatmaps[existing] = entry; else importedBeatmaps.push(entry); importStatus.textContent = '✅ 谱面已就绪' + (pendingAudioFile ? ' (含音频)' : ' (无音频)'); importStatus.style.color = '#4caf50'; importModal.classList.remove('active'); showBeatmapSelect(); pendingOsuContent = null; pendingAudioFile = null; osuFileInput.value = ''; audioFileInput.value = ''; } }
       function showBeatmapSelect() { beatmapList.innerHTML = ''; const list = importedBeatmaps; if (list.length === 0) { beatmapList.innerHTML = '<p style="text-align:center;color:rgba(255,255,255,0.4);">未找到谱面，请先导入 .osz 或 .osu 文件</p>'; } for (const bm of list) { const div = document.createElement('div'); div.className = 'beatmap-item'; if (beatmapData && bm.filename === beatmapData.filename && bm.version === beatmapData.version) div.classList.add('current'); const modeLabel = bm.mode === 1 ? 'Taiko' : (bm.mode === 0 ? 'osu!' : '模式' + bm.mode); const densityInfo = getBeatmapDensityInfo(bm); const densityText = densityInfo.notesPerSecond > 0 ? densityInfo.notesPerSecond.toFixed(1) + ' 次/秒' : '无数据'; div.innerHTML = `<div class="version">${bm.version || 'Unknown'} ${beatmapData && bm.filename === beatmapData.filename && bm.version === beatmapData.version ? '👈 当前' : ''}</div><div class="meta">${bm.artist || 'Unknown'} - ${bm.title || 'Unknown'}</div><div class="notes">音符: ${bm.hitObjects.length} | ${bm.audioBlob ? '🎵 ' + (bm.audioFileName || '有音频') : '🔇 无音频'} | ${modeLabel} <span class="density-info">| 密度: ${densityText}</span></div>`; div.addEventListener('click', () => selectBeatmap(bm)); beatmapList.appendChild(div); } beatmapSelect.classList.add('active'); }
-      async function selectBeatmap(beatmap) { if (preparingTrack) return; beatmapData = beatmap; guideBoxes = generateGuideBoxes(beatmapData); totalBoxes = guideBoxes.length; progressMarkers = generateProgressMarkers(beatmapData); kiaiSquares = generateKiaiSquares(beatmapData, guideBoxes); generateCollectibles(beatmapData); kiaiPeriods = beatmap.kiaiPeriods || []; kiaiTransitionFactor = 0; beatmapSelect.classList.remove('active'); if (audioElement) { audioElement.pause(); detachAudioAnalyzer(); if (audioElement.src.startsWith('blob:')) URL.revokeObjectURL(audioElement.src); audioElement = null; } if (beatmap.audioBlob) { audioElement = new Audio(URL.createObjectURL(beatmap.audioBlob)); audioElement.preload = 'auto'; applyAudioVolume(); audioElement.load(); } customLineColor = null; if (beatmap.backgroundBlob) { customLineColor = await extractLineColorFromImage(beatmap.backgroundBlob); baseLineColor = customLineColor || '#00b8d4'; } else baseLineColor = '#00b8d4'; await prepareSelectedBeatmapAsync(beatmapData); resetGame(); updateInfoText(); drawFrame(); }
+      async function selectBeatmap(beatmap) { if (preparingTrack) return; beatmapData = beatmap; guideBoxes = generateGuideBoxes(beatmapData); totalBoxes = guideBoxes.length; progressMarkers = generateProgressMarkers(beatmapData); kiaiSquares = generateKiaiSquares(beatmapData, guideBoxes); generateCollectibles(beatmapData); kiaiPeriods = beatmap.kiaiPeriods || []; kiaiTransitionFactor = 0; beatmapSelect.classList.remove('active'); if (audioElement) { audioElement.pause(); if (audioElement.src.startsWith('blob:')) URL.revokeObjectURL(audioElement.src); audioElement = null; } if (beatmap.audioBlob) { audioElement = new Audio(URL.createObjectURL(beatmap.audioBlob)); audioElement.preload = 'auto'; applyAudioVolume(); audioElement.load(); } customLineColor = null; if (beatmap.backgroundBlob) { customLineColor = await extractLineColorFromImage(beatmap.backgroundBlob); baseLineColor = customLineColor || '#00b8d4'; } else baseLineColor = '#00b8d4'; await prepareSelectedBeatmapAsync(beatmapData); resetGame(); updateInfoText(); drawFrame(); }
       async function prepareSelectedBeatmapAsync(beatmap) { preparingTrack = true; try { showPreloadPanel('正在载入谱面', '正在解析引导框和障碍物...', 4); await nextPaintFrame(); generateTrackAndObstaclesFromBeatmap(beatmap); await buildTrackRenderCacheAsync(beatmap); } catch (e) { console.error('谱面载入出错:', e); } finally { preparingTrack = false; hidePreloadPanel(); } }
       function nextPaintFrame() { return new Promise(res => requestAnimationFrame(() => res())); }
       function showPreloadPanel(title, detail, progress) { if (!preloadPanel) return; preloadPanel.classList.add('active'); preloadTitle.textContent = title || '正在预渲染轨道'; preloadDetail.textContent = detail || '请稍候...'; preloadBarFill.style.width = `${Math.max(0, Math.min(100, progress || 0))}%`; }
       function hidePreloadPanel() { if (!preloadPanel) return; preloadPanel.classList.remove('active'); preloadBarFill.style.width = '0%'; }
-      async function buildTrackRenderCacheAsync(beatmap) { trackRenderCache = null; trackRenderCacheKey = ''; if (!beatmap || laneSegments.length === 0 || !currentTrackConfig) return; try { const half = currentTrackConfig.laneWidth / 2; const chunks = []; const chunkSize = 56; const totalChunks = Math.ceil(laneSegments.length / chunkSize); for (let c = 0; c < totalChunks; c++) { const start = c * chunkSize; const end = Math.min(laneSegments.length - 1, start + chunkSize - 1); const segs = laneSegments.slice(start, end + 1); if (segs.length === 0) continue; const centerPts = []; centerPts.push({ x: segs[0].x1, y: segs[0].y1 }); for (const s of segs) { centerPts.push({ x: s.x2, y: s.y2 }); } const left = centerPts.map(p => ({ x: p.x + half, y: p.y })); const right = centerPts.map(p => ({ x: p.x - half, y: p.y })); chunks.push({ start, end, bbox: { minX: Math.min(...segs.map(s => Math.min(s.x1, s.x2))) - half - 50, minY: Math.min(...segs.map(s => Math.min(s.y1, s.y2))) - half - 50, maxX: Math.max(...segs.map(s => Math.max(s.x1, s.x2))) + half + 50, maxY: Math.max(...segs.map(s => Math.max(s.y1, s.y2))) + half + 50 }, centerPath: makePathFromWorldPoints(centerPts), leftPath: makePathFromWorldPoints(left), rightPath: makePathFromWorldPoints(right), tickPath: new Path2D() }); if ((c & 3) === 3 || c === totalChunks - 1) { await nextPaintFrame(); } } trackRenderCache = { key: makeTrackCacheKey(beatmap), chunks, half, ready: true }; trackRenderCacheKey = trackRenderCache.key; } catch (e) { console.error('轨道缓存生成出错:', e); trackRenderCache = null; trackRenderCacheKey = ''; } }
+      async function buildTrackRenderCacheAsync(beatmap) {
+        trackRenderCache = null; trackRenderCacheKey = '';
+        if (!beatmap || laneSegments.length === 0 || !currentTrackConfig) return;
+        try {
+          const half = currentTrackConfig.laneWidth / 2;
+          const tileSize = 640;
+          const bleed = Math.ceil(half + 34);
+          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+          for (const seg of laneSegments) {
+            minX = Math.min(minX, seg.x1, seg.x2);
+            minY = Math.min(minY, seg.y1, seg.y2);
+            maxX = Math.max(maxX, seg.x1, seg.x2);
+            maxY = Math.max(maxY, seg.y1, seg.y2);
+          }
+          minX -= bleed; minY -= bleed; maxX += bleed; maxY += bleed;
+          const startTileX = Math.floor(minX / tileSize);
+          const endTileX = Math.floor(maxX / tileSize);
+          const startTileY = Math.floor(minY / tileSize);
+          const endTileY = Math.floor(maxY / tileSize);
+          const tiles = [];
+          let built = 0;
+          const totalTiles = Math.max(1, (endTileX - startTileX + 1) * (endTileY - startTileY + 1));
+          for (let ty = startTileY; ty <= endTileY; ty++) {
+            for (let tx = startTileX; tx <= endTileX; tx++) {
+              const tileMinX = tx * tileSize;
+              const tileMinY = ty * tileSize;
+              const worldMinX = tileMinX - bleed;
+              const worldMinY = tileMinY - bleed;
+              const worldMaxX = tileMinX + tileSize + bleed;
+              const worldMaxY = tileMinY + tileSize + bleed;
+              let start = -1, end = -1;
+              for (let i = 0; i < laneSegments.length; i++) {
+                const seg = laneSegments[i];
+                const segMinX = Math.min(seg.x1, seg.x2) - half - 22;
+                const segMinY = Math.min(seg.y1, seg.y2) - half - 22;
+                const segMaxX = Math.max(seg.x1, seg.x2) + half + 22;
+                const segMaxY = Math.max(seg.y1, seg.y2) + half + 22;
+                if (segMaxX < worldMinX || segMinX > worldMaxX || segMaxY < worldMinY || segMinY > worldMaxY) continue;
+                if (start < 0) start = i;
+                end = i;
+              }
+              if (start >= 0 && end >= start) {
+                const paths = makeTrackRangePaths(start, end, half);
+                if (paths) {
+                  const canvas = document.createElement('canvas');
+                  canvas.width = Math.ceil(tileSize + bleed * 2);
+                  canvas.height = Math.ceil(tileSize + bleed * 2);
+                  const offCtx = canvas.getContext('2d');
+                  offCtx.translate(-worldMinX, -worldMinY);
+                  offCtx.lineCap = 'butt';
+                  offCtx.lineJoin = 'miter';
+                  offCtx.miterLimit = 2.2;
+                  strokeTrackPaths(offCtx, paths, half);
+                  tiles.push({
+                    tx, ty,
+                    x: tileMinX, y: tileMinY,
+                    width: tileSize, height: tileSize,
+                    bleed,
+                    bbox: { minX: tileMinX, minY: tileMinY, maxX: tileMinX + tileSize, maxY: tileMinY + tileSize },
+                    canvas
+                  });
+                }
+              }
+              built++;
+              if ((built & 7) === 0 || built === totalTiles) {
+                showPreloadPanel('正在载入谱面', '正在缓存轨道瓦片...', 8 + Math.round(built / totalTiles * 92));
+                await nextPaintFrame();
+              }
+            }
+          }
+          trackRenderCache = { key: makeTrackCacheKey(beatmap), tiles, half, tileSize, bleed, ready: true };
+          trackRenderCacheKey = trackRenderCache.key;
+        } catch (e) {
+          console.error('轨道缓存生成出错:', e);
+          trackRenderCache = null; trackRenderCacheKey = '';
+        }
+      }
       function makeTrackCacheKey(beatmap) { return `${beatmap.filename}|${beatmap.version}|${beatmap.hitObjects.length}|${currentTrackConfig.resolvedDifficulty}|${currentTrackConfig.laneWidth}`; }
       function makePathFromWorldPoints(points) { const path = new Path2D(); if (!points || points.length < 2) return path; path.moveTo(points[0].x, points[0].y); for (let i = 1; i < points.length; i++) path.lineTo(points[i].x, points[i].y); return path; }
-      function isTrackChunkVisible(chunk, size, pad = 160) { if (!chunk || !chunk.bbox) return true; const offY = getCameraOffsetY(); const minX = cameraX - size.w / 2 - pad, maxX = cameraX + size.w / 2 + pad, minY = cameraY - size.h / 2 - offY - pad, maxY = cameraY + size.h / 2 - offY + pad; const b = chunk.bbox; return b.maxX >= minX && b.minX <= maxX && b.maxY >= minY && b.minY <= maxY; }
+      function isTrackChunkVisible(chunk, size, pad = 160) { if (!chunk || !chunk.bbox) return true; const viewport = getWorldViewport(pad); const b = chunk.bbox; return b.maxX >= viewport.minX && b.minX <= viewport.maxX && b.maxY >= viewport.minY && b.minY <= viewport.maxY; }
       function getSegmentSidePoints(seg, x, y, half) { const len = Math.hypot(seg.x2 - seg.x1, seg.y2 - seg.y1) || 1, nx = -(seg.y2 - seg.y1) / len, ny = (seg.x2 - seg.x1) / len; return { left: { x: x + nx * half, y: y + ny * half }, right: { x: x - nx * half, y: y - ny * half } }; }
       function intersectLines(p, dx, dy, q, ex, ey) { const den = dx * ey - dy * ex; if (Math.abs(den) < 0.001) return p; const t = ((q.x - p.x) * ey - (q.y - p.y) * ex) / den; return { x: p.x + dx * t, y: p.y + dy * t }; }
       function makeTrackRangePaths(start, end, half) { const segs = laneSegments.slice(start, end + 1); if (segs.length === 0) return null; const centerPts = [{ x: segs[0].x1, y: segs[0].y1 }]; for (const s of segs) centerPts.push({ x: s.x2, y: s.y2 }); const left = centerPts.map(p => ({ x: p.x + half, y: p.y })); const right = centerPts.map(p => ({ x: p.x - half, y: p.y })); const capPath = new Path2D(); if (start === 0) { const first = segs[0], side = getSegmentSidePoints(first, first.x1, first.y1, half), dx = first.x2 - first.x1, dy = first.y2 - first.y1, ex = side.right.x - side.left.x, ey = side.right.y - side.left.y; left[0] = intersectLines(left[0], dx, dy, side.left, ex, ey); right[0] = intersectLines(right[0], dx, dy, side.left, ex, ey); capPath.moveTo(left[0].x, left[0].y); capPath.lineTo(right[0].x, right[0].y); } if (end === laneSegments.length - 1) { const last = segs[segs.length - 1], side = getSegmentSidePoints(last, last.x2, last.y2, half), dx = last.x2 - last.x1, dy = last.y2 - last.y1, ex = side.right.x - side.left.x, ey = side.right.y - side.left.y, li = left.length - 1, ri = right.length - 1; left[li] = intersectLines(left[li], dx, dy, side.left, ex, ey); right[ri] = intersectLines(right[ri], dx, dy, side.left, ex, ey); capPath.moveTo(left[li].x, left[li].y); capPath.lineTo(right[ri].x, right[ri].y); } return { centerPath: makePathFromWorldPoints(centerPts), leftPath: makePathFromWorldPoints(left), rightPath: makePathFromWorldPoints(right), capPath }; }
-      function strokeTrackPaths(paths, half) { ctx.strokeStyle = 'rgba(6,12,22,0.82)'; ctx.lineWidth = half * 2 + 18; ctx.stroke(paths.centerPath); ctx.strokeStyle = 'rgba(26,43,57,0.96)'; ctx.lineWidth = half * 2; ctx.stroke(paths.centerPath); ctx.strokeStyle = 'rgba(54,83,104,0.34)'; ctx.lineWidth = Math.max(half * 1.38, half * 2 - 26); ctx.stroke(paths.centerPath); ctx.strokeStyle = 'rgba(255,255,255,0.045)'; ctx.lineWidth = 1.2; ctx.stroke(paths.centerPath); ctx.strokeStyle = 'rgba(0,229,255,0.20)'; ctx.lineWidth = 11; ctx.stroke(paths.leftPath); ctx.stroke(paths.rightPath); ctx.stroke(paths.capPath); ctx.strokeStyle = 'rgba(220,250,255,0.88)'; ctx.lineWidth = 3; ctx.stroke(paths.leftPath); ctx.stroke(paths.rightPath); ctx.stroke(paths.capPath); }
-      function drawGeneratedTrackAndObstacles() { if (!currentTrackConfig || laneSegments.length === 0) return; if (trackRenderCache && trackRenderCache.ready && trackRenderCache.key === makeTrackCacheKey(beatmapData)) { const half = trackRenderCache.half; const size = getScreenSizeCss(); const offY = getCameraOffsetY(); const visibleChunks = trackRenderCache.chunks.filter(chunk => isTrackChunkVisible(chunk, size)); ctx.save(); ctx.translate(size.w / 2 - cameraX, size.h / 2 - cameraY + offY); ctx.lineCap = 'butt'; ctx.lineJoin = 'miter'; ctx.miterLimit = 2.2; let rangeStart = null, rangeEnd = null; for (const chunk of visibleChunks) { if (rangeStart === null) { rangeStart = chunk.start; rangeEnd = chunk.end; continue; } if (chunk.start <= rangeEnd + 1) { rangeEnd = Math.max(rangeEnd, chunk.end); } else { const paths = makeTrackRangePaths(rangeStart, rangeEnd, half); if (paths) strokeTrackPaths(paths, half); rangeStart = chunk.start; rangeEnd = chunk.end; } } if (rangeStart !== null) { const paths = makeTrackRangePaths(rangeStart, rangeEnd, half); if (paths) strokeTrackPaths(paths, half); } ctx.restore(); } for (const obs of obstacles) { const sc = worldToScreen(obs.x, obs.y); if (!isScreenPointInView(sc.x, sc.y, 220)) continue; ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(obs.angle + Math.PI / 4); const ho = obs.size / 2; ctx.fillStyle = obs.kind === 'big' ? 'rgba(255,218,48,0.90)' : 'rgba(255,82,82,0.84)'; ctx.strokeStyle = 'rgba(255,255,255,0.36)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(0, -ho); ctx.lineTo(ho, 0); ctx.lineTo(0, ho); ctx.lineTo(-ho, 0); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore(); } }
+      function strokeTrackPaths(renderCtx, paths, half) { renderCtx.strokeStyle = 'rgba(6,12,22,0.82)'; renderCtx.lineWidth = half * 2 + 18; renderCtx.stroke(paths.centerPath); renderCtx.strokeStyle = 'rgba(26,43,57,0.96)'; renderCtx.lineWidth = half * 2; renderCtx.stroke(paths.centerPath); renderCtx.strokeStyle = 'rgba(54,83,104,0.34)'; renderCtx.lineWidth = Math.max(half * 1.38, half * 2 - 26); renderCtx.stroke(paths.centerPath); renderCtx.strokeStyle = 'rgba(255,255,255,0.045)'; renderCtx.lineWidth = 1.2; renderCtx.stroke(paths.centerPath); renderCtx.strokeStyle = 'rgba(0,229,255,0.20)'; renderCtx.lineWidth = 11; renderCtx.stroke(paths.leftPath); renderCtx.stroke(paths.rightPath); renderCtx.stroke(paths.capPath); renderCtx.strokeStyle = 'rgba(220,250,255,0.88)'; renderCtx.lineWidth = 3; renderCtx.stroke(paths.leftPath); renderCtx.stroke(paths.rightPath); renderCtx.stroke(paths.capPath); }
+      function drawGeneratedTrackAndObstacles() {
+        if (!currentTrackConfig || laneSegments.length === 0) return;
+        if (trackRenderCache && trackRenderCache.ready && trackRenderCache.key === makeTrackCacheKey(beatmapData)) {
+          const size = getScreenSizeCss();
+          const offY = getCameraOffsetY();
+          const zoom = getViewZoom();
+          const visibleTiles = trackRenderCache.tiles.filter(tile => isTrackChunkVisible(tile, size, 200));
+          ctx.save();
+          ctx.translate(size.w / 2, size.h / 2 + offY);
+          ctx.scale(zoom, zoom);
+          ctx.translate(-cameraX, -cameraY);
+          for (const tile of visibleTiles) {
+            if (!tile.canvas) continue;
+            ctx.drawImage(tile.canvas, tile.bleed, tile.bleed, tile.width, tile.height, tile.x, tile.y, tile.width, tile.height);
+          }
+          ctx.restore();
+        }
+        for (const obs of obstacles) {
+          const sc = worldToScreen(obs.x, obs.y);
+          if (!isScreenPointInView(sc.x, sc.y, 220)) continue;
+          ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(obs.angle + Math.PI / 4);
+          const ho = obs.size / 2 * getViewZoom();
+          ctx.fillStyle = obs.kind === 'big' ? 'rgba(255,218,48,0.90)' : 'rgba(255,82,82,0.84)';
+          ctx.strokeStyle = 'rgba(255,255,255,0.36)'; ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.moveTo(0, -ho); ctx.lineTo(ho, 0); ctx.lineTo(0, ho); ctx.lineTo(-ho, 0); ctx.closePath();
+          ctx.fill(); ctx.stroke(); ctx.restore();
+        }
+      }
       function checkTrackBoundaryCollision(ts = performance.now()) {
         if (!beatmapData || laneSegments.length === 0 || !lineMoving || gameFinished || paused) return false;
         const timeMs = getCurrentGameTimeMs(ts);
@@ -1562,7 +1738,7 @@
       autoplayExitBtn.addEventListener('click', e => { e.stopPropagation(); if (autoplayMode) exitAutoplay(); else exitFreeMode(); });
       reviveBtn.addEventListener('click', e => { e.stopPropagation(); reviveAtCrown(); });
       helpBtn.addEventListener('click', e => { e.stopPropagation(); helpModal.classList.add('active'); });
-      restartBtn.addEventListener('click', e => { e.stopPropagation(); if (animFrameId) cancelAnimationFrame(animFrameId); resetGame(); });
+      if (menuBtn) menuBtn.addEventListener('click', e => { e.stopPropagation(); if (!gameStarted && moreModal) moreModal.classList.add('active'); });
       loadBtn.addEventListener('click', e => { e.stopPropagation(); importModal.classList.add('active'); syncObstacleDifficultySelects(obstacleDifficulty); importStatus.textContent = ''; pendingOsuContent = null; pendingAudioFile = null; osuFileInput.value = ''; audioFileInput.value = ''; oszFileInput.value = ''; });
       introImportBtn.addEventListener('click', e => { e.stopPropagation(); importModal.classList.add('active'); syncObstacleDifficultySelects(obstacleDifficulty); importStatus.textContent = ''; pendingOsuContent = null; pendingAudioFile = null; osuFileInput.value = ''; audioFileInput.value = ''; oszFileInput.value = ''; });
       beatmapBtn.addEventListener('click', e => { e.stopPropagation(); if (!preparingTrack && (!gameStarted || gameFinished)) showBeatmapSelect(); });
@@ -1572,9 +1748,10 @@
       document.getElementById('close-modal-btn').addEventListener('click', () => importModal.classList.remove('active'));
       document.getElementById('close-beatmap-btn').addEventListener('click', () => beatmapSelect.classList.remove('active'));
       document.getElementById('close-help-btn').addEventListener('click', () => helpModal.classList.remove('active'));
+      document.getElementById('close-more-btn').addEventListener('click', () => { if (moreModal) moreModal.classList.remove('active'); });
+      if (moreModal) moreModal.addEventListener('click', e => { if (e.target === moreModal) moreModal.classList.remove('active'); });
       delayInput.addEventListener('change', () => { if (!gameStarted) { delayMs = getDelayMs(); const dOff = LINE_SPEED * delayMs / 1000; currentDir = DIR_UP_RIGHT; squareX = -currentDir.dx * dOff; squareY = -currentDir.dy * dOff; cameraX = 0; cameraY = 0; trailPoints = [{ x: squareX, y: squareY }]; updateInfoText(); drawFrame(); } });
       if (reviveBtn) reviveBtn.textContent = IS_MOBILE_UI ? '复活' : '复活 (F)';
-      if (restartBtn) restartBtn.textContent = IS_MOBILE_UI ? '重来' : '重来 (R)';
       if (resultRestartBtn) resultRestartBtn.textContent = IS_MOBILE_UI ? '重来' : '重来 (R)';
       if (pauseBtn) pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (P)';
       delayInput.addEventListener('input', () => { let v = delayInput.value.replace(/[^\d-]/g, ''); const fd = v.indexOf('-'); if (fd > 0) v = v.replace(/-/g, ''); else if (fd === 0) v = '-' + v.slice(1).replace(/-/g, ''); delayInput.value = v; });
@@ -1596,3 +1773,4 @@
 </body>
 
 </html>
+
