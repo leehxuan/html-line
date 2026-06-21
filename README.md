@@ -7,6 +7,14 @@ When I first started the project, the plan was to only support _osu!taiko_ beatm
 On PC, if the browser loses focus for too long, you might experience audio and visuals being out of sync when you play (that’s a browser issue, and I don’t know how to fix it yet), but just restarting the game fixes it.<br />
 There are still lots of bugs. If you find any, feel free to give feedback. Bilibili video: [BV11xj66vEEz](https://www.bilibili.com/video/BV11xj66vEEz/).
 
+### Developers
+- DLmember
+  - [His GitHub account](https://github.com/DLmember/)
+- p0verwrit3
+  - [His Github account](https://github.com/p0verwrit3/)
+- leehxuan
+  - [His Github account](https://github.com/leehxuan/)
+
 #
 
 ### 简介
@@ -15,6 +23,14 @@ There are still lots of bugs. If you find any, feel free to give feedback. Bilib
 电脑端如果浏览器失焦太久，再玩会出现音画不同步的现象（浏览器的问题，目前尚不知如何修复），不过重开一局就好了。<br />
 bug 依旧很多，发现 bug 欢迎来反馈。B站视频: [BV11xj66vEEz](https://www.bilibili.com/video/BV11xj66vEEz/)。
 
+### 开发者
+- DLmember
+  - [他的 GitHub 账号](https://github.com/DLmember/)
+- p0verwrit3
+  - [他的 Github 账号](https://github.com/p0verwrit3/)
+- leehxuan
+  - [他的 Github 账号](https://github.com/leehxuan/)
+
 #
 
 ### 紹介
@@ -22,3 +38,11 @@ bug 依旧很多，发现 bug 欢迎来反馈。B站视频: [BV11xj66vEEz](https
 プロジェクトを始めたときは osu!taiko の譜面のみをサポートするつもりでしたが、偶然他の3つのタイプもサポートできるようになりました。特に osu!taiko の譜面をインポートするのをおすすめします。どうしても無理なら osu! タイプでも大丈夫ですが、osu!catch と osu!mania のプレイ体験は完全に地獄です。<br />
 PCでブラウザが長時間フォーカスを失うと、再度プレイすると音と映像がずれる現象が起きます（ブラウザの問題で、現状修正方法は不明です）が、再度一局を始めれば直ります。<br />
 バグはまだたくさんあります。バグを見つけたらフィードバックを歓迎します。Bilibili 動画: [BV11xj66vEEz](https://www.bilibili.com/video/BV11xj66vEEz/)。
+
+### 開発者
+- DLmember
+  - [彼のGitHubアカウント](https://github.com/DLmember/)
+- p0verwrit3
+  - [彼のGitHubアカウント](https://github.com/p0verwrit3/)
+- leehxuan
+  - [彼のGitHubアカウント](https://github.com/leehxuan/)
