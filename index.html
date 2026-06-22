@@ -7,24 +7,39 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>跳舞的线 - 模拟器</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
       --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --bg: #04060d;
+      --panel: rgba(9, 15, 27, 0.74);
+      --panel-solid: #080d18;
+      --line: rgba(95, 175, 205, 0.22);
+      --line-2: rgba(120, 215, 255, 0.5);
+      --cyan: #38e8ff;
+      --cyan-soft: rgba(56, 232, 255, 0.62);
+      --amber: #ffcf5c;
+      --red: #ff5277;
+      --green: #57ffbf;
+      --text: #d6ecf7;
+      --text-2: rgba(160, 192, 212, 0.62);
+      --text-3: rgba(130, 165, 190, 0.4);
+      --grid: rgba(70, 150, 185, 0.04);
+      --font-display: -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+      --font-mono: 'Share Tech Mono', ui-monospace, 'SF Mono', 'Consolas', monospace;
+      --font-cjk: 'PingFang SC', 'Microsoft YaHei', sans-serif;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html,
-    body {
+    html, body {
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #0d0d1a;
-      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: var(--bg);
+      font-family: var(--font-cjk);
       user-select: none;
       -webkit-user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -49,794 +64,518 @@
       cursor: pointer;
     }
 
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      background: #0d0d1a;
-    }
+    canvas { display: block; width: 100%; height: 100%; background: var(--bg); }
 
-    #pause-btn {
-      position: absolute;
-      bottom: 16px;
-      left: 16px;
-      z-index: 20;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: rgba(255, 255, 255, 0.85);
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      cursor: pointer;
+    /* ===== 通用 HUD 按钮 ===== */
+    #pause-btn, #autoplay-btn, #menu-btn, #ui-mode-btn, #help-btn, #help-top-btn, #intro-import-btn,
+    #autoplay-exit-btn, #revive-btn, #result-restart-btn, #controls button,
+    #close-modal-btn, #close-beatmap-btn, #close-help-btn, #close-more-btn {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-family: var(--font-cjk);
       letter-spacing: 1px;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-
-    #pause-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.4);
-    }
-
-    #pause-btn.kiai-active {
-      background: rgba(116, 124, 138, 0.48);
-      border-color: rgba(230, 235, 242, 0.78);
-      color: rgba(255, 255, 255, 0.96);
-      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.22);
-    }
-
-    #autoplay-btn {
-      position: absolute;
-      bottom: 16px;
-      right: 16px;
-      z-index: 20;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: rgba(255, 255, 255, 0.85);
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 13px;
       cursor: pointer;
-      letter-spacing: 1px;
-      transition: all 0.2s;
-      font-family: inherit;
+      backdrop-filter: blur(6px);
+      transition: border-color .18s, background .18s, color .18s, box-shadow .18s, transform .12s;
+      clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
     }
+    #pause-btn::before, #autoplay-btn::before, #menu-btn::before, #ui-mode-btn::before, #help-btn::before, #help-top-btn::before,
+    #intro-import-btn::before, #autoplay-exit-btn::before, #revive-btn::before,
+    #result-restart-btn::before, #controls button::before {
+      content: ""; position: absolute; left: 0; top: 0; width: 8px; height: 1.5px;
+      background: var(--cyan); opacity: .5; transition: opacity .18s; pointer-events: none;
+    }
+    #pause-btn:hover, #autoplay-btn:hover, #menu-btn:hover, #ui-mode-btn:hover, #help-btn:hover, #help-top-btn:hover,
+    #intro-import-btn:hover, #controls button:hover, #result-restart-btn:hover,
+    #close-modal-btn:hover, #close-beatmap-btn:hover, #close-help-btn:hover, #close-more-btn:hover {
+      border-color: var(--line-2); color: #fff;
+      background: rgba(20, 36, 54, 0.82);
+      box-shadow: 0 0 0 1px rgba(56,232,255,0.1);
+    }
+    #pause-btn:hover::before, #autoplay-btn:hover::before, #menu-btn:hover::before, #ui-mode-btn:hover::before, #help-top-btn:hover::before,
+    #controls button:hover::before { opacity: 1; }
+    #controls button:active { transform: translateY(1px) scale(0.98); }
 
-    #autoplay-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.4);
-    }
+    #pause-btn { position: absolute; bottom: 16px; left: 16px; z-index: 20; padding: 9px 16px; font-size: 13px; }
+    #autoplay-btn { position: absolute; top: 14px; left: 88px; z-index: 21; padding: 8px 30px 8px 16px; font-size: 13px; }
+    #menu-btn { position: absolute; top: 14px; left: 14px; z-index: 21; padding: 8px 15px; font-size: 13px; }
+    #ui-mode-btn { position: absolute; top: 56px; left: 14px; z-index: 21; padding: 8px 15px; font-size: 13px; }
 
-    #autoplay-btn.active {
-      background: rgba(0, 229, 255, 0.2);
-      border-color: #00e5ff;
-      color: #00e5ff;
-      box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
+    /* 自动游玩开关 LED */
+    #autoplay-btn::after {
+      content: ""; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      width: 8px; height: 8px; border-radius: 50%; background: #3a4654;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset; transition: all .2s;
     }
+    #autoplay-btn.active { border-color: rgba(56,232,255,0.6); color: var(--cyan); background: rgba(56,232,255,0.08); }
+    #autoplay-btn.active::after { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
 
     #autoplay-exit-btn {
-      display: none;
-      position: absolute;
-      bottom: 16px;
-      right: 16px;
-      z-index: 21;
-      background: rgba(255, 140, 0, 0.14);
-      border: 1px solid rgba(255, 140, 0, 0.6);
-      color: #ff8c00;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      cursor: pointer;
-      letter-spacing: 1px;
-      transition: all 0.2s;
-      font-family: inherit;
+      display: none; position: absolute; bottom: 16px; right: 16px; z-index: 21;
+      padding: 9px 16px; font-size: 13px; color: var(--amber); border-color: rgba(255,207,92,0.55);
+      background: rgba(255,207,92,0.08);
     }
+    #autoplay-exit-btn:hover { color: #ffe09a; border-color: var(--amber); box-shadow: 0 0 18px rgba(255,207,92,0.2); }
+    #autoplay-exit-btn::before { background: var(--amber); }
 
-    #autoplay-exit-btn:hover {
-      background: rgba(255, 140, 0, 0.22);
-      color: #ffb347;
-      border-color: rgba(255, 140, 0, 0.9);
+    /* kiai（副歌）高亮态 */
+    #pause-btn.kiai-active {
+      border-color: rgba(230, 235, 242, 0.85); color: #fff;
+      background: rgba(40, 56, 74, 0.6); box-shadow: 0 0 16px rgba(255,255,255,0.12);
     }
-
     #autoplay-exit-btn.kiai-active {
-      background: rgba(18, 23, 32, 0.92);
-      border-color: rgba(255, 183, 77, 0.98);
-      color: #ffd18a;
-      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.28), 0 0 16px rgba(255, 183, 77, 0.18);
+      border-color: rgba(255, 207, 92, 0.95); color: #ffe3a0;
+      box-shadow: 0 0 18px rgba(255, 207, 92, 0.28);
+    }
+    #result-restart-btn.kiai-active {
+      border-color: rgba(56,232,255,0.95); color: #fff;
+      box-shadow: 0 0 18px rgba(56,232,255,0.28);
     }
 
     #revive-btn {
-      display: none;
-      position: absolute;
-      left: 50%;
-      top: calc(42% + 150px);
-      transform: translateX(-50%);
-      z-index: 25;
-      background: rgba(255, 215, 0, 0.15);
-      border: 1px solid rgba(255, 215, 0, 0.5);
-      color: #ffd700;
-      padding: 10px 24px;
-      border-radius: 10px;
-      font-size: 15px;
-      cursor: pointer;
-      letter-spacing: 2px;
-      font-family: inherit;
-      font-weight: bold;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-
-    #revive-btn:hover {
-      background: rgba(255, 215, 0, 0.25);
-      border-color: #ffd700;
-    }
-
-    #help-btn,
-    #intro-import-btn {
-      position: absolute;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 20;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: rgba(255, 255, 255, 0.85);
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-      letter-spacing: 1px;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-
-    #help-btn {
-      top: calc(58% - 72px);
-    }
-
-    #intro-import-btn {
-      top: calc(58% - 24px);
-    }
-
-    #menu-btn {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      z-index: 21;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: rgba(255, 255, 255, 0.85);
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      cursor: pointer;
-      letter-spacing: 1px;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-
-    #help-btn:hover,
-    #intro-import-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.4);
-    }
-
-    #menu-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.4);
-    }
-
-    #pause-overlay {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
+      display: none; position: relative; z-index: 25;
+      padding: 12px 16px; font-size: 14px; font-weight: bold; letter-spacing: 2px; white-space: nowrap;
+      color: var(--amber); border-color: rgba(255,207,92,0.55); background: rgba(255,207,92,0.1);
       width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 15;
-      justify-content: center;
-      align-items: center;
-      pointer-events: none;
     }
+    #revive-btn::before { background: var(--amber); }
+    #revive-btn:hover { color: #ffe09a; border-color: var(--amber); box-shadow: 0 0 20px rgba(255,207,92,0.25); }
 
-    #pause-overlay.active {
-      display: flex;
+    #help-btn, #intro-import-btn {
+      position: absolute; left: 50%; transform: translate(-50%, -50%); z-index: 20;
+      padding: 10px 22px; font-size: 14px;
     }
+    #help-btn { top: calc(58% - 72px); }
+    #help-top-btn { position: absolute; top: 56px; left: 110px; z-index: 21; padding: 8px 15px; font-size: 13px; display: none; }
+    #intro-import-btn { top: calc(58% - 24px); border-color: rgba(56,232,255,0.5); color: var(--cyan); }
+    #intro-import-btn:hover { color: #fff; }
 
+    /* ===== 暂停遮罩 ===== */
+    #pause-overlay {
+      display: none; position: absolute; inset: 0; z-index: 15;
+      background: rgba(3,6,12,0.66); backdrop-filter: blur(3px);
+      justify-content: center; align-items: center; pointer-events: none;
+    }
+    #pause-overlay.active { display: flex; }
     #pause-overlay span {
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 28px;
-      letter-spacing: 4px;
-      font-weight: bold;
+      color: #fff; font-family: var(--font-display); font-size: 24px; letter-spacing: 6px; font-weight: 600;
+      text-shadow: none;
     }
 
+    /* ===== 通关结算面板 ===== */
     #result-panel {
-      display: none;
-      position: absolute;
-      top: 42%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 20;
-      background: rgba(20, 20, 20, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 28px 36px;
-      text-align: center;
-      pointer-events: none;
+      display: none; position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%);
+      z-index: 20; width: min(540px, 93vw);
+      background: linear-gradient(180deg, rgba(10,18,32,0.93), rgba(6,11,21,0.93));
+      border: 1px solid rgba(56,232,255,0.28);
+      box-shadow: 0 0 30px rgba(56,232,255,0.06);
+      padding: 26px 30px 24px; text-align: left; pointer-events: auto; overflow: hidden;
+      clip-path: polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px);
     }
-
-    #result-panel.active {
-      display: block;
+    #result-panel.active { display: block; animation: resCardIn .5s cubic-bezier(.2,.8,.2,1); }
+    @keyframes resCardIn { from { opacity: 0; transform: translate(-50%, calc(-50% + 14px)) scale(.98); } }
+    #result-panel .hud-corner { position: absolute; width: 14px; height: 14px; pointer-events: none; }
+    #result-panel .hud-corner.tl { top: 6px; left: 6px; border-top: 1.5px solid var(--cyan); border-left: 1.5px solid var(--cyan); }
+    #result-panel .hud-corner.tr { top: 6px; right: 6px; border-top: 1.5px solid var(--cyan); border-right: 1.5px solid var(--cyan); }
+    #result-panel .hud-corner.bl { bottom: 6px; left: 6px; border-bottom: 1.5px solid var(--cyan); border-left: 1.5px solid var(--cyan); }
+    #result-panel .hud-corner.br { bottom: 6px; right: 6px; border-bottom: 1.5px solid var(--cyan); border-right: 1.5px solid var(--cyan); }
+    #result-panel .res-gridbg {
+      position: absolute; inset: 0; pointer-events: none; opacity: .35;
+      background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 26px 26px;
     }
+    #result-panel .res-sweep {
+      position: absolute; left: 0; right: 0; height: 80px; top: -90px; pointer-events: none;
+      background: linear-gradient(180deg, transparent, rgba(56,232,255,0.08), transparent);
+    }
+    #result-panel.active .res-sweep { animation: resSweep 1.1s ease-out .15s 1; }
+    @keyframes resSweep { from { top: -90px; } to { top: 110%; } }
 
+    #result-panel .res-head { position: relative; display: flex; align-items: center; gap: 12px; }
+    #result-panel .res-tag {
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 4px; color: #04131a;
+      background: var(--cyan); padding: 3px 10px; box-shadow: 0 0 8px rgba(56,232,255,0.28);
+      clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    }
+    #result-panel.failed .res-tag { background: var(--red); box-shadow: 0 0 16px rgba(255,82,119,0.5); color: #1a0309; }
+    #result-panel .res-title { font-family: var(--font-display); font-weight: 600; font-size: 19px; letter-spacing: 2px; color: #fff; }
+    #result-panel .res-id { margin-left: auto; font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.5px; color: var(--text-3); text-align: right; line-height: 1.5; }
+
+    #result-panel .res-body { position: relative; display: flex; gap: 24px; align-items: center; margin-top: 20px; }
+    #result-panel .res-ring { position: relative; width: 176px; height: 176px; flex-shrink: 0; }
+    #result-panel .res-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    #result-panel .rr-track { fill: none; stroke: rgba(255,255,255,0.07); stroke-width: 6; }
+    #result-panel .rr-fill {
+      fill: none; stroke: url(#resRingGrad); stroke-width: 7; stroke-linecap: round;
+      stroke-dasharray: 502.65; stroke-dashoffset: 502.65;
+      filter: drop-shadow(0 0 6px rgba(56,232,255,0.7));
+      transition: stroke-dashoffset 1.3s cubic-bezier(.2,.8,.2,1);
+    }
+    #result-panel.failed .rr-fill { stroke: var(--red); filter: drop-shadow(0 0 6px rgba(255,82,119,0.7)); }
+    #result-panel .res-ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     #result-panel .result-pct {
-      font-size: 72px;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: 2px;
-      line-height: 1;
-      margin-bottom: 20px;
-      text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+      font-family: var(--font-display); font-weight: 700; font-size: 46px; line-height: 1; color: #fff;
+      letter-spacing: 0; text-shadow: none;
     }
+    #result-panel .res-rank { margin-top: 6px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 3px; color: var(--text-2); display: flex; align-items: center; gap: 7px; }
+    #result-panel .res-rank b { font-family: var(--font-display); font-weight: 700; font-size: 19px; color: var(--amber); }
 
+    #result-panel .res-stats { flex: 1; display: flex; flex-direction: column; }
     #result-panel .result-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 24px;
-      margin: 3px 0;
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.5);
-      letter-spacing: 1px;
+      display: flex; align-items: baseline; justify-content: space-between;
+      padding: 8px 0; margin: 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 13px; letter-spacing: 1px;
     }
+    #result-panel .result-row:first-child { border-top: 1px solid rgba(255,255,255,0.06); }
+    #result-panel .result-row .label { color: var(--text-2); display: flex; align-items: center; gap: 8px; }
+    #result-panel .result-row .label::before { content: ""; width: 5px; height: 5px; background: var(--cyan); transform: rotate(45deg); opacity: .8; }
+    #result-panel .result-row .label em { font-family: var(--font-mono); font-style: normal; font-size: 9px; letter-spacing: 1.5px; color: var(--text-3); }
+    #result-panel .result-row .value { font-family: var(--font-mono); font-weight: 400; font-size: 18px; color: var(--text); }
+    #result-panel .value.hit { color: var(--green); }
+    #result-panel .value.miss { color: var(--red); }
+    #result-panel .value.rate { color: var(--cyan); }
+    #result-panel .value.diamond { color: var(--cyan); }
+    #result-panel .value.crown { color: var(--amber); display: inline-flex; align-items: center; gap: 5px; }
+    #result-panel .rc-crown { width: 26px; height: 26px; object-fit: contain; display: block; }
+    #result-panel .rc-crown.got { filter: drop-shadow(0 0 5px rgba(255,207,92,0.7)); }
+    #result-panel .rc-crown.lost { filter: brightness(0) drop-shadow(0 0 1.5px rgba(150,185,210,0.75)); opacity: 0.8; }
 
-    #result-panel .result-row .label {
-      color: rgba(255, 255, 255, 0.35);
-    }
-
-    #result-panel .result-row .value {
-      font-weight: bold;
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    #result-panel .value.hit {
-      color: #ffd700;
-    }
-
-    #result-panel .value.miss {
-      color: #ff5252;
-    }
-
-    #result-panel .value.rate {
-      color: #00e5ff;
-      font-size: 15px;
-    }
-
-    #result-panel .value.diamond {
-      color: #00e5ff;
-    }
-
-    #result-panel .value.crown {
-      color: #ffd700;
-    }
-
-    #result-restart-btn {
-      margin-top: 16px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: rgba(255, 255, 255, 0.88);
-      padding: 9px 28px;
-      border-radius: 9px;
-      font-size: 14px;
-      cursor: pointer;
-      letter-spacing: 2px;
-      font-family: inherit;
+    #result-actions {
+      display: flex; gap: 10px; margin-top: 22px; align-items: stretch;
       pointer-events: auto;
     }
-
-    #result-restart-btn.kiai-active {
-      background: rgba(18, 23, 32, 0.92);
-      border-color: rgba(255, 255, 255, 0.96);
-      color: #ffffff;
-      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.28), 0 0 16px rgba(255, 255, 255, 0.14);
+    #result-actions.revive-ready #result-restart-btn {
+      flex: 0 0 calc((100% - 10px) / 3);
+      width: calc((100% - 10px) / 3);
     }
+    #result-actions.revive-ready #revive-btn {
+      display: block;
+      flex: 1 1 auto;
+      width: auto;
+    }
+    #result-restart-btn {
+      position: relative; margin-top: 0; width: 100%;
+      padding: 12px 16px; font-size: 14px; letter-spacing: 3px; pointer-events: auto;
+      color: var(--cyan); border-color: rgba(56,232,255,0.5); background: rgba(56,232,255,0.1);
+      text-align: center;
+    }
+    #result-restart-btn:hover { color: #fff; }
 
+    /* ===== 底部控制栏 ===== */
     #controls {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 12px calc(10px + var(--safe-bottom));
-      background: rgba(0, 0, 0, 0.4);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      z-index: 10;
+      position: absolute; left: 0; right: 0; bottom: 0;
+      display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px;
+      padding: 11px 12px calc(11px + var(--safe-bottom));
+      background: linear-gradient(180deg, rgba(4,7,14,0) 0%, rgba(4,7,14,0.8) 40%, rgba(4,7,14,0.95) 100%);
+      border-top: 1px solid var(--line); z-index: 10;
       transition: transform 0.28s ease, opacity 0.2s ease;
     }
-
-    #controls.hidden {
-      transform: translateY(110%);
-      opacity: 0;
-      pointer-events: none;
+    #controls::before {
+      content: ""; position: absolute; left: 50%; top: -1px; transform: translateX(-50%);
+      width: 120px; height: 1px; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); opacity: .45;
     }
-
-    #controls button {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: rgba(255, 255, 255, 0.85);
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      cursor: pointer;
-      letter-spacing: 1px;
-      transition: all 0.2s;
-      font-family: inherit;
-      white-space: nowrap;
-      flex-shrink: 0;
+    #controls.hidden { transform: translateY(110%); opacity: 0; pointer-events: none; }
+    #controls.summary-only {
+      gap: 0;
+      padding-top: 8px;
+      padding-bottom: calc(8px + var(--safe-bottom));
     }
-
-    #controls button:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.4);
+    #controls.summary-only > :not(#info-text) { display: none !important; }
+    #controls.summary-only #info-text {
+      margin-top: 0;
+      flex-basis: auto;
+      width: auto;
+      color: rgba(255,255,255,0.72);
+      font-size: 12px;
     }
+    #controls button { padding: 10px 16px; font-size: 13px; white-space: nowrap; flex-shrink: 0; }
+    #controls button.primary { border-color: rgba(56,232,255,0.5); color: var(--cyan); }
+    #controls button.primary:hover { color: #fff; }
 
-    #controls button:active {
-      transform: scale(0.95);
-      background: rgba(255, 255, 255, 0.2);
+    /* 摇滚 / 引导线 开关 LED */
+    #controls button.rock, #controls button.guide-toggle { padding-right: 30px; }
+    #controls button.rock::after, #controls button.guide-toggle::after {
+      content: ""; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      width: 8px; height: 8px; border-radius: 50%; background: #3a4654;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset; transition: all .2s;
     }
+    #controls button.rock.active { border-color: rgba(255,207,92,0.6); color: var(--amber); background: rgba(255,207,92,0.08); }
+    #controls button.rock.active::after { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+    #controls button.guide-toggle { color: var(--text-2); }
+    #controls button.guide-toggle.on { border-color: rgba(56,232,255,0.6); color: var(--cyan); background: rgba(56,232,255,0.08); }
+    #controls button.guide-toggle.on::after { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
 
-    #controls button.primary {
-      border-color: rgba(0, 229, 255, 0.5);
-      color: #00e5ff;
+    #delay-group, #volume-group, #obstacle-group {
+      position: relative; display: flex; align-items: center; gap: 7px;
+      background: rgba(8,13,24,0.7); border: 1px solid var(--line); padding: 7px 12px; flex-shrink: 0;
+      clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
     }
-
-    #controls button.rock {
-      border-color: rgba(255, 255, 255, 0.2);
-      color: rgba(255, 255, 255, 0.85);
+    #delay-group label, #volume-group label, #obstacle-group label {
+      color: var(--text-2); font-size: 11px; letter-spacing: 1px; white-space: nowrap;
     }
-
-    #controls button.rock.active {
-      background: rgba(255, 215, 0, 0.16);
-      border-color: #ffd700;
-      color: #ffd700;
-      box-shadow: 0 0 12px rgba(255, 215, 0, 0.26);
-    }
-
-    #controls button.guide-toggle {
-      border-color: rgba(255, 255, 255, 0.2);
-      color: rgba(255, 255, 255, 0.6);
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    #controls button.guide-toggle.on {
-      border-color: rgba(0, 229, 255, 0.5);
-      color: #00e5ff;
-      background: rgba(0, 229, 255, 0.1);
-    }
-
-    #delay-group,
-    #volume-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      padding: 7px 12px;
-      flex-shrink: 0;
-    }
-
-    #delay-group label,
-    #volume-group label {
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 11px;
-      letter-spacing: 1px;
-      white-space: nowrap;
-    }
-
     #delay-input {
-      width: 46px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #fff;
-      border-radius: 4px;
-      padding: 5px 4px;
-      font-size: 13px;
-      text-align: center;
-      font-family: inherit;
+      width: 48px; background: rgba(0,0,0,0.35); border: 1px solid var(--line);
+      color: var(--cyan); font-family: var(--font-mono); font-size: 13px; text-align: center; padding: 5px 4px;
     }
-
-    #volume-input {
-      width: 82px;
-      accent-color: #00e5ff;
+    #delay-input:focus { outline: none; border-color: var(--cyan); }
+    #volume-input { width: 84px; accent-color: var(--cyan); }
+    #obstacle-difficulty-live, #obstacle-difficulty {
+      background: rgba(0,0,0,0.35); border: 1px solid var(--line); color: var(--cyan);
+      font-family: var(--font-mono); font-size: 12px; padding: 5px 8px;
     }
-
-    #delay-input:focus {
-      outline: none;
-      border-color: #00e5ff;
-    }
+    #obstacle-difficulty-live option, #obstacle-difficulty option { background: var(--panel-solid); color: var(--text); }
 
     #info-text {
-      color: rgba(255, 255, 255, 0.35);
-      font-size: 11px;
-      letter-spacing: 0.5px;
-      text-align: center;
-      pointer-events: none;
-      width: 100%;
-      flex-basis: 100%;
-      margin-top: 2px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      color: var(--text-3); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.5px;
+      text-align: center; pointer-events: none; width: 100%; flex-basis: 100%; margin-top: 2px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
 
-    #import-modal,
-    #beatmap-select,
-    #help-modal,
-    #more-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.75);
-      z-index: 100;
-      justify-content: center;
-      align-items: center;
+    /* ===== 弹窗 ===== */
+    #import-modal, #beatmap-select, #help-modal, #more-modal {
+      display: none; position: fixed; inset: 0; z-index: 100;
+      background: rgba(3,6,12,0.78); backdrop-filter: blur(3px);
+      justify-content: center; align-items: center;
     }
-
-    #import-modal.active,
-    #beatmap-select.active,
-    #help-modal.active,
-    #more-modal.active {
-      display: flex;
+    #import-modal.active, #beatmap-select.active, #help-modal.active, #more-modal.active { display: flex; }
+    #import-panel, #beatmap-panel, #help-panel, #more-panel {
+      position: relative;
+      background: linear-gradient(180deg, rgba(11,18,32,0.97), rgba(7,12,22,0.97));
+      border: 1px solid rgba(56,232,255,0.26);
+      box-shadow: 0 0 26px rgba(56,232,255,0.06);
+      padding: 22px 24px; max-width: 470px; width: 92%; color: var(--text);
+      max-height: 82vh; overflow-y: auto; text-align: center;
+      clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
     }
-
-    #import-panel,
-    #beatmap-panel,
-    #help-panel,
-    #more-panel {
-      background: #1a1a2e;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      padding: 24px;
-      max-width: 460px;
-      width: 92%;
-      color: #fff;
-      max-height: 80vh;
-      overflow-y: auto;
-      text-align: center;
+    #import-panel::before, #beatmap-panel::before, #help-panel::before, #more-panel::before {
+      content: ""; position: absolute; left: 8px; top: 8px; width: 14px; height: 14px;
+      border-top: 1.5px solid var(--cyan); border-left: 1.5px solid var(--cyan); pointer-events: none;
     }
-
-    #help-panel p {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.7);
-      line-height: 1.8;
-      text-align: left;
-    }
-
-    #help-panel a {
-      color: #00e5ff;
-      text-decoration: underline;
-    }
-
-    #more-panel p {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.7);
-      line-height: 1.8;
-      text-align: left;
-      min-height: 0;
-      margin: 0;
-      white-space: pre-line;
-    }
-
-    #more-panel {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    #more-content {
-      flex: 1 1 auto;
-      min-height: 160px;
-      max-height: calc(80vh - 120px);
-      overflow-y: auto;
-      margin-top: 6px;
-      padding-right: 6px;
-    }
-
-    #import-panel .desc {
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.5);
+    #import-panel h3, #beatmap-panel h3, #help-panel h3, #more-panel h3 {
+      font-size: 16px; letter-spacing: 3px; color: #fff; font-weight: 600;
+      border-left: 3px solid var(--cyan); padding-left: 11px; text-align: left;
       margin-bottom: 14px;
-      line-height: 1.6;
     }
+    #help-panel p, #more-panel p {
+      font-size: 13px; color: var(--text-2); line-height: 1.85; text-align: left;
+    }
+    #help-panel a { color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(56,232,255,0.4); }
+    #more-panel p { white-space: pre-line; margin: 0; min-height: 0; }
+    #more-panel { display: flex; flex-direction: column; overflow: hidden; }
+    #more-content { flex: 1 1 auto; min-height: 160px; max-height: calc(80vh - 120px); overflow-y: auto; margin-top: 6px; padding-right: 6px; }
 
+    #import-panel .desc { font-size: 11px; color: var(--text-3); margin-bottom: 14px; line-height: 1.6; }
     #import-panel label {
-      display: block;
-      margin: 8px 0;
-      padding: 12px 18px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px dashed rgba(255, 255, 255, 0.3);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 13px;
-      letter-spacing: 1px;
+      display: block; margin: 9px 0; padding: 13px 16px;
+      background: rgba(56,232,255,0.04); border: 1px dashed rgba(56,232,255,0.35);
+      cursor: pointer; transition: all 0.18s; font-size: 13px; letter-spacing: 1px; text-align: left;
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
     }
+    #import-panel label:hover { background: rgba(56,232,255,0.1); border-color: var(--cyan); }
+    #import-panel input[type="file"] { display: none; }
+    #import-status { margin: 8px 0; font-family: var(--font-mono); font-size: 12px; min-height: 16px; color: var(--cyan); }
 
-    #import-panel label:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.5);
-    }
-
-    #import-panel input[type="file"] {
-      display: none;
-    }
-
-    #import-status {
-      margin: 8px 0;
-      font-size: 12px;
-      min-height: 16px;
-    }
-
-    #close-modal-btn,
-    #close-beatmap-btn,
-    #close-help-btn,
-    #close-more-btn {
-      margin-top: 14px;
-      padding: 10px 28px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: #fff;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      letter-spacing: 1px;
-      transition: all 0.2s;
-      font-family: inherit;
-      width: 100%;
-    }
-
-    #close-modal-btn:hover,
-    #close-beatmap-btn:hover,
-    #close-help-btn:hover,
-    #close-more-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
+    #close-modal-btn, #close-beatmap-btn, #close-help-btn, #close-more-btn {
+      margin-top: 14px; padding: 11px 28px; width: 100%; font-size: 14px; letter-spacing: 2px;
     }
 
     .beatmap-item {
-      padding: 12px 16px;
-      margin: 6px 0;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: left;
+      padding: 13px 15px; margin: 8px 0; background: rgba(8,13,24,0.7);
+      border: 1px solid var(--line); cursor: pointer; transition: all 0.18s; text-align: left;
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
     }
-
-    .beatmap-item:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(0, 229, 255, 0.5);
-    }
-
-    .beatmap-item.current {
-      border-color: #ffd700;
-      background: rgba(255, 215, 0, 0.08);
-    }
-
-    .beatmap-item .version {
-      font-size: 15px;
-      font-weight: bold;
-      color: #00e5ff;
-    }
-
-    .beatmap-item.current .version {
-      color: #ffd700;
-    }
-
-    .beatmap-item .meta {
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.5);
-      margin-top: 3px;
-    }
-
-    .beatmap-item .notes {
-      font-size: 10px;
-      color: rgba(255, 255, 255, 0.35);
-      margin-top: 2px;
-    }
-
-    .density-info {
-      color: #ffab00;
-      font-weight: bold;
-    }
-
-    #obstacle-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      padding: 7px 12px;
-      flex-shrink: 0;
-    }
-
-    #obstacle-group label {
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 11px;
-      letter-spacing: 1px;
-      white-space: nowrap;
-    }
-
-    #obstacle-difficulty-live,
-    #obstacle-difficulty {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #fff;
-      border-radius: 4px;
-      padding: 5px 8px;
-      font-size: 13px;
-      font-family: inherit;
-    }
-
-    #obstacle-difficulty-live option,
-    #obstacle-difficulty option {
-      background: #1a1a2e;
-      color: #fff;
-    }
+    .beatmap-item:hover { background: rgba(20,36,54,0.7); border-color: rgba(56,232,255,0.5); }
+    .beatmap-item.current { border-color: var(--amber); background: rgba(255,207,92,0.06); }
+    .beatmap-item .version { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--cyan); letter-spacing: 1px; }
+    .beatmap-item.current .version { color: var(--amber); }
+    .beatmap-item .meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); margin-top: 4px; }
+    .beatmap-item .notes { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 2px; }
+    .density-info { color: var(--amber); font-weight: bold; }
 
     .difficulty-card {
-      margin: 12px 0 14px;
-      padding: 12px;
-      background: rgba(0, 229, 255, 0.06);
-      border: 1px solid rgba(0, 229, 255, 0.25);
-      border-radius: 8px;
-      text-align: left;
+      margin: 4px 0 14px; padding: 13px 14px; background: rgba(56,232,255,0.05);
+      border: 1px solid rgba(56,232,255,0.22); text-align: left;
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
     }
+    .difficulty-title { font-family: var(--font-mono); color: var(--cyan); font-size: 12px; letter-spacing: 2px; margin-bottom: 9px; }
+    .difficulty-desc { margin-top: 9px; color: var(--text-3); font-size: 11px; line-height: 1.5; }
 
-    .difficulty-title {
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 13px;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
-    .difficulty-desc {
-      margin-top: 8px;
-      color: rgba(255, 255, 255, 0.45);
-      font-size: 11px;
-      line-height: 1.5;
-    }
-
+    /* ===== 预加载面板 ===== */
     #preload-panel {
-      display: none;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 25;
-      width: min(360px, 82vw);
-      padding: 18px 20px;
-      border-radius: 14px;
-      background: rgba(8, 12, 28, 0.92);
-      border: 1px solid rgba(0, 229, 255, 0.32);
-      box-shadow: 0 0 28px rgba(0, 229, 255, 0.16);
-      color: #fff;
-      text-align: center;
-      pointer-events: none;
+      display: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      z-index: 25; width: min(380px, 84vw); padding: 22px 24px;
+      background: var(--panel); border: 1px solid rgba(56,232,255,0.34); backdrop-filter: blur(8px);
+      box-shadow: 0 0 20px rgba(56,232,255,0.08); color: var(--text); text-align: center; pointer-events: none;
+      clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
     }
-
-    #preload-panel.active {
-      display: block;
-    }
-
-    #preload-title {
-      font-size: 15px;
-      letter-spacing: 1px;
-      color: rgba(255, 255, 255, 0.88);
-      margin-bottom: 10px;
-    }
-
-    #preload-bar {
-      height: 8px;
-      border-radius: 999px;
-      overflow: hidden;
-      background: rgba(255, 255, 255, 0.10);
-      border: 1px solid rgba(255, 255, 255, 0.10);
-    }
-
-    #preload-bar-fill {
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(0, 184, 212, 0.85), rgba(0, 229, 255, 1));
-      transition: width 0.12s linear;
-    }
-
-    #preload-detail {
-      margin-top: 8px;
-      color: rgba(255, 255, 255, 0.45);
-      font-size: 11px;
-      letter-spacing: 0.5px;
-    }
+    #preload-panel.active { display: block; }
+    #preload-title { font-family: var(--font-mono); font-size: 13px; letter-spacing: 2px; color: var(--text); margin-bottom: 12px; text-align: left; }
+    #preload-bar { height: 7px; overflow: hidden; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); position: relative; }
+    #preload-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, rgba(56,232,255,0.55), var(--cyan)); box-shadow: 0 0 14px rgba(56,232,255,0.6); transition: width 0.12s linear; }
+    #preload-detail { margin-top: 10px; font-family: var(--font-mono); color: var(--text-3); font-size: 11px; letter-spacing: 0.5px; text-align: left; }
 
     @media (max-width:480px) {
-      #controls button {
-        padding: 8px 12px;
-        font-size: 12px;
-        border-radius: 6px;
-      }
-
-      #delay-group,
-      #volume-group {
-        padding: 5px 10px;
-      }
-
-      #delay-input {
-        width: 40px;
-        font-size: 12px;
-      }
-
-      #volume-input {
-        width: 68px;
-      }
-
-      #result-panel {
-        top: 40%;
-        padding: 20px 28px;
-      }
-
-      #result-panel .result-pct {
-        font-size: 56px;
-      }
-
-      #revive-btn {
-        top: calc(40% + 156px);
-        padding: 9px 18px;
-        font-size: 13px;
-      }
-
-      #result-restart-btn {
-        padding: 8px 22px;
-        font-size: 13px;
-      }
-
-      #autoplay-btn,
-      #autoplay-exit-btn {
-        padding: 7px 12px;
-        font-size: 12px;
-      }
-
-      #pause-btn,
-      #help-btn,
-      #intro-import-btn {
-        padding: 6px 12px;
-        font-size: 12px;
-      }
-
-      #menu-btn {
-        top: 12px;
-        left: 12px;
-        padding: 7px 12px;
-        font-size: 12px;
-      }
-
-      #intro-import-btn {
-        top: calc(58% - 18px);
-      }
+      #controls button { padding: 8px 12px; font-size: 12px; }
+      #delay-group, #volume-group, #obstacle-group { padding: 5px 10px; }
+      #delay-input { width: 42px; font-size: 12px; }
+      #volume-input { width: 70px; }
+      #result-panel { top: 46%; padding: 20px 22px; width: 94vw; }
+      #result-panel .res-body { flex-direction: column; gap: 16px; }
+      #result-panel .res-ring { width: 150px; height: 150px; }
+      #result-panel .result-pct { font-size: 40px; }
+      #result-panel .res-stats { width: 100%; }
+      #revive-btn { padding: 9px 20px; font-size: 13px; }
+      #autoplay-btn, #autoplay-exit-btn { padding: 7px 26px 7px 12px; font-size: 12px; }
+      #pause-btn, #help-btn, #intro-import-btn { padding: 7px 13px; font-size: 12px; }
+      #help-top-btn { top: 50px; left: 98px; padding: 7px 12px; font-size: 12px; }
+      #menu-btn { top: 12px; left: 12px; padding: 7px 12px; font-size: 12px; }
+      #autoplay-btn { top: 12px; left: 80px; }
+      #ui-mode-btn { top: 50px; left: 12px; padding: 7px 12px; font-size: 12px; }
+      #pause-overlay span { font-size: 20px; letter-spacing: 8px; }
     }
+
+    body.ui-default {
+      --bg: #1f2030;
+      --panel: rgba(53, 55, 78, 0.9);
+      --panel-solid: #35374e;
+      --line: rgba(255, 255, 255, 0.14);
+      --line-2: rgba(255, 255, 255, 0.28);
+      --cyan: #ffffff;
+      --cyan-soft: rgba(255,255,255,0.72);
+      --amber: #ffd86f;
+      --red: #ff6b7a;
+      --green: #76ffcf;
+      --text: #f7f7fb;
+      --text-2: rgba(233, 236, 248, 0.78);
+      --text-3: rgba(220, 224, 240, 0.54);
+      --grid: rgba(255, 255, 255, 0.02);
+      --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      --font-mono: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      --font-cjk: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+    body.ui-default #pause-btn,
+    body.ui-default #autoplay-btn,
+    body.ui-default #menu-btn,
+    body.ui-default #ui-mode-btn,
+    body.ui-default #help-btn,
+    body.ui-default #help-top-btn,
+    body.ui-default #intro-import-btn,
+    body.ui-default #autoplay-exit-btn,
+    body.ui-default #revive-btn,
+    body.ui-default #result-restart-btn,
+    body.ui-default #controls button,
+    body.ui-default #close-modal-btn,
+    body.ui-default #close-beatmap-btn,
+    body.ui-default #close-help-btn,
+    body.ui-default #close-more-btn {
+      background: rgba(53, 55, 78, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #fff;
+      letter-spacing: 0;
+      backdrop-filter: none;
+      clip-path: none;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(8, 9, 20, 0.18);
+    }
+    body.ui-default #pause-btn::before,
+    body.ui-default #autoplay-btn::before,
+    body.ui-default #menu-btn::before,
+    body.ui-default #ui-mode-btn::before,
+    body.ui-default #help-btn::before,
+    body.ui-default #help-top-btn::before,
+    body.ui-default #intro-import-btn::before,
+    body.ui-default #autoplay-exit-btn::before,
+    body.ui-default #revive-btn::before,
+    body.ui-default #result-restart-btn::before,
+    body.ui-default #controls button::before,
+    body.ui-default #controls::before,
+    body.ui-default #import-panel::before,
+    body.ui-default #beatmap-panel::before,
+    body.ui-default #help-panel::before,
+    body.ui-default #more-panel::before,
+    body.ui-default #result-panel .hud-corner,
+    body.ui-default #result-panel .res-gridbg,
+    body.ui-default #result-panel .res-sweep,
+    body.ui-default #result-panel .res-id {
+      display: none;
+    }
+    body.ui-default #pause-btn:hover,
+    body.ui-default #autoplay-btn:hover,
+    body.ui-default #menu-btn:hover,
+    body.ui-default #ui-mode-btn:hover,
+    body.ui-default #help-btn:hover,
+    body.ui-default #help-top-btn:hover,
+    body.ui-default #intro-import-btn:hover,
+    body.ui-default #controls button:hover,
+    body.ui-default #result-restart-btn:hover,
+    body.ui-default #close-modal-btn:hover,
+    body.ui-default #close-beatmap-btn:hover,
+    body.ui-default #close-help-btn:hover,
+    body.ui-default #close-more-btn:hover {
+      background: rgba(66, 69, 96, 0.96);
+      border-color: rgba(255, 255, 255, 0.24);
+      box-shadow: 0 12px 28px rgba(8, 9, 20, 0.22);
+    }
+    body.ui-default #controls {
+      background: linear-gradient(180deg, rgba(28, 29, 45, 0) 0%, rgba(34, 36, 56, 0.84) 30%, rgba(40, 42, 64, 0.98) 100%);
+      border-top: none;
+    }
+    body.ui-default #delay-group,
+    body.ui-default #volume-group,
+    body.ui-default #obstacle-group {
+      background: rgba(53, 55, 78, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      clip-path: none;
+    }
+    body.ui-default #delay-input,
+    body.ui-default #obstacle-difficulty-live,
+    body.ui-default #obstacle-difficulty {
+      background: rgba(23, 24, 38, 0.52);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #fff;
+      border-radius: 8px;
+    }
+    body.ui-default #import-panel,
+    body.ui-default #beatmap-panel,
+    body.ui-default #help-panel,
+    body.ui-default #more-panel,
+    body.ui-default #result-panel {
+      background: linear-gradient(180deg, rgba(48, 50, 72, 0.97), rgba(39, 41, 60, 0.97));
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 20px 50px rgba(8, 9, 20, 0.34);
+      clip-path: none;
+      border-radius: 18px;
+    }
+    body.ui-default #import-panel label,
+    body.ui-default .beatmap-item {
+      clip-path: none;
+      border-radius: 14px;
+      background: rgba(63, 65, 92, 0.96);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: none;
+    }
+    body.ui-default #import-panel label:hover,
+    body.ui-default .beatmap-item:hover {
+      background: rgba(75, 78, 108, 0.98);
+      border-color: rgba(255,255,255,0.24);
+    }
+    body.ui-default .beatmap-item.current {
+      background: rgba(255,216,111,0.1);
+      border-color: rgba(255,216,111,0.45);
+    }
+    body.ui-default #result-panel .res-tag {
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      box-shadow: none;
+      clip-path: none;
+      border-radius: 999px;
+      padding: 5px 12px;
+      letter-spacing: 1px;
+    }
+
   </style>
 </head>
 
@@ -845,25 +584,57 @@
     <div id="canvas-area">
       <canvas id="gameCanvas"></canvas>
       <button id="menu-btn">更多</button>
+      <button id="ui-mode-btn">UI：科技</button>
       <button id="pause-btn">暂停</button>
       <button id="autoplay-btn">自动游玩: 关</button>
       <button id="autoplay-exit-btn">退出</button>
-      <button id="revive-btn">在上一个皇冠处复活</button>
       <button id="help-btn">游戏说明</button>
+      <button id="help-top-btn">回到首页</button>
       <button id="intro-import-btn">导入谱面</button>
       <div id="pause-overlay"><span>已暂停</span></div>
       <div id="result-panel">
-        <div class="result-pct" id="result-pct">0%</div>
-        <div class="result-row" id="result-hit-row"><span class="label">命中</span><span class="value hit"
-            id="result-hit">0</span></div>
-        <div class="result-row" id="result-miss-row"><span class="label">未命中</span><span class="value miss"
-            id="result-miss">0</span></div>
-        <div class="result-row"><span class="label">命中率</span><span class="value rate" id="result-rate">0%</span></div>
-        <div class="result-row"><span class="label">钻石</span><span class="value diamond"
-            id="result-diamonds">0/10</span></div>
-        <div class="result-row"><span class="label">皇冠</span><span class="value crown" id="result-crowns">0/3</span>
+        <span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span>
+        <div class="res-gridbg"></div>
+        <div class="res-sweep"></div>
+        <div class="res-head">
+          <span class="res-tag" id="result-tag">STAGE CLEAR</span>
+          <span class="res-title" id="result-title">完成</span>
+          <span class="res-id">DANCING&nbsp;LINE<br>HUD</span>
         </div>
-        <button id="result-restart-btn">重来</button>
+        <div class="res-body">
+          <div class="res-ring">
+            <svg viewBox="0 0 176 176">
+              <defs>
+                <linearGradient id="resRingGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#38e8ff" />
+                  <stop offset="100%" stop-color="#7af7c8" />
+                </linearGradient>
+              </defs>
+              <circle class="rr-track" cx="88" cy="88" r="80" />
+              <circle class="rr-fill" id="result-ring-fill" cx="88" cy="88" r="80" />
+            </svg>
+            <div class="res-ring-center">
+              <div class="result-pct" id="result-pct">0%</div>
+              <div class="res-rank">RANK <b id="result-rank">A</b></div>
+            </div>
+          </div>
+          <div class="res-stats">
+            <div class="result-row" id="result-hit-row"><span class="label">命中 <em>HIT</em></span><span
+                class="value hit" id="result-hit">0</span></div>
+            <div class="result-row" id="result-miss-row"><span class="label">未命中 <em>MISS</em></span><span
+                class="value miss" id="result-miss">0</span></div>
+            <div class="result-row"><span class="label">命中率 <em>ACCURACY</em></span><span class="value rate"
+                id="result-rate">0%</span></div>
+            <div class="result-row"><span class="label">钻石 <em>GEMS</em></span><span class="value diamond"
+                id="result-diamonds">0/10</span></div>
+            <div class="result-row"><span class="label">皇冠 <em>CROWN</em></span><span class="value crown"
+                id="result-crowns">0/3</span></div>
+          </div>
+        </div>
+        <div id="result-actions">
+          <button id="result-restart-btn">重来</button>
+          <button id="revive-btn">在上一个皇冠处复活</button>
+        </div>
       </div>
       <div id="preload-panel">
         <div id="preload-title">正在预渲染轨道</div>
@@ -884,10 +655,10 @@
           value="100" step="1"></div>
       <div id="obstacle-group"><label for="obstacle-difficulty-live">路宽</label><select id="obstacle-difficulty-live">
           <option value="auto" selected>自动决定</option>
-          <option value="easy">不难</option>
-          <option value="normal">还行</option>
-          <option value="hard">好难</option>
-          <option value="extreme">贼难</option>
+          <option value="easy">好粗</option>
+          <option value="normal">粗</option>
+          <option value="hard">细</option>
+          <option value="extreme">好细</option>
           <option value="washpool">洗笔池</option>
         </select></div>
       <div id="info-text">点击屏幕以开始 | 空格或上箭头转弯 | R 重开 | F 复活 | P 暂停</div>
@@ -900,10 +671,10 @@
       <div class="difficulty-card">
         <div class="difficulty-title">路宽</div><select id="obstacle-difficulty">
           <option value="auto" selected>自动决定</option>
-          <option value="easy">不难</option>
-          <option value="normal">还行</option>
-          <option value="hard">好难</option>
-          <option value="extreme">贼难</option>
+          <option value="easy">好粗</option>
+          <option value="normal">粗</option>
+          <option value="hard">细</option>
+          <option value="extreme">好细</option>
           <option value="washpool">洗笔池</option>
         </select>
         <div class="difficulty-desc" id="obstacle-difficulty-desc">自动模式会根据谱面音符密度推断轨道宽度和障碍物密度。</div>
@@ -947,6 +718,14 @@
 有问题目前可以先去B站 BV11xj66vEEz 来反映哦
 
 更新记录：
+2026/6/22 beta0.3
+新增一套科技ui，改善了默认ui，并且玩家可以自选ui
+现在玩家选择的ui和调的延迟都会被保存在浏览器本地
+现在玩家可以在已导入谱面的时候回到主页
+在终点处加了金色框框，以说明这是终点
+修复了在60帧设备上线会冲得太靠前的bug
+啊，肝疼（
+
 2026/6/22 beta0.2.3
 修复了皇冠出现时掉帧的bug，并且重绘了皇冠样式，确保在所有设备上皇冠都能正常显示
 修复了在ios上会没音乐并且走几步路就自己死的bug
@@ -978,10 +757,12 @@ kiai time的背景亮度略微降低
       const controls = document.getElementById('controls');
       const pauseBtn = document.getElementById('pause-btn');
       const menuBtn = document.getElementById('menu-btn');
+      const uiModeBtn = document.getElementById('ui-mode-btn');
       const autoplayBtn = document.getElementById('autoplay-btn');
       const autoplayExitBtn = document.getElementById('autoplay-exit-btn');
       const reviveBtn = document.getElementById('revive-btn');
       const helpBtn = document.getElementById('help-btn');
+      const helpTopBtn = document.getElementById('help-top-btn');
       const introImportBtn = document.getElementById('intro-import-btn');
       const pauseOverlay = document.getElementById('pause-overlay');
       const loadBtn = document.getElementById('load-btn');
@@ -1004,6 +785,7 @@ kiai time的背景亮度略微降低
       const resultHitRow = document.getElementById('result-hit-row');
       const resultMissRow = document.getElementById('result-miss-row');
       const resultRestartBtn = document.getElementById('result-restart-btn');
+      const resultActions = document.getElementById('result-actions');
       const preloadPanel = document.getElementById('preload-panel');
       const preloadTitle = document.getElementById('preload-title');
       const preloadBarFill = document.getElementById('preload-bar-fill');
@@ -1029,6 +811,16 @@ kiai time的背景亮度略微降低
       let showGuideBoxes = false;
       let rockMode = false;
       let autoplayMode = false;
+      const VERSION_TEXT = 'beta0.3';
+      const STORAGE_KEYS = { uiMode: 'html-line-ui-mode', delayMs: 'html-line-delay-ms' };
+      let uiMode = 'tech';
+
+      function updateResultActionLayout() {
+        if (!resultActions || !reviveBtn) return;
+        const reviveReady = canRevive && !!lastReviveCrown && gameFinished;
+        resultActions.classList.toggle('revive-ready', reviveReady);
+        reviveBtn.style.display = reviveReady ? 'block' : 'none';
+      }
 
       function getCanvasDpr() { return Math.min(window.devicePixelRatio || 1, MAX_RENDER_DPR); }
       const DIR_UP_RIGHT = { dx: 1, dy: -1, angle: -Math.PI / 4 };
@@ -1041,6 +833,7 @@ kiai time的背景亮度略微降低
       let trailPoints = [{ x: 0, y: 0 }];
       let cameraX = 0, cameraY = 0;
       const CAMERA_SMOOTH = 0.025;
+      const CAMERA_FOLLOW_HZ = 120;
 
       let gameStarted = false, gameStartTime = 0, delayMs = 0, lineMoving = false;
       let gameTimeOffset = 0;
@@ -1065,6 +858,7 @@ kiai time的背景亮度略微降低
       let diamonds = [];
       let crowns = [];
       let diamondEffects = [];
+      let crownEffects = [];
       let kiaiTurnParticles = [];
       let collectedDiamondSet = new Set();
       let collectedCrownSet = new Set();
@@ -1078,6 +872,7 @@ kiai time的背景亮度略微降低
       let obstacleDifficulty = 'auto', currentTrackConfig = null;
       let boundaryCrashEffects = [], lastResultReason = null;
       let resultFlashStartTime = 0, resultFlashDuration = 300;
+      let fullCollectGoldShiftStart = 0, fullCollectGoldShiftDuration = 2000;
       let preparingTrack = false;
       let trackRenderCache = null, trackRenderCacheKey = '';
 
@@ -1099,6 +894,41 @@ kiai time的背景亮度略微降低
       let wasInsideTrack = false;
 
       function isBigNote(type) { return (type & 4) !== 0; }
+      function hexToRgb(hex) {
+        const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '');
+        return m ? { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) } : null;
+      }
+      function parseCssColor(color) {
+        if (!color) return { r: 0, g: 184, b: 212 };
+        if (color.startsWith('#')) return hexToRgb(color) || { r: 0, g: 184, b: 212 };
+        const m = color.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/i);
+        if (m) return { r: +m[1], g: +m[2], b: +m[3] };
+        return { r: 0, g: 184, b: 212 };
+      }
+      function mixColors(colorA, colorB, t) {
+        const a = parseCssColor(colorA), b = parseCssColor(colorB);
+        const k = Math.max(0, Math.min(1, t));
+        const r = Math.round(a.r + (b.r - a.r) * k);
+        const g = Math.round(a.g + (b.g - a.g) * k);
+        const bch = Math.round(a.b + (b.b - a.b) * k);
+        return `rgb(${r},${g},${bch})`;
+      }
+      function getRenderedLineColor(now) {
+        if (!fullCollectGoldShiftStart) return baseLineColor;
+        const t = Math.max(0, Math.min(1, (now - fullCollectGoldShiftStart) / fullCollectGoldShiftDuration));
+        return mixColors(baseLineColor, '#ffd54a', t);
+      }
+      function savePreference(key, value) {
+        try { localStorage.setItem(key, String(value)); } catch (e) { }
+      }
+      function loadPreferences() {
+        try {
+          const savedUiMode = localStorage.getItem(STORAGE_KEYS.uiMode);
+          if (savedUiMode === 'tech' || savedUiMode === 'default') uiMode = savedUiMode;
+          const savedDelay = parseInt(localStorage.getItem(STORAGE_KEYS.delayMs) || '', 10);
+          if (!Number.isNaN(savedDelay) && delayInput) delayInput.value = String(Math.max(-500, Math.min(500, savedDelay)));
+        } catch (e) { }
+      }
       function getDelayMs() { const v = parseInt(delayInput.value); return isNaN(v) ? 0 : v; }
       function getVolumeValue() { const v = parseInt(volumeInput.value); return Math.max(0, Math.min(1, (isNaN(v) ? 100 : v) / 100)); }
       function applyAudioVolume() {
@@ -1260,8 +1090,38 @@ kiai time的背景亮度略微降低
         }
         return color;
       }
-      function setControlsHidden(hidden) { if (!controls) return; controls.classList.toggle('hidden', !!hidden); canvasArea.style.height = hidden ? '100%' : `calc(100% - ${controls.offsetHeight}px)`; requestAnimationFrame(resizeCanvas); }
-      function updateHelpVisibility() { const visible = (!beatmapData && !gameStarted) ? 'block' : 'none'; if (helpBtn) helpBtn.style.display = visible; if (introImportBtn) introImportBtn.style.display = visible; if (menuBtn) menuBtn.style.display = visible; }
+      function setControlsHidden(hidden, summaryOnly = false) {
+        if (!controls) return;
+        controls.classList.toggle('hidden', !!hidden);
+        controls.classList.toggle('summary-only', !hidden && !!summaryOnly);
+        canvasArea.style.height = hidden ? '100%' : `calc(100% - ${controls.offsetHeight}px)`;
+        requestAnimationFrame(resizeCanvas);
+      }
+      function updateUiModeButton() {
+        if (!uiModeBtn) return;
+        uiModeBtn.textContent = uiMode === 'tech' ? 'UI：科技' : 'UI：默认';
+      }
+      function applyUiMode() {
+        document.body.classList.toggle('ui-default', uiMode === 'default');
+        document.body.classList.toggle('ui-tech', uiMode === 'tech');
+        updateUiModeButton();
+      }
+      function toggleUiMode() {
+        uiMode = uiMode === 'tech' ? 'default' : 'tech';
+        applyUiMode();
+        savePreference(STORAGE_KEYS.uiMode, uiMode);
+      }
+      function updateHelpVisibility() {
+        const topLeftVisible = !gameStarted;
+        const centerIntroVisible = !beatmapData && !gameStarted;
+        const topHelpVisible = !!beatmapData && !gameStarted;
+        if (introImportBtn) introImportBtn.style.display = centerIntroVisible ? 'block' : 'none';
+        if (menuBtn) menuBtn.style.display = topLeftVisible ? 'block' : 'none';
+        if (uiModeBtn) uiModeBtn.style.display = topLeftVisible ? 'block' : 'none';
+        if (helpBtn) helpBtn.style.display = centerIntroVisible ? 'block' : 'none';
+        if (helpTopBtn) helpTopBtn.style.display = topHelpVisible ? 'block' : 'none';
+        if (pauseBtn) pauseBtn.style.display = (!gameStarted && !gameFinished) ? 'none' : 'block';
+      }
       function updateAutoplayVisibility() { if (autoplayBtn) autoplayBtn.style.display = gameStarted ? 'none' : 'block'; if (autoplayExitBtn) autoplayExitBtn.style.display = (gameStarted && !gameFinished && (autoplayMode || !beatmapData)) ? 'block' : 'none'; }
 
       function resizeCanvas() { const rect = canvasArea.getBoundingClientRect(); const dpr = getCanvasDpr(); canvas.width = rect.width * dpr; canvas.height = rect.height * dpr; canvasWidth = canvas.width; canvasHeight = canvas.height; drawFrame(); }
@@ -1337,7 +1197,7 @@ kiai time的背景亮度略微降低
           const side = crownRng() < 0.5 ? -1 : 1;
           crowns.push({ id: 'c' + i, x: pos.x, y: pos.y, time: totalDuration * (pct / 100), side });
         }
-        lastReviveCrown = null; canRevive = false; diamondEffects = [];
+        lastReviveCrown = null; canRevive = false; diamondEffects = []; crownEffects = [];
       }
 
       function isDiamondCollected(d) { return collectedDiamondSet.has(d.id) || lostDiamondSet.has(d.id); }
@@ -1417,18 +1277,50 @@ kiai time的背景亮度略微降低
 
       function showResults(deathPct) {
         const isWin = lastResultReason === 'complete' || lastResultReason === 'end';
-        setControlsHidden(!isWin);
+        setControlsHidden(!isWin, isWin);
         const hit = hitCount, total = totalBoxes, miss = total - hit, rate = total > 0 ? Math.round((hit / total) * 100) : 0;
         const pct = deathPct !== undefined ? deathPct : 100;
         const allCollected = collectedDiamondSet.size >= 10 && collectedCrownSet.size >= 3;
         const shouldFlash = lastResultReason === 'complete' && allCollected;
+        if (isWin && allCollected) fullCollectGoldShiftStart = performance.now(); else fullCollectGoldShiftStart = 0;
         resultPct.textContent = pct + '%'; resultHit.textContent = hit; resultMiss.textContent = miss; resultRate.textContent = rate + '%';
         resultPct.style.color = (isWin && pct === 100 && allCollected) ? '#ffd54a' : '#fff';
         resultPct.style.textShadow = (isWin && pct === 100 && allCollected) ? '0 0 14px rgba(255,213,74,0.45)' : 'none';
         if (shouldFlash) resultFlashStartTime = performance.now(); else resultFlashStartTime = 0;
-        resultDiamonds.textContent = collectedDiamondSet.size + '/10'; resultCrowns.textContent = collectedCrownSet.size + '/3';
+        resultDiamonds.textContent = collectedDiamondSet.size + '/10'; renderResultCrowns(collectedCrownSet.size, 3);
         resultHitRow.style.display = 'flex'; resultMissRow.style.display = 'flex';
+        updateResultActionLayout();
         resultPanel.classList.add('active');
+        // —— HUD: 环形进度 / 评级 / 标题 / 计数动画 ——
+        try {
+          var _rf = document.getElementById('result-ring-fill');
+          var _rk = document.getElementById('result-rank');
+          var _tg = document.getElementById('result-tag');
+          var _tt = document.getElementById('result-title');
+          var _C = 502.6548;
+          var _p = Math.max(0, Math.min(100, pct));
+          var _rank = (_p >= 100 && allCollected) ? 'S' : _p >= 95 ? 'S' : _p >= 90 ? 'A' : _p >= 80 ? 'B' : _p >= 60 ? 'C' : 'D';
+          if (_rk) _rk.textContent = _rank;
+          if (isWin) { resultPanel.classList.remove('failed'); if (_tg) _tg.textContent = 'STAGE CLEAR'; if (_tt) _tt.textContent = '完成'; }
+          else { resultPanel.classList.add('failed'); if (_tg) _tg.textContent = 'FAILED'; if (_tt) _tt.textContent = '失败'; }
+          if (_rf) {
+            _rf.style.transition = 'none';
+            _rf.style.strokeDashoffset = _C;
+            _rf.getBoundingClientRect();
+            requestAnimationFrame(function () { _rf.style.transition = ''; _rf.style.strokeDashoffset = (_C * (1 - _p / 100)).toFixed(2); });
+          }
+          var _pctEl = document.getElementById('result-pct');
+          if (_pctEl) {
+            var _tok = (showResults._tok = (showResults._tok || 0) + 1);
+            var _t0 = performance.now(), _dur = 900;
+            (function _step(now) {
+              if (showResults._tok !== _tok) return;
+              var k = Math.min(1, (now - _t0) / _dur), e = 1 - Math.pow(1 - k, 3);
+              _pctEl.textContent = Math.round(_p * e) + '%';
+              if (k < 1) requestAnimationFrame(_step); else _pctEl.textContent = _p + '%';
+            })(_t0);
+          }
+        } catch (e) {}
       }
 
       function resetGame(fullReset = true) {
@@ -1440,7 +1332,7 @@ kiai time的背景亮度略微降低
           bigNoteScanIndex = 0; allNoteScanIndex = 0; musicFallbackScanIndex = 0;
           collectedDiamondSet = new Set(); collectedCrownSet = new Set();
           lostDiamondSet = new Set(); lostCrownSet = new Set();
-          lastReviveCrown = null; canRevive = false; diamondEffects = []; kiaiTurnParticles = [];
+          lastReviveCrown = null; canRevive = false; diamondEffects = []; crownEffects = []; kiaiTurnParticles = [];
           gameTimeOffset = 0;
           kiaiTransitionFactor = 0;
           kiaiSquareDrawIdx = 0;
@@ -1452,10 +1344,11 @@ kiai time的背景亮度略微降低
         if (beatmapData && delayMs !== 0) { const delayOffsetDist = LINE_SPEED * delayMs / 1000; squareX -= currentDir.dx * delayOffsetDist; squareY -= currentDir.dy * delayOffsetDist; trailPoints = [{ x: squareX, y: squareY }]; }
         ignoreMouseUntil = 0;
         hitEffects = []; boundaryCrashEffects = []; lastResultReason = null; resultFlashStartTime = 0;
+        fullCollectGoldShiftStart = 0;
         setControlsHidden(false);
         resetMusicReactiveValues(); hitCount = 0;
         resultPanel.classList.remove('active'); pauseOverlay.classList.remove('active'); pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (P)';
-        reviveBtn.style.display = 'none';
+        updateResultActionLayout();
         updateAutoplayVisibility(); updateHelpVisibility();
         if (beatmapData) {
           guideBoxes = generateGuideBoxes(beatmapData); totalBoxes = guideBoxes.length;
@@ -1483,9 +1376,9 @@ kiai time的背景亮度略微降低
         for (const d of diamonds) { if (d.time <= reviveTimeMs) { lostDiamondSet.add(d.id); collectedDiamondSet.delete(d.id); } }
         for (const c of crowns) { if (c.time <= reviveTimeMs) { lostCrownSet.add(c.id); collectedCrownSet.delete(c.id); } }
         canRevive = false;
-        reviveBtn.style.display = 'none';
+        updateResultActionLayout();
         gameFinished = false; lastResultReason = null;
-        boundaryCrashEffects = []; hitEffects = []; resultFlashStartTime = 0; kiaiTurnParticles = [];
+        boundaryCrashEffects = []; hitEffects = []; resultFlashStartTime = 0; fullCollectGoldShiftStart = 0; kiaiTurnParticles = [];
         resultPanel.classList.remove('active');
         cumulativeScale = 1; cumulativeRotation = 0; bigEffectAnim = null; bigNoteSequence = 0;
         triggeredBigNotes = new Set(); triggeredAllNotes = new Set();
@@ -1511,6 +1404,10 @@ kiai time的背景亮度略微降低
       function updateInfoText() {
         const modeText = rockMode ? ' [摇滚]' : ''; const autoText = autoplayMode ? ' | 自动游玩' : '';
         if (beatmapData) {
+          if (gameFinished && (lastResultReason === 'complete' || lastResultReason === 'end')) {
+            infoText.textContent = `${beatmapData.artist} - ${beatmapData.title} [${beatmapData.version}]`;
+            return;
+          }
           const obsText = currentTrackConfig ? ` | 路宽: ${currentTrackConfig.label}` : '';
           infoText.textContent = `${beatmapData.artist} - ${beatmapData.title} [${beatmapData.version}]${modeText}${autoText} | 钻石: ${collectedDiamondSet.size}/10 皇冠: ${collectedCrownSet.size}/3${obsText}`;
         } else { infoText.textContent = IS_MOBILE_UI ? ('点击屏幕以开始' + modeText + autoText) : ('点击屏幕以开始 | 空格或上箭头转弯 | R 重开 | F 复活 | P 暂停' + modeText + autoText); }
@@ -1519,6 +1416,18 @@ kiai time的背景亮度略微降低
       function toggleRockMode() { if (gameStarted && !gameFinished) return; rockMode = !rockMode; rockBtn.textContent = rockMode ? '摇滚模式: 开' : '摇滚模式: 关'; rockBtn.classList.toggle('active', rockMode); updateInfoText(); resetGame(); }
       function exitAutoplay() { if (!autoplayMode) return; autoplayMode = false; if (gameStarted && animFrameId) { cancelAnimationFrame(animFrameId); } pauseAudioPlayback(); resetGame(); autoplayBtn.textContent = '自动游玩'; autoplayBtn.classList.remove('active'); updateAutoplayVisibility(); updateInfoText(); drawFrame(); }
       function toggleAutoplay() { if (gameStarted && !gameFinished) return; autoplayMode = !autoplayMode; autoplayBtn.textContent = autoplayMode ? '自动游玩: 开' : '自动游玩: 关'; autoplayBtn.classList.toggle('active', autoplayMode); updateAutoplayVisibility(); updateInfoText(); if (!gameStarted) drawFrame(); }
+      function returnToHome() {
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        pauseAudioPlayback();
+        beatmapData = null;
+        customLineColor = null;
+        baseLineColor = '#00b8d4';
+        resetGame();
+        updateAutoplayVisibility();
+        updateHelpVisibility();
+        updateInfoText();
+        drawFrame();
+      }
       function togglePause() {
         if (!gameStarted || gameFinished) return;
         paused = !paused;
@@ -1641,7 +1550,8 @@ kiai time的背景亮度略微降低
         if (paused) { drawFrame(); animFrameId = requestAnimationFrame(gameLoop); return; }
         if (lastFrameTime === 0) lastFrameTime = timestamp;
         let dt = (timestamp - lastFrameTime) / 1000;
-        if (dt <= 0) dt = 0.016; if (dt > 0.1) dt = 0.1;
+        if (dt <= 0) dt = 1 / 120;
+        if (dt > 1 / 20) dt = 1 / 20;
         lastFrameTime = timestamp;
 
         if (autoplayMode && !gameFinished && lineMoving) {
@@ -1652,7 +1562,7 @@ kiai time的背景亮度略微降低
         kiaiTransitionFactor += (getCurrentKiaiFactor(gameTimeMs) - kiaiTransitionFactor) * 0.06;
 
         for (const d of diamonds) { if (isDiamondCollected(d)) continue; if (Math.hypot(squareX - d.x, squareY - d.y) < SQUARE_SIZE) { collectedDiamondSet.add(d.id); diamondEffects.push({ x: d.x, y: d.y, startTime: performance.now(), duration: 1000, angle: Math.random() * Math.PI * 2 }); updateInfoText(); } }
-        for (const c of crowns) { if (isCrownCollected(c)) continue; if (gameTimeMs >= c.time) { collectedCrownSet.add(c.id); lastReviveCrown = { x: c.x, y: c.y, crownId: c.id, dirIndex: DIRS.indexOf(currentDir), collectedDiamondSnapshot: [...collectedDiamondSet], collectedCrownSnapshot: [...collectedCrownSet] }; updateInfoText(); } }
+        for (const c of crowns) { if (isCrownCollected(c)) continue; if (gameTimeMs >= c.time) { collectedCrownSet.add(c.id); crownEffects.push({ x: c.x, y: c.y, startTime: performance.now(), duration: 950 }); lastReviveCrown = { x: c.x, y: c.y, crownId: c.id, dirIndex: DIRS.indexOf(currentDir), collectedDiamondSnapshot: [...collectedDiamondSet], collectedCrownSnapshot: [...collectedCrownSet] }; updateInfoText(); } }
 
         if (!gameFinished && totalBoxes > 0) {
           if (!gameFinished && laneSegments.length > 0) { const lastLane = laneSegments[laneSegments.length - 1]; if (gameTimeMs > lastLane.endTime + 120) { gameFinished = true; lastResultReason = 'end'; showResults(getCurrentProgressPercent()); } }
@@ -1666,7 +1576,12 @@ kiai time的背景亮度略微降低
         if (rockMode && !gameFinished && beatmapData && lineMoving) {
           while (allNoteScanIndex < guideBoxes.length && guideBoxes[allNoteScanIndex].time <= gameTimeMs) { const box = guideBoxes[allNoteScanIndex]; if (box && !triggeredAllNotes.has(box.time) && !triggeredBigNotes.has(box.time)) { triggeredAllNotes.add(box.time); triggerBigNoteEffect(); } allNoteScanIndex++; }
         }
-        if (!gameFinished) { cameraX += (squareX - cameraX) * CAMERA_SMOOTH; cameraY += (squareY - cameraY) * CAMERA_SMOOTH; }
+        if (!gameFinished) {
+          const followSteps = dt * CAMERA_FOLLOW_HZ;
+          const followFactor = 1 - Math.pow(1 - CAMERA_SMOOTH, followSteps);
+          cameraX += (squareX - cameraX) * followFactor;
+          cameraY += (squareY - cameraY) * followFactor;
+        }
         drawFrame(); animFrameId = requestAnimationFrame(gameLoop);
       }
 
@@ -1681,80 +1596,53 @@ kiai time的背景亮度略微降低
 
       function buildCrownSprite(size) {
         const sprite = document.createElement('canvas');
-        const padding = Math.max(4, Math.ceil(size * 0.18));
+        const padding = Math.max(3, Math.ceil(size * 0.16));
         const spriteSize = Math.max(16, Math.ceil(size + padding * 2));
         sprite.width = spriteSize;
         sprite.height = spriteSize;
         const sctx = sprite.getContext('2d');
         const cx = spriteSize / 2;
-        const cy = spriteSize / 2 + size * 0.08;
-        const w = size * 0.94;
-        const h = size * 0.72;
+        const cy = spriteSize / 2 + size * 0.06;
+        const w = size * 0.9;
+        const h = size * 0.64;
         const left = cx - w / 2;
         const right = cx + w / 2;
         const top = cy - h / 2;
-        const baseTop = cy + h * 0.08;
+        const baseTop = cy + h * 0.12;
         const baseBottom = cy + h * 0.34;
-        const peak1x = left + w * 0.18, peak1y = top + h * 0.04;
-        const peak2x = cx, peak2y = top - h * 0.18;
-        const peak3x = right - w * 0.18, peak3y = top + h * 0.04;
-
-        sctx.fillStyle = '#8a5a00';
+        // 简洁皇冠：单层多边形（底座 + 三尖）
         sctx.beginPath();
-        sctx.roundRect(left + w * 0.06, baseTop, w * 0.88, baseBottom - baseTop, Math.max(2, size * 0.08));
-        sctx.fill();
-
-        sctx.beginPath();
-        sctx.moveTo(left, baseTop);
-        sctx.lineTo(peak1x, peak1y);
-        sctx.lineTo(cx - w * 0.12, baseTop);
-        sctx.lineTo(peak2x, peak2y);
-        sctx.lineTo(cx + w * 0.12, baseTop);
-        sctx.lineTo(peak3x, peak3y);
+        sctx.moveTo(left, baseBottom);
+        sctx.lineTo(left, baseTop);
+        sctx.lineTo(left + w * 0.20, top + h * 0.06);
+        sctx.lineTo(cx - w * 0.10, baseTop);
+        sctx.lineTo(cx, top - h * 0.16);
+        sctx.lineTo(cx + w * 0.10, baseTop);
+        sctx.lineTo(right - w * 0.20, top + h * 0.06);
         sctx.lineTo(right, baseTop);
-        sctx.lineTo(right - w * 0.04, baseBottom);
-        sctx.lineTo(left + w * 0.04, baseBottom);
+        sctx.lineTo(right, baseBottom);
         sctx.closePath();
-        const crownGradient = sctx.createLinearGradient(0, top, 0, baseBottom);
-        crownGradient.addColorStop(0, '#fff2a8');
-        crownGradient.addColorStop(0.36, '#ffd95e');
-        crownGradient.addColorStop(1, '#d89b11');
-        sctx.fillStyle = crownGradient;
+        const g = sctx.createLinearGradient(0, top, 0, baseBottom);
+        g.addColorStop(0, '#ffe79a');
+        g.addColorStop(1, '#e3a92c');
+        sctx.fillStyle = g;
         sctx.fill();
-
-        sctx.strokeStyle = '#a86c00';
-        sctx.lineWidth = Math.max(1.5, size * 0.06);
+        sctx.strokeStyle = '#b3800f';
+        sctx.lineWidth = Math.max(1.2, size * 0.05);
         sctx.lineJoin = 'round';
         sctx.stroke();
-
-        sctx.fillStyle = 'rgba(255,255,255,0.42)';
-        sctx.beginPath();
-        sctx.moveTo(left + w * 0.1, baseTop + h * 0.04);
-        sctx.lineTo(peak1x, peak1y + h * 0.14);
-        sctx.lineTo(cx - w * 0.03, baseTop + h * 0.06);
-        sctx.lineTo(cx + w * 0.05, baseTop + h * 0.06);
-        sctx.lineTo(peak3x, peak3y + h * 0.14);
-        sctx.lineTo(right - w * 0.1, baseTop + h * 0.06);
-        sctx.lineTo(right - w * 0.16, baseTop + h * 0.18);
-        sctx.lineTo(left + w * 0.16, baseTop + h * 0.18);
-        sctx.closePath();
-        sctx.fill();
-
-        sctx.fillStyle = '#fff7cf';
-        const jewelR = Math.max(1.6, size * 0.055);
-        for (const jewel of [
-          [peak1x, peak1y + h * 0.13],
-          [peak2x, peak2y + h * 0.18],
-          [peak3x, peak3y + h * 0.13]
-        ]) {
+        // 三尖顶点小圆点
+        sctx.fillStyle = '#fff4cf';
+        const r = Math.max(1.3, size * 0.05);
+        for (const p of [[left + w * 0.20, top + h * 0.06], [cx, top - h * 0.16], [right - w * 0.20, top + h * 0.06]]) {
           sctx.beginPath();
-          sctx.arc(jewel[0], jewel[1], jewelR, 0, Math.PI * 2);
+          sctx.arc(p[0], p[1], r, 0, Math.PI * 2);
           sctx.fill();
         }
         return sprite;
       }
       function getCrownSprite(size) {
-        const key = Math.max(12, Math.round(size));
+        const key = Math.max(12, Math.round(size / 4) * 4);
         if (crownSpriteCache && crownSpriteCache.key === key && crownSpriteCache.canvas) return crownSpriteCache.canvas;
         const canvas = buildCrownSprite(key);
         crownSpriteCache = { key, canvas };
@@ -1765,19 +1653,28 @@ kiai time的背景亮度略微降低
         ctx.drawImage(sprite, x - sprite.width / 2, y - sprite.height / 2);
       }
 
+      // 结算面板：用游戏内皇冠图标展示数量（已得=金色，缺位=黑色剪影）
+      let resultCrownUrl = null;
+      function getResultCrownUrl() {
+        if (!resultCrownUrl) { resultCrownUrl = buildCrownSprite(40).toDataURL(); }
+        return resultCrownUrl;
+      }
+      function renderResultCrowns(collected, total) {
+        if (!resultCrowns) return;
+        const url = getResultCrownUrl();
+        let html = '';
+        for (let i = 0; i < total; i++) {
+          html += '<img class="rc-crown ' + (i < collected ? 'got' : 'lost') + '" src="' + url + '" alt="">';
+        }
+        resultCrowns.innerHTML = html;
+      }
+
       function drawFrame() {
         const dpr = getCanvasDpr(); const w = canvasWidth / dpr, h = canvasHeight / dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); const now = performance.now(); drawMusicReactiveBackground(w, h, now); const kiaiUiActive = kiaiTransitionFactor > 0.12; if (pauseBtn) pauseBtn.classList.toggle('kiai-active', kiaiUiActive); if (resultRestartBtn) resultRestartBtn.classList.toggle('kiai-active', kiaiUiActive); if (autoplayExitBtn) autoplayExitBtn.classList.toggle('kiai-active', kiaiUiActive);
-        if (!gameStarted && !beatmapData) {
-          ctx.fillStyle = '#ffffff';
-          ctx.font = 'bold 52px "PingFang SC","Microsoft YaHei",sans-serif';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('HTML Line', w / 2, h * 0.35);
-        }
         if (autoplayMode && gameStarted && lineMoving && !gameFinished) { ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.font = 'bold 64px "PingFang SC","Microsoft YaHei",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('自动游玩中', w / 2, h * 0.7); }
         let currentS = cumulativeScale, currentR = cumulativeRotation; if (bigEffectAnim) { const elapsed = now - bigEffectAnim.startTime; if (elapsed >= bigEffectAnim.duration) { currentS = bigEffectAnim.targetScale; currentR = bigEffectAnim.targetRot; bigEffectAnim = null; } else { const t = elapsed / bigEffectAnim.duration; const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; currentS = bigEffectAnim.startScale + (bigEffectAnim.targetScale - bigEffectAnim.startScale) * eased; currentR = bigEffectAnim.startRot + (bigEffectAnim.targetRot - bigEffectAnim.startRot) * eased; } }
         ctx.save(); if (currentS !== 1 || currentR !== 0) { ctx.translate(w / 2, h / 2); ctx.scale(currentS, currentS); ctx.rotate(currentR); ctx.translate(-w / 2, -h / 2); }
-        const currentLineColor = baseLineColor;
+        const currentLineColor = getRenderedLineColor(now);
         const currentKiaiSquareColor = getBrightenedLineColor(currentLineColor, 0.14);
         const gameTimeMs = getCurrentGameTimeMs(now);
         const viewport = getWorldViewport(220);
@@ -1788,24 +1685,74 @@ kiai time的背景亮度略微降低
         for (const c of crowns) { if (isCrownCollected(c) || !isWorldPointInViewport(c.x, c.y, viewport)) continue; const sc = worldToScreen(c.x, c.y); if (!isScreenPointInView(sc.x, sc.y, 180)) continue; drawCrownEmoji(sc.x, sc.y, crownSize); }
         for (const d of diamonds) { if (isDiamondCollected(d) || !isWorldPointInViewport(d.x, d.y, viewport)) continue; const sc = worldToScreen(d.x, d.y); if (!isScreenPointInView(sc.x, sc.y, 100)) continue; drawHexagon(sc.x, sc.y, itemSize / 2, currentLineColor, (now % 2500) / 2500 * Math.PI * 2); }
         for (let i = diamondEffects.length - 1; i >= 0; i--) { const de = diamondEffects[i]; const elapsed = now - de.startTime; if (elapsed > de.duration) { diamondEffects.splice(i, 1); continue; } const progress = elapsed / de.duration; const sc = worldToScreen(de.x, de.y); const alpha = 1 - progress; for (let j = 0; j < 6; j++) { const angle = Math.PI / 3 * j - Math.PI / 6; const dist = SQUARE_SIZE * 0.7 * progress; const px = sc.x + Math.cos(angle) * dist; const py = sc.y + Math.sin(angle) * dist; ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = currentLineColor; ctx.fillRect(px - 2, py - 2, 4, 4); ctx.restore(); } const dotDist = Math.max(w, h) * 0.33 * progress; const dotAngle = de.angle || 0; ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = '#fff'; ctx.shadowColor = '#fff'; ctx.shadowBlur = 12 * alpha; ctx.beginPath(); ctx.arc(sc.x + Math.cos(dotAngle) * dotDist, sc.y + Math.sin(dotAngle) * dotDist, 6 * alpha, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
+        for (let i = crownEffects.length - 1; i >= 0; i--) {
+          const ce = crownEffects[i]; const elapsed = now - ce.startTime;
+          if (elapsed > ce.duration) { crownEffects.splice(i, 1); continue; }
+          const cp = elapsed / ce.duration, ca = 1 - cp;
+          const csc = worldToScreen(ce.x, ce.y);
+          // 光环 + 放射粒子：用 lighter 叠加发光，避免昂贵的 shadowBlur
+          ctx.save();
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.strokeStyle = 'rgba(255,210,90,' + (ca * 0.7).toFixed(3) + ')';
+          ctx.lineWidth = 3 * ca + 0.6;
+          ctx.beginPath(); ctx.arc(csc.x, csc.y, crownSize * (0.4 + cp * 1.7), 0, Math.PI * 2); ctx.stroke();
+          for (let j = 0; j < 6; j++) {
+            const ang = (Math.PI * 2 / 6) * j + cp * 0.5;
+            const dist = crownSize * (0.3 + cp * 2.0);
+            const px = csc.x + Math.cos(ang) * dist, py = csc.y + Math.sin(ang) * dist;
+            const ps = 3.2 * ca + 1;
+            ctx.fillStyle = 'rgba(255,225,140,' + ca.toFixed(3) + ')';
+            ctx.save(); ctx.translate(px, py); ctx.rotate(Math.PI / 4); ctx.fillRect(-ps / 2, -ps / 2, ps, ps); ctx.restore();
+          }
+          ctx.restore();
+          // 中心皇冠弹出（普通合成，无阴影）
+          const pop = 1 + (1 - Math.pow(1 - cp, 2)) * 0.6;
+          const csprite = getCrownSprite(crownSize);
+          const cdw = csprite.width * pop, cdh = csprite.height * pop;
+          ctx.save(); ctx.globalAlpha = ca;
+          ctx.drawImage(csprite, csc.x - cdw / 2, csc.y - cdh / 2 - crownSize * 0.08, cdw, cdh);
+          ctx.restore();
+        }
         for (const marker of progressMarkers) { if (!isWorldPointInViewport(marker.x, marker.y, viewport)) continue; const sc = worldToScreen(marker.x, marker.y); ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '60px "PingFang SC","Microsoft YaHei",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(marker.pct + '%', sc.x, sc.y); }
         const headX = lineMoving ? squareX : trailPoints[0].x; const headY = lineMoving ? squareY : trailPoints[0].y;
         if (showGuideBoxes) { for (const effect of hitEffects) { const elapsed = now - effect.startTime; if (elapsed > effect.duration) continue; const progress = elapsed / effect.duration; const sc = worldToScreen(effect.x, effect.y); const size = GUIDE_BOX_SIZE + progress * 40; ctx.save(); ctx.globalAlpha = 1 - progress; ctx.translate(sc.x, sc.y); ctx.rotate(effect.angle || DIR_UP_RIGHT.angle); ctx.fillStyle = '#ffd700'; ctx.fillRect(-size / 2, -size / 2, size, size); ctx.restore(); } }
-        if (showGuideBoxes) { const gdr = getGuideBoxDrawRange(); for (let bi = gdr.first; bi <= gdr.last; bi++) { const box = guideBoxes[bi]; if (!box || !box.active) continue; const sc = worldToScreen(box.x, box.y); if (!isScreenPointInView(sc.x, sc.y, 120)) continue; const halfGB = GUIDE_BOX_SIZE / 2; ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(box.angle); ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 2; ctx.strokeRect(-halfGB, -halfGB, GUIDE_BOX_SIZE, GUIDE_BOX_SIZE); ctx.restore(); } }
+        if (showGuideBoxes) { const gdr = getGuideBoxDrawRange(); for (let bi = gdr.first; bi <= gdr.last; bi++) { const box = guideBoxes[bi]; if (!box || !box.active) continue; const sc = worldToScreen(box.x, box.y); if (!isScreenPointInView(sc.x, sc.y, 120)) continue; const halfGB = GUIDE_BOX_SIZE / 2; ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(box.angle); ctx.strokeStyle = box.isFinal ? 'rgba(255,215,0,0.96)' : 'rgba(255,255,255,0.7)'; ctx.lineWidth = box.isFinal ? 3 : 2; ctx.strokeRect(-halfGB, -halfGB, GUIDE_BOX_SIZE, GUIDE_BOX_SIZE); ctx.restore(); } }
+        const finalGuideBox = guideBoxes.find(box => box && box.isFinal && box.active);
+        if (finalGuideBox && !showGuideBoxes) { const sc = worldToScreen(finalGuideBox.x, finalGuideBox.y); if (isScreenPointInView(sc.x, sc.y, 120)) { const halfGB = GUIDE_BOX_SIZE / 2; ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(finalGuideBox.angle); ctx.strokeStyle = 'rgba(255,215,0,0.96)'; ctx.lineWidth = 3; ctx.strokeRect(-halfGB, -halfGB, GUIDE_BOX_SIZE, GUIDE_BOX_SIZE); ctx.restore(); } }
         drawPlayerTrailFast(headX, headY, currentLineColor);
         const zoom = getViewZoom(); const sc = worldToScreen(headX, headY); ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(currentDir.angle); ctx.fillStyle = currentLineColor; ctx.fillRect(-SQUARE_SIZE / 2 * zoom, -SQUARE_SIZE / 2 * zoom, SQUARE_SIZE * zoom, SQUARE_SIZE * zoom); if (!lineMoving) { const arrowOffset = SQUARE_SIZE * 1.1 * zoom, arrowSize = SQUARE_SIZE * 0.56 * zoom; ctx.beginPath(); ctx.moveTo(arrowOffset + arrowSize, 0); ctx.lineTo(arrowOffset - arrowSize * 0.45, -arrowSize * 0.72); ctx.lineTo(arrowOffset - arrowSize * 0.45, -arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 1.05, -arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 1.05, arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 0.45, arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 0.45, arrowSize * 0.72); ctx.closePath(); ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.shadowColor = 'rgba(255,255,255,0.65)'; ctx.shadowBlur = 10; ctx.fill(); ctx.lineWidth = 1.2; ctx.strokeStyle = 'rgba(0,184,212,0.9)'; ctx.stroke(); } ctx.restore();
         if (kiaiSquares.length > 0) { while (kiaiSquareDrawIdx < kiaiSquares.length) { const sq = kiaiSquares[kiaiSquareDrawIdx]; if (gameTimeMs < sq.appearTime + 4000) break; if (!isWorldPointInViewport(sq.x, sq.y, viewport)) { kiaiSquareDrawIdx++; } else break; } for (let i = kiaiSquareDrawIdx; i < kiaiSquares.length; i++) { const sq = kiaiSquares[i]; if (gameTimeMs < sq.appearTime) continue; if (sq.appearTime > gameTimeMs + 3000) break; if (!isWorldPointInViewport(sq.x, sq.y, viewport)) continue; const sqSc = worldToScreen(sq.x, sq.y); if (!isScreenPointInView(sqSc.x, sqSc.y, 180)) continue; ctx.save(); ctx.globalAlpha = 0.8; ctx.translate(sqSc.x, sqSc.y); ctx.rotate(sq.rotation + backgroundPhase * 0.22); ctx.shadowColor = 'rgba(0,0,0,0.32)'; ctx.shadowBlur = 8; ctx.shadowOffsetX = 1.5; ctx.shadowOffsetY = 2.5; ctx.fillStyle = currentKiaiSquareColor; ctx.fillRect(-sq.size / 2, -sq.size / 2, sq.size, sq.size); ctx.restore(); } }
         if (kiaiTurnParticles.length) { const alive = []; for (const p of kiaiTurnParticles) { const elapsed = now - p.startTime; if (elapsed >= p.duration) continue; const t = elapsed / p.duration; const sec = elapsed / 1000; const px = p.x + p.vx * sec; const py = p.y + p.vy * sec + 220 * sec * sec; const psc = worldToScreen(px, py); if (!isScreenPointInView(psc.x, psc.y, 140)) { if (t < 0.72) alive.push(p); continue; } ctx.save(); ctx.globalAlpha = (1 - t) * 0.85; ctx.translate(psc.x, psc.y); ctx.rotate(p.rotation + p.vr * sec); ctx.fillStyle = p.color; ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.restore(); alive.push(p); } kiaiTurnParticles = alive; }
         drawBoundaryCrashEffects(now); ctx.restore();
         if (resultFlashStartTime) { const flashElapsed = now - resultFlashStartTime; if (flashElapsed < resultFlashDuration) { ctx.save(); ctx.globalAlpha = Math.max(0, 1 - flashElapsed / resultFlashDuration); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h); ctx.restore(); } else { resultFlashStartTime = 0; } }
-        if (!gameStarted) { ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '13px "PingFang SC","Microsoft YaHei",sans-serif'; ctx.textAlign = 'center'; if (beatmapData && trailPoints.length <= 1) { ctx.fillText(`${beatmapData.artist} - ${beatmapData.title}`, w / 2, h / 2 - 20); ctx.fillText(`[${beatmapData.version}] | 引导框: ${totalBoxes}个`, w / 2, h / 2 + 6); } }
+        if (!gameStarted && !beatmapData) {
+          ctx.save();
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.font = `700 ${Math.max(42, Math.min(w * 0.12, 84))}px ${getComputedStyle(document.body).getPropertyValue('--font-display') || '"PingFang SC","Microsoft YaHei",sans-serif'}`;
+          ctx.fillStyle = '#ffffff';
+          ctx.globalAlpha = 0.92;
+          ctx.fillText('HTML Line', w / 2, h * 0.35);
+          ctx.font = `600 ${Math.max(12, Math.min(w * 0.024, 18))}px ${getComputedStyle(document.body).getPropertyValue('--font-mono') || 'monospace'}`;
+          ctx.fillStyle = 'rgba(255,255,255,0.76)';
+          ctx.globalAlpha = 0.9;
+          ctx.fillText(VERSION_TEXT, w / 2, h * 0.35 + Math.max(30, Math.min(h * 0.045, 36)));
+          ctx.restore();
+          ctx.fillStyle = 'rgba(255,255,255,0.5)';
+          ctx.font = '13px "PingFang SC","Microsoft YaHei",sans-serif';
+          ctx.textAlign = 'center';
+          if (beatmapData && trailPoints.length <= 1) {
+            ctx.fillText(`${beatmapData.artist} - ${beatmapData.title}`, w / 2, h / 2 - 20);
+            ctx.fillText(`[${beatmapData.version}] | 引导框: ${totalBoxes}个`, w / 2, h / 2 + 6);
+          }
+        }
         if (gameStarted && !lineMoving) { const rem = delayMs - (performance.now() - gameStartTime - totalPauseTime); if (rem > 0) { ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif'; ctx.textAlign = 'center'; ctx.fillText(`延迟中... ${Math.ceil(rem)}ms`, w / 2, h / 2 + 50); } }
         if (gameStarted && lineMoving && !gameFinished && totalBoxes > 0) { const ac = Math.max(0, totalBoxes - hitCount); ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.font = '11px monospace'; ctx.textAlign = 'right'; ctx.fillText(`命中: ${hitCount} | 剩余: ${ac} | 钻石: ${collectedDiamondSet.size} 皇冠: ${collectedCrownSet.size}`, w - 12, h - 10); }
         ctx.fillStyle = 'rgba(128,128,128,0.5)';
         ctx.font = '10px monospace';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'top';
-        ctx.fillText('HTML Line beta0.2.3', w - 10, 10);
+        ctx.fillText('HTML Line ' + VERSION_TEXT, w - 10, 10);
       }
 
       function getGuideBoxDrawRange() { if (!guideBoxes || guideBoxes.length === 0) return { first: 0, last: -1 }; if (!gameStarted || !lineMoving) return { first: 0, last: Math.min(guideBoxes.length - 1, 50) }; const seg = getExpectedLaneSegmentByTime(getCurrentGameTimeMs()); const idx = seg ? Math.max(0, seg.index) : 0; return { first: Math.max(0, idx - 14), last: Math.min(guideBoxes.length - 1, idx + 105) }; }
@@ -1818,7 +1765,7 @@ kiai time的背景亮度略微降低
       function drawBoundaryCrashEffects(now) { if (!boundaryCrashEffects.length) return; const n = []; for (const p of boundaryCrashEffects) { const e = now - p.startTime; if (e >= p.duration) continue; const t = e / p.duration, sec = e / 1000, x = p.x + p.vx * sec, y = p.y + p.vy * sec + 150 * sec * sec, alpha = Math.max(0, 1 - t); const sc = worldToScreen(x, y); if (!isScreenPointInView(sc.x, sc.y, 120)) { if (t < 0.72) n.push(p); continue; } ctx.save(); ctx.globalAlpha = alpha; ctx.translate(sc.x, sc.y); ctx.rotate(p.rot + p.vr * sec); ctx.fillStyle = '#00e5ff'; ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1; ctx.strokeRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.restore(); n.push(p); } boundaryCrashEffects = n; }
 
       function generateTrackAndObstaclesFromBeatmap(beatmap) { laneSegments = []; trackPoints = []; obstacles = []; currentTrackConfig = null; trackRenderCache = null; trackRenderCacheKey = ''; if (!beatmap || beatmap.hitObjects.length === 0) return; const cfg = OBSTACLE_DIFFICULTY_CONFIG[resolveObstacleDifficulty(beatmap)]; currentTrackConfig = { ...cfg, resolvedDifficulty: resolveObstacleDifficulty(beatmap) }; let cx = 0, cy = 0, di = 0, pt = 0, lot = -Infinity; const seed = hashString(`${beatmap.filename}|${beatmap.title}|${beatmap.version}|${currentTrackConfig.resolvedDifficulty}|${beatmap.hitObjects.length}`); const rng = createSeededRandom(seed); trackPoints.push({ x: 0, y: 0, time: 0, index: -1 }); const BACKWARD_EXTEND_MS = 5000; const bwDist = LINE_SPEED * BACKWARD_EXTEND_MS / 1000; const bd0 = DIRS[0]; laneSegments.push({ x1: -bd0.dx * bwDist, y1: -bd0.dy * bwDist, x2: 0, y2: 0, width: cfg.laneWidth, angle: bd0.angle, index: -1, startTime: -BACKWARD_EXTEND_MS, endTime: 0, length: bwDist }); for (let i = 0; i < beatmap.hitObjects.length; i++) { const obj = beatmap.hitObjects[i], d = DIRS[di], dt = Math.max(0, (obj.time - pt) / 1000), dist = LINE_SPEED * dt; const sx = cx, sy = cy, ex = cx + d.dx * dist, ey = cy + d.dy * dist; if (dist > 1) { laneSegments.push({ x1: sx, y1: sy, x2: ex, y2: ey, width: cfg.laneWidth, angle: d.angle, index: i, startTime: pt, endTime: obj.time, length: dist }); trackPoints.push({ x: ex, y: ey, time: obj.time, index: i }); } if (dist > 25 && obj.time - lot >= cfg.minSpacingMs && rng() < cfg.obstacleProbability) { const t = 0.25 + rng() * 0.5, bx = sx + (ex - sx) * t, by = sy + (ey - sy) * t, px = -d.dy, py = d.dx, side = rng() < 0.5 ? -1 : 1, offset = side * (cfg.laneWidth / 2 + cfg.sideGap + rng() * 22), size = cfg.obstacleSize * (0.85 + rng() * 0.35); obstacles.push({ x: bx + px * offset, y: by + py * offset, size, angle: d.angle, kind: isBigNote(obj.type) ? 'big' : 'normal' }); lot = obj.time; } cx = ex; cy = ey; di = 1 - di; pt = obj.time; } if (beatmap.hitObjects.length > 0) { const lo = beatmap.hitObjects[beatmap.hitObjects.length - 1], ld = DIRS[di], et = 2000, ed = LINE_SPEED * (et / 1000), ex = cx + ld.dx * ed, ey = cy + ld.dy * ed; laneSegments.push({ x1: cx, y1: cy, x2: ex, y2: ey, width: currentTrackConfig.laneWidth, angle: ld.angle, index: beatmap.hitObjects.length, startTime: lo.time, endTime: lo.time + et, length: ed }); trackPoints.push({ x: ex, y: ey, time: lo.time + et, index: beatmap.hitObjects.length }); } updateObstacleDifficultyDesc(); }
-      const OBSTACLE_DIFFICULTY_CONFIG = { easy: { label: '不难', laneWidth: 130, obstacleProbability: 0.10, obstacleSize: 15, sideGap: 42, minSpacingMs: 900 }, normal: { label: '还行', laneWidth: 105, obstacleProbability: 0.18, obstacleSize: 19, sideGap: 34, minSpacingMs: 650 }, hard: { label: '好难', laneWidth: 82, obstacleProbability: 0.30, obstacleSize: 23, sideGap: 26, minSpacingMs: 450 }, extreme: { label: '贼难', laneWidth: 62, obstacleProbability: 0.42, obstacleSize: 27, sideGap: 18, minSpacingMs: 300 }, washpool: { label: '洗笔池', laneWidth: SQUARE_SIZE * 1.25, obstacleProbability: 0.50, obstacleSize: 29, sideGap: 14, minSpacingMs: 260 } };
+      const OBSTACLE_DIFFICULTY_CONFIG = { easy: { label: '好粗', laneWidth: 130, obstacleProbability: 0.10, obstacleSize: 15, sideGap: 42, minSpacingMs: 900 }, normal: { label: '粗', laneWidth: 105, obstacleProbability: 0.18, obstacleSize: 19, sideGap: 34, minSpacingMs: 650 }, hard: { label: '细', laneWidth: 82, obstacleProbability: 0.30, obstacleSize: 23, sideGap: 26, minSpacingMs: 450 }, extreme: { label: '好细', laneWidth: 62, obstacleProbability: 0.42, obstacleSize: 27, sideGap: 18, minSpacingMs: 300 }, washpool: { label: '洗笔池', laneWidth: SQUARE_SIZE * 1.25, obstacleProbability: 0.50, obstacleSize: 29, sideGap: 14, minSpacingMs: 260 } };
       function hashString(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
       function createSeededRandom(seed) { let a = seed >>> 0; return function () { a += 0x6D2B79F5; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
       function resolveObstacleDifficulty(beatmap) { if (obstacleDifficulty !== 'auto') return obstacleDifficulty; const info = getBeatmapDensityInfo(beatmap); if (info.notesPerSecond < 2.2 && info.noteCount < 450) return 'easy'; if (info.notesPerSecond < 4.0 && info.noteCount < 800) return 'normal'; if (info.notesPerSecond < 6.2 && info.noteCount < 1300) return 'hard'; return 'extreme'; }
@@ -1985,7 +1932,8 @@ kiai time的背景亮度略微降低
       function getPointSegmentDistance(px, py, seg) { const vx = seg.x2 - seg.x1, vy = seg.y2 - seg.y1, wx = px - seg.x1, wy = py - seg.y1; const lenSq = vx * vx + vy * vy; if (lenSq <= 0.0001) return { distance: Math.hypot(px - seg.x1, py - seg.y1), t: 0, rawT: 0, seg }; const rawT = (wx * vx + wy * vy) / lenSq, t = Math.max(0, Math.min(1, rawT)), projX = seg.x1 + vx * t, projY = seg.y1 + vy * t; return { distance: Math.hypot(px - projX, py - projY), t, rawT, seg, projX, projY }; }
       function triggerBoundaryCrash(info) {
         if (gameFinished) return; gameFinished = true; lastResultReason = 'boundary'; spawnBoundaryCrashEffects(squareX, squareY, info);
-        if (lastReviveCrown) { canRevive = true; reviveBtn.style.display = 'block'; }
+        if (lastReviveCrown) { canRevive = true; }
+        updateResultActionLayout();
         showResults(getCurrentProgressPercent()); drawFrame();
       }
       function spawnBoundaryCrashEffects(x, y, info) { boundaryCrashEffects = []; const seed = hashString(`${x.toFixed(2)}|${y.toFixed(2)}|${performance.now().toFixed(0)}`); const rng = createSeededRandom(seed); const ba = info && info.seg ? info.seg.angle : currentDir.angle; for (let i = 0; i < 24; i++) { const sp = (rng() - 0.5) * Math.PI * 1.35, speed = 80 + rng() * 260, angle = ba + Math.PI + sp; boundaryCrashEffects.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, size: 4 + rng() * 9, rot: rng() * Math.PI, vr: (rng() - 0.5) * 9, startTime: performance.now(), duration: 760 + rng() * 420 }); } }
@@ -1998,6 +1946,7 @@ kiai time的背景亮度略微降低
       autoplayExitBtn.addEventListener('click', e => { e.stopPropagation(); if (autoplayMode) exitAutoplay(); else exitFreeMode(); });
       reviveBtn.addEventListener('click', e => { e.stopPropagation(); reviveAtCrown(); });
       helpBtn.addEventListener('click', e => { e.stopPropagation(); helpModal.classList.add('active'); });
+      if (helpTopBtn) helpTopBtn.addEventListener('click', e => { e.stopPropagation(); returnToHome(); });
       if (menuBtn) menuBtn.addEventListener('click', e => { e.stopPropagation(); if (!gameStarted && moreModal) moreModal.classList.add('active'); });
       loadBtn.addEventListener('click', e => { e.stopPropagation(); importModal.classList.add('active'); syncObstacleDifficultySelects(obstacleDifficulty); importStatus.textContent = ''; pendingOsuContent = null; pendingAudioFile = null; osuFileInput.value = ''; audioFileInput.value = ''; oszFileInput.value = ''; });
       introImportBtn.addEventListener('click', e => { e.stopPropagation(); importModal.classList.add('active'); syncObstacleDifficultySelects(obstacleDifficulty); importStatus.textContent = ''; pendingOsuContent = null; pendingAudioFile = null; osuFileInput.value = ''; audioFileInput.value = ''; oszFileInput.value = ''; });
@@ -2010,7 +1959,8 @@ kiai time的背景亮度略微降低
       document.getElementById('close-help-btn').addEventListener('click', () => helpModal.classList.remove('active'));
       document.getElementById('close-more-btn').addEventListener('click', () => { if (moreModal) moreModal.classList.remove('active'); });
       if (moreModal) moreModal.addEventListener('click', e => { if (e.target === moreModal) moreModal.classList.remove('active'); });
-      delayInput.addEventListener('change', () => { if (!gameStarted) { delayMs = getDelayMs(); const dOff = LINE_SPEED * delayMs / 1000; currentDir = DIR_UP_RIGHT; squareX = -currentDir.dx * dOff; squareY = -currentDir.dy * dOff; cameraX = 0; cameraY = 0; trailPoints = [{ x: squareX, y: squareY }]; updateInfoText(); drawFrame(); } });
+      if (uiModeBtn) uiModeBtn.addEventListener('click', e => { e.stopPropagation(); if (!gameStarted) toggleUiMode(); });
+      delayInput.addEventListener('change', () => { if (!gameStarted) { delayMs = getDelayMs(); savePreference(STORAGE_KEYS.delayMs, delayMs); const dOff = LINE_SPEED * delayMs / 1000; currentDir = DIR_UP_RIGHT; squareX = -currentDir.dx * dOff; squareY = -currentDir.dy * dOff; cameraX = 0; cameraY = 0; trailPoints = [{ x: squareX, y: squareY }]; updateInfoText(); drawFrame(); } });
       if (reviveBtn) reviveBtn.textContent = IS_MOBILE_UI ? '复活' : '复活 (F)';
       if (resultRestartBtn) resultRestartBtn.textContent = IS_MOBILE_UI ? '重来' : '重来 (R)';
       if (pauseBtn) pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (P)';
@@ -2022,7 +1972,9 @@ kiai time的背景亮度略微降低
       async function handleObstacleDifficultyChange(value) { syncObstacleDifficultySelects(value); if (beatmapData) { if (gameStarted && !gameFinished) { infoText.textContent = '请先重开或结束当前游戏后再切换障碍难度'; return; } if (preparingTrack) return; await prepareSelectedBeatmapAsync(beatmapData); resetGame(); updateInfoText(); drawFrame(); } }
       if (obstacleDifficultySelect) obstacleDifficultySelect.addEventListener('change', e => handleObstacleDifficultyChange(e.target.value));
       if (obstacleDifficultyLiveSelect) obstacleDifficultyLiveSelect.addEventListener('change', e => handleObstacleDifficultyChange(e.target.value));
+      loadPreferences();
       syncObstacleDifficultySelects('auto');
+      applyUiMode();
       const resizeObserver = new ResizeObserver(() => setControlsHidden(controls && controls.classList.contains('hidden')));
       resizeObserver.observe(canvasArea);
       resizeCanvas();
