@@ -742,12 +742,15 @@
     <div id="more-panel">
       <h3>更多</h3>
       <div id="more-content">
-        <p>开发：DLmember  UnsignedWRLD  不再永夜
+        <p>开发：DLmember   UnsignedWRLD   不再永夜
 网站：不再永夜
-测试：地下老铁  风暴是只喵  Neon  irryan  AirRain-小五  潺水如溪兮  zifya  用户306806134327改名  等等
+测试：地下老铁   风暴是只喵   Neon   irryan   AirRain-小五   潺水如溪兮   zifya   用户306806134327改名    等等
 有问题目前可以先去B站 BV11xj66vEEz 来反映哦
 
 更新记录：
+2026/6/23 beta0.3.2
+修复了手机上引导框太大的bug
+
 2026/6/23 beta0.3.1
 更改电脑端键位，现在电脑端可以使用任意字母键来操控，期待你们开发出更高上限的玩法(≧∇≦)ﾉ
 修复了在加载谱面时点击会导致音乐错乱的bug
@@ -838,15 +841,16 @@ kiai time的背景亮度略微降低
       let canvasWidth, canvasHeight;
       const LINE_SPEED = 240;
       const SQUARE_SIZE = 18;
+      const IS_MOBILE_UI = /Android|iPhone|iPad|iPod|HarmonyOS|Mobile/i.test(navigator.userAgent || '') || ('ontouchstart' in window && Math.min(window.innerWidth, window.innerHeight) < 900);
       let baseLineColor = '#00b8d4';
-      const GUIDE_BOX_SIZE = (SQUARE_SIZE + 10) * 1.2;
+      const GUIDE_BOX_SIZE = IS_MOBILE_UI ? (SQUARE_SIZE + 10) : ((SQUARE_SIZE + 10) * 1.2);
       const HIT_RANGE_MULTIPLIER = 1.5;
       const HEAD_SCREEN_RATIO = 0.35;
       const MAX_RENDER_DPR = 1.25;
       let showGuideBoxes = false;
       let rockMode = false;
       let autoplayMode = false;
-      const VERSION_TEXT = 'beta0.3.1';
+      const VERSION_TEXT = 'beta0.3.2';
       const STORAGE_KEYS = { uiMode: 'html-line-ui-mode', delayMs: 'html-line-delay-ms' };
       let uiMode = 'tech';
 
@@ -861,7 +865,6 @@ kiai time的背景亮度略微降低
       const DIR_UP_RIGHT = { dx: 1, dy: -1, angle: -Math.PI / 4 };
       const DIR_UP_LEFT = { dx: -1, dy: -1, angle: -Math.PI * 3 / 4 };
       const DIRS = [DIR_UP_RIGHT, DIR_UP_LEFT];
-      const IS_MOBILE_UI = /Android|iPhone|iPad|iPod|HarmonyOS|Mobile/i.test(navigator.userAgent || '') || ('ontouchstart' in window && Math.min(window.innerWidth, window.innerHeight) < 900);
 
       let currentDir = DIR_UP_RIGHT;
       let squareX = 0, squareY = 0;
