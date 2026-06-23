@@ -362,6 +362,32 @@
       font-size: 13px; color: var(--text-2); line-height: 1.85; text-align: left;
     }
     #help-panel a { color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(56,232,255,0.4); }
+    .help-links {
+      display: flex;
+      gap: 10px;
+      margin: 14px 0 4px;
+    }
+    .help-links a {
+      flex: 1 1 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 12px;
+      color: #fff;
+      background: rgba(56,232,255,0.08);
+      border: 1px solid rgba(56,232,255,0.32);
+      border-bottom: 1px solid rgba(56,232,255,0.32);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 1px;
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .help-links a:hover {
+      background: rgba(56,232,255,0.14);
+      border-color: rgba(56,232,255,0.54);
+    }
     #more-panel p { white-space: pre-line; margin: 0; min-height: 0; }
     #more-panel { display: flex; flex-direction: column; overflow: hidden; }
     #more-content { flex: 1 1 auto; min-height: 160px; max-height: calc(80vh - 120px); overflow-y: auto; margin-top: 6px; padding-right: 6px; }
@@ -696,15 +722,19 @@
       <h3>游戏说明</h3>
       <p>
         <br />跳舞的线模拟器，可以导入osu!谱面来生成道路，尤其推荐osu!taiko谱面，可以在<a href="https://osu.sayobot.cn/home" target="_blank">
-          https://osu.sayobot.cn/home</a>下载谱面。搜索前最好筛选谱面类型为Taiko，不推荐另外三种类型的谱面。下载谱面的时候记得选“无视频”或“mini”。如果是电脑端，按鼠标左键/空格或↑来控制线，R键重开，P键暂停。
+          https://osu.sayobot.cn/home</a>下载谱面。搜索前最好筛选谱面类型为Taiko，不推荐另外三种类型的谱面。下载谱面的时候记得选“无视频”或“mini”。如果是电脑端，按鼠标、空格、↑、任意字母键来控制线，←重开，↓暂停。
           <br /><br />
           原作：跳舞的线 Cheetah Mobile。
           <br /><br />
-          由于浏览器本身机制，如果浏览器长时间失去焦点，再回来玩时会让音频播放慢半拍……这个咱目前实在是不知道该如何修复，只能麻烦您在玩的时候尽可能别长时间让浏览器失焦了orz。
+          由于浏览器本身机制，如果长时间不碰游戏，再回来玩时会让音频播放慢半拍……这个咱目前实在是不知道该如何修复，只能麻烦您在玩的时候尽可能别长时间放置游戏了orz。
           <br /><br />
           DLmember&UnsignedWRLD制作，使用DeepSeek和Codex。
           <br /><br />
       </p>
+      <div class="help-links">
+        <a href="https://osu.ppy.sh" target="_blank" rel="noopener noreferrer">osu!官网</a>
+        <a href="https://osu.sayobot.cn/home" target="_blank" rel="noopener noreferrer">osu!镜像站（推荐）</a>
+      </div>
       <button id="close-help-btn">关闭</button>
     </div>
   </div>
@@ -718,6 +748,11 @@
 有问题目前可以先去B站 BV11xj66vEEz 来反映哦
 
 更新记录：
+2026/6/23 beta0.3.1
+更改电脑端键位，现在电脑端可以使用任意字母键来操控，期待你们开发出更高上限的玩法(≧∇≦)ﾉ
+修复了在加载谱面时点击会导致音乐错乱的bug
+略微放大了引导框和钻石破碎效果
+
 2026/6/22 beta0.3
 新增一套科技ui，改善了默认ui，并且玩家可以自选ui
 现在玩家选择的ui和调的延迟都会被保存在浏览器本地
@@ -804,14 +839,14 @@ kiai time的背景亮度略微降低
       const LINE_SPEED = 240;
       const SQUARE_SIZE = 18;
       let baseLineColor = '#00b8d4';
-      const GUIDE_BOX_SIZE = SQUARE_SIZE + 10;
+      const GUIDE_BOX_SIZE = (SQUARE_SIZE + 10) * 1.2;
       const HIT_RANGE_MULTIPLIER = 1.5;
       const HEAD_SCREEN_RATIO = 0.35;
       const MAX_RENDER_DPR = 1.25;
       let showGuideBoxes = false;
       let rockMode = false;
       let autoplayMode = false;
-      const VERSION_TEXT = 'beta0.3';
+      const VERSION_TEXT = 'beta0.3.1';
       const STORAGE_KEYS = { uiMode: 'html-line-ui-mode', delayMs: 'html-line-delay-ms' };
       let uiMode = 'tech';
 
@@ -874,6 +909,7 @@ kiai time的背景亮度略微降低
       let resultFlashStartTime = 0, resultFlashDuration = 300;
       let fullCollectGoldShiftStart = 0, fullCollectGoldShiftDuration = 2000;
       let preparingTrack = false;
+      let inputLockedUntilReady = false;
       let trackRenderCache = null, trackRenderCacheKey = '';
 
       let kiaiPeriods = [];
@@ -1347,9 +1383,10 @@ kiai time的背景亮度略微降低
         fullCollectGoldShiftStart = 0;
         setControlsHidden(false);
         resetMusicReactiveValues(); hitCount = 0;
-        resultPanel.classList.remove('active'); pauseOverlay.classList.remove('active'); pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (P)';
+        resultPanel.classList.remove('active'); pauseOverlay.classList.remove('active'); pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (↓)';
         updateResultActionLayout();
         updateAutoplayVisibility(); updateHelpVisibility();
+        inputLockedUntilReady = false;
         if (beatmapData) {
           guideBoxes = generateGuideBoxes(beatmapData); totalBoxes = guideBoxes.length;
           progressMarkers = generateProgressMarkers(beatmapData);
@@ -1392,7 +1429,7 @@ kiai time的背景亮度略微降低
         gameTimeOffset = reviveTimeMs;
         gameStarted = false; gameStartTime = 0; lineMoving = false;
         delayMs = 0; totalPauseTime = 0; pauseStartTime = 0; pausedAudioTime = 0; audioResumeAnchorMs = reviveTimeMs;
-        pauseOverlay.classList.remove('active'); pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停(P)';
+          pauseOverlay.classList.remove('active'); pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (↓)';
         pauseAudioPlayback(); seekAudioToMs(reviveTimeMs); audioEndedByPlayback = false;
         kiaiTransitionFactor = getCurrentKiaiFactor(reviveTimeMs);
         kiaiSquareDrawIdx = 0;
@@ -1410,7 +1447,7 @@ kiai time的背景亮度略微降低
           }
           const obsText = currentTrackConfig ? ` | 路宽: ${currentTrackConfig.label}` : '';
           infoText.textContent = `${beatmapData.artist} - ${beatmapData.title} [${beatmapData.version}]${modeText}${autoText} | 钻石: ${collectedDiamondSet.size}/10 皇冠: ${collectedCrownSet.size}/3${obsText}`;
-        } else { infoText.textContent = IS_MOBILE_UI ? ('点击屏幕以开始' + modeText + autoText) : ('点击屏幕以开始 | 空格或上箭头转弯 | R 重开 | F 复活 | P 暂停' + modeText + autoText); }
+        } else { infoText.textContent = IS_MOBILE_UI ? ('点击屏幕以开始' + modeText + autoText) : ('点击屏幕以开始 | 字母/符号键或空格操控 | ← 重开 | → 复活 | ↓ 暂停' + modeText + autoText); }
       }
 
       function toggleRockMode() { if (gameStarted && !gameFinished) return; rockMode = !rockMode; rockBtn.textContent = rockMode ? '摇滚模式: 开' : '摇滚模式: 关'; rockBtn.classList.toggle('active', rockMode); updateInfoText(); resetGame(); }
@@ -1442,7 +1479,7 @@ kiai time的背景亮度略微降低
           const resumeNow = performance.now();
           totalPauseTime += resumeNow - pauseStartTime;
           pauseOverlay.classList.remove('active');
-          pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (P)';
+          pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (↓)';
           if ((audioElement || canUseDecodedAudio()) && beatmapData) {
             startAudioPlaybackFromMs(audioResumeAnchorMs).catch(() => { });
           }
@@ -1451,7 +1488,7 @@ kiai time的背景亮度略微降低
       }
 
       function startGame() {
-        if (preparingTrack || gameStarted) return;
+        if (preparingTrack || inputLockedUntilReady || gameStarted) return;
         gameStarted = true; gameStartTime = performance.now();
         lineMoving = true; gameFinished = false; paused = false; totalPauseTime = 0;
         cumulativeScale = 1; cumulativeRotation = 0; bigEffectAnim = null; bigNoteSequence = 0;
@@ -1462,7 +1499,7 @@ kiai time的背景亮度略微降低
         setControlsHidden(true);
         resetMusicReactiveValues();
         for (const box of guideBoxes) box._autoTriggered = false;
-        resultPanel.classList.remove('active'); pauseOverlay.classList.remove('active'); pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (P)';
+        resultPanel.classList.remove('active'); pauseOverlay.classList.remove('active'); pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (↓)';
         reviveBtn.style.display = 'none';
         kiaiTransitionFactor = 0;
         wasInsideTrack = false;
@@ -1684,7 +1721,7 @@ kiai time的背景亮度略微降低
         for (const c of crowns) { if (!isCrownActuallyCollected(c) || !isWorldPointInViewport(c.x, c.y, viewport)) continue; const sc = worldToScreen(c.x, c.y); if (!isScreenPointInView(sc.x, sc.y, 300)) continue; const sideOffset = c.side * (currentTrackConfig ? currentTrackConfig.laneWidth / 2 + 40 : 60); drawCrownEmoji(sc.x + sideOffset, sc.y, crownSize); }
         for (const c of crowns) { if (isCrownCollected(c) || !isWorldPointInViewport(c.x, c.y, viewport)) continue; const sc = worldToScreen(c.x, c.y); if (!isScreenPointInView(sc.x, sc.y, 180)) continue; drawCrownEmoji(sc.x, sc.y, crownSize); }
         for (const d of diamonds) { if (isDiamondCollected(d) || !isWorldPointInViewport(d.x, d.y, viewport)) continue; const sc = worldToScreen(d.x, d.y); if (!isScreenPointInView(sc.x, sc.y, 100)) continue; drawHexagon(sc.x, sc.y, itemSize / 2, currentLineColor, (now % 2500) / 2500 * Math.PI * 2); }
-        for (let i = diamondEffects.length - 1; i >= 0; i--) { const de = diamondEffects[i]; const elapsed = now - de.startTime; if (elapsed > de.duration) { diamondEffects.splice(i, 1); continue; } const progress = elapsed / de.duration; const sc = worldToScreen(de.x, de.y); const alpha = 1 - progress; for (let j = 0; j < 6; j++) { const angle = Math.PI / 3 * j - Math.PI / 6; const dist = SQUARE_SIZE * 0.7 * progress; const px = sc.x + Math.cos(angle) * dist; const py = sc.y + Math.sin(angle) * dist; ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = currentLineColor; ctx.fillRect(px - 2, py - 2, 4, 4); ctx.restore(); } const dotDist = Math.max(w, h) * 0.33 * progress; const dotAngle = de.angle || 0; ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = '#fff'; ctx.shadowColor = '#fff'; ctx.shadowBlur = 12 * alpha; ctx.beginPath(); ctx.arc(sc.x + Math.cos(dotAngle) * dotDist, sc.y + Math.sin(dotAngle) * dotDist, 6 * alpha, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
+        for (let i = diamondEffects.length - 1; i >= 0; i--) { const de = diamondEffects[i]; const elapsed = now - de.startTime; if (elapsed > de.duration) { diamondEffects.splice(i, 1); continue; } const progress = elapsed / de.duration; const sc = worldToScreen(de.x, de.y); const alpha = 1 - progress; for (let j = 0; j < 6; j++) { const angle = Math.PI / 3 * j - Math.PI / 6; const dist = SQUARE_SIZE * 0.7 * progress; const px = sc.x + Math.cos(angle) * dist; const py = sc.y + Math.sin(angle) * dist; ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = currentLineColor; ctx.fillRect(px - 4, py - 4, 8, 8); ctx.restore(); } const dotDist = Math.max(w, h) * 0.33 * progress; const dotAngle = de.angle || 0; ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = '#fff'; ctx.shadowColor = '#fff'; ctx.shadowBlur = 12 * alpha; ctx.beginPath(); ctx.arc(sc.x + Math.cos(dotAngle) * dotDist, sc.y + Math.sin(dotAngle) * dotDist, 12 * alpha, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
         for (let i = crownEffects.length - 1; i >= 0; i--) {
           const ce = crownEffects[i]; const elapsed = now - ce.startTime;
           if (elapsed > ce.duration) { crownEffects.splice(i, 1); continue; }
@@ -1779,6 +1816,7 @@ kiai time的背景亮度略微降低
       function showBeatmapSelect() { beatmapList.innerHTML = ''; const list = importedBeatmaps; if (list.length === 0) { beatmapList.innerHTML = '<p style="text-align:center;color:rgba(255,255,255,0.4);">未找到谱面，请先导入 .osz 或 .osu 文件</p>'; } for (const bm of list) { const div = document.createElement('div'); div.className = 'beatmap-item'; if (beatmapData && bm.filename === beatmapData.filename && bm.version === beatmapData.version) div.classList.add('current'); const modeLabel = bm.mode === 1 ? 'Taiko' : (bm.mode === 0 ? 'osu!' : '模式' + bm.mode); const densityInfo = getBeatmapDensityInfo(bm); const densityText = densityInfo.notesPerSecond > 0 ? densityInfo.notesPerSecond.toFixed(1) + ' 次/秒' : '无数据'; div.innerHTML = `<div class="version">${bm.version || 'Unknown'} ${beatmapData && bm.filename === beatmapData.filename && bm.version === beatmapData.version ? '👈 当前' : ''}</div><div class="meta">${bm.artist || 'Unknown'} - ${bm.title || 'Unknown'}</div><div class="notes">音符: ${bm.hitObjects.length} | ${bm.audioBlob ? '🎵 ' + (bm.audioFileName || '有音频') : '🔇 无音频'} | ${modeLabel} <span class="density-info">| 密度: ${densityText}</span></div>`; div.addEventListener('click', () => selectBeatmap(bm)); beatmapList.appendChild(div); } beatmapSelect.classList.add('active'); }
       async function selectBeatmap(beatmap) {
         if (preparingTrack) return;
+        inputLockedUntilReady = true;
         beatmapData = beatmap; guideBoxes = generateGuideBoxes(beatmapData); totalBoxes = guideBoxes.length; progressMarkers = generateProgressMarkers(beatmapData); kiaiSquares = generateKiaiSquares(beatmapData, guideBoxes); generateCollectibles(beatmapData); kiaiPeriods = beatmap.kiaiPeriods || []; kiaiTransitionFactor = 0; beatmapSelect.classList.remove('active');
         releaseAudioResources();
         if (beatmap.audioBlob) {
@@ -1938,9 +1976,15 @@ kiai time的背景亮度略微降低
       }
       function spawnBoundaryCrashEffects(x, y, info) { boundaryCrashEffects = []; const seed = hashString(`${x.toFixed(2)}|${y.toFixed(2)}|${performance.now().toFixed(0)}`); const rng = createSeededRandom(seed); const ba = info && info.seg ? info.seg.angle : currentDir.angle; for (let i = 0; i < 24; i++) { const sp = (rng() - 0.5) * Math.PI * 1.35, speed = 80 + rng() * 260, angle = ba + Math.PI + sp; boundaryCrashEffects.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, size: 4 + rng() * 9, rot: rng() * Math.PI, vr: (rng() - 0.5) * 9, startTime: performance.now(), duration: 760 + rng() * 420 }); } }
 
-      canvas.addEventListener('mousedown', e => { e.preventDefault(); if (preparingTrack) return; if (performance.now() < ignoreMouseUntil) return; if (gameFinished) { return; } if (paused) { togglePause(); return; } if (!gameStarted) startGame(); else if (!autoplayMode) triggerTurn(); });
-      canvas.addEventListener('touchstart', e => { e.preventDefault(); if (preparingTrack) return; if (gameFinished) { return; } if (paused) { ignoreMouseUntil = performance.now() + 700; togglePause(); return; } if (!gameStarted) { startGame(); } else if (!autoplayMode) triggerTurn(); }, { passive: false });
-      document.addEventListener('keydown', e => { if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); if (preparingTrack) return; if (gameFinished) { return; } if (paused) { togglePause(); return; } if (!gameStarted) startGame(); else if (!autoplayMode) triggerTurn(); } if (e.code === 'KeyR') { e.preventDefault(); if (animFrameId) cancelAnimationFrame(animFrameId); resetGame(); } if (e.code === 'KeyP') { e.preventDefault(); togglePause(); } if (e.code === 'KeyF') { e.preventDefault(); if (canRevive && lastReviveCrown && gameFinished) reviveAtCrown(); } });
+      canvas.addEventListener('mousedown', e => { e.preventDefault(); if (preparingTrack || inputLockedUntilReady) return; if (performance.now() < ignoreMouseUntil) return; if (gameFinished) { return; } if (paused) { togglePause(); return; } if (!gameStarted) startGame(); else if (!autoplayMode) triggerTurn(); });
+      canvas.addEventListener('touchstart', e => { e.preventDefault(); if (preparingTrack || inputLockedUntilReady) return; if (gameFinished) { return; } if (paused) { ignoreMouseUntil = performance.now() + 700; togglePause(); return; } if (!gameStarted) { startGame(); } else if (!autoplayMode) triggerTurn(); }, { passive: false });
+      document.addEventListener('keydown', e => {
+        const turnKeys = new Set(['Space','ArrowUp','KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight','Backslash','KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote','KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash']);
+        if (turnKeys.has(e.code)) { e.preventDefault(); if (preparingTrack || inputLockedUntilReady) return; if (gameFinished) { return; } if (paused) { togglePause(); return; } if (!gameStarted) startGame(); else if (!autoplayMode) triggerTurn(); return; }
+        if (e.code === 'ArrowLeft') { e.preventDefault(); if (animFrameId) cancelAnimationFrame(animFrameId); resetGame(); return; }
+        if (e.code === 'ArrowDown') { e.preventDefault(); togglePause(); return; }
+        if (e.code === 'ArrowRight') { e.preventDefault(); if (canRevive && lastReviveCrown && gameFinished) reviveAtCrown(); }
+      });
       pauseBtn.addEventListener('click', e => { e.stopPropagation(); togglePause(); });
       autoplayBtn.addEventListener('click', e => { e.stopPropagation(); toggleAutoplay(); });
       autoplayExitBtn.addEventListener('click', e => { e.stopPropagation(); if (autoplayMode) exitAutoplay(); else exitFreeMode(); });
@@ -1961,9 +2005,9 @@ kiai time的背景亮度略微降低
       if (moreModal) moreModal.addEventListener('click', e => { if (e.target === moreModal) moreModal.classList.remove('active'); });
       if (uiModeBtn) uiModeBtn.addEventListener('click', e => { e.stopPropagation(); if (!gameStarted) toggleUiMode(); });
       delayInput.addEventListener('change', () => { if (!gameStarted) { delayMs = getDelayMs(); savePreference(STORAGE_KEYS.delayMs, delayMs); const dOff = LINE_SPEED * delayMs / 1000; currentDir = DIR_UP_RIGHT; squareX = -currentDir.dx * dOff; squareY = -currentDir.dy * dOff; cameraX = 0; cameraY = 0; trailPoints = [{ x: squareX, y: squareY }]; updateInfoText(); drawFrame(); } });
-      if (reviveBtn) reviveBtn.textContent = IS_MOBILE_UI ? '复活' : '复活 (F)';
-      if (resultRestartBtn) resultRestartBtn.textContent = IS_MOBILE_UI ? '重来' : '重来 (R)';
-      if (pauseBtn) pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (P)';
+      if (reviveBtn) reviveBtn.textContent = IS_MOBILE_UI ? '复活' : '复活 (→)';
+      if (resultRestartBtn) resultRestartBtn.textContent = IS_MOBILE_UI ? '重来' : '重来 (←)';
+      if (pauseBtn) pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (↓)';
       delayInput.addEventListener('input', () => { let v = delayInput.value.replace(/[^\d-]/g, ''); const fd = v.indexOf('-'); if (fd > 0) v = v.replace(/-/g, ''); else if (fd === 0) v = '-' + v.slice(1).replace(/-/g, ''); delayInput.value = v; });
       volumeInput.addEventListener('input', applyAudioVolume);
       oszFileInput.addEventListener('change', function (e) { if (e.target.files[0]) { processOszFile(e.target.files[0]); oszFileInput.value = ''; } });
