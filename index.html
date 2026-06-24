@@ -592,6 +592,65 @@
       background: rgba(255,216,111,0.1);
       border-color: rgba(255,216,111,0.45);
     }
+    body.ui-default .beatmap-item .version,
+    body.ui-default .beatmap-item .meta,
+    body.ui-default .beatmap-item .notes,
+    body.ui-default #preload-title,
+    body.ui-default #preload-detail {
+      font-family: var(--font-cjk);
+      letter-spacing: 0;
+    }
+    body.ui-default .difficulty-card {
+      clip-path: none;
+      border-radius: 14px;
+      background: rgba(63, 65, 92, 0.96);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: none;
+    }
+    body.ui-default .help-links a {
+      clip-path: none;
+      border-radius: 14px;
+      background: rgba(63, 65, 92, 0.96);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: none;
+      color: #fff;
+      font-family: var(--font-cjk);
+      letter-spacing: 0;
+    }
+    body.ui-default .help-links a:hover {
+      background: rgba(75, 78, 108, 0.98);
+      border-color: rgba(255,255,255,0.24);
+    }
+    body.ui-default #preload-panel {
+      clip-path: none;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(48, 50, 72, 0.97), rgba(39, 41, 60, 0.97));
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 20px 50px rgba(8, 9, 20, 0.34);
+      backdrop-filter: blur(10px);
+    }
+    body.ui-default #preload-bar {
+      height: 9px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    body.ui-default #preload-bar-fill {
+      background: linear-gradient(90deg, rgba(173, 178, 255, 0.9), rgba(245, 246, 255, 0.98));
+      box-shadow: none;
+    }
+    body.ui-default #preload-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+    body.ui-default #preload-detail {
+      margin-top: 12px;
+      color: rgba(255,255,255,0.72);
+      font-size: 13px;
+    }
     body.ui-default #result-panel .res-tag {
       background: rgba(255,255,255,0.14);
       color: #fff;
@@ -748,6 +807,9 @@
 有问题目前可以先去B站 BV11xj66vEEz 来反映哦
 
 更新记录：
+2026/6/24 beta0.3.3
+修复了默认ui下有科技ui残留的bug
+
 2026/6/23 beta0.3.2
 修复了手机上引导框太大的bug
 
@@ -850,7 +912,7 @@ kiai time的背景亮度略微降低
       let showGuideBoxes = false;
       let rockMode = false;
       let autoplayMode = false;
-      const VERSION_TEXT = 'beta0.3.2';
+      const VERSION_TEXT = 'beta0.3.3';
       const STORAGE_KEYS = { uiMode: 'html-line-ui-mode', delayMs: 'html-line-delay-ms' };
       let uiMode = 'tech';
 
