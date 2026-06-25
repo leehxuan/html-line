@@ -295,14 +295,16 @@
     #controls button.primary:hover { color: #fff; }
 
     /* 摇滚 / 引导线 开关 LED */
-    #controls button.rock, #controls button.guide-toggle { padding-right: 30px; }
-    #controls button.rock::after, #controls button.guide-toggle::after {
+    #controls button.mod-btn, #controls button.guide-toggle { padding-right: 30px; }
+    #controls button.mod-btn::after, #controls button.guide-toggle::after {
       content: ""; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
       width: 8px; height: 8px; border-radius: 50%; background: #3a4654;
       box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset; transition: all .2s;
     }
-    #controls button.rock.active { border-color: rgba(255,207,92,0.6); color: var(--amber); background: rgba(255,207,92,0.08); }
-    #controls button.rock.active::after { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+    #controls button.mod-btn.active { border-color: rgba(255,207,92,0.6); color: var(--amber); background: rgba(255,207,92,0.08); }
+    #controls button.mod-btn.active::after { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+    #controls button.rock.on { border-color: rgba(56,232,255,0.6); color: var(--cyan); background: rgba(56,232,255,0.08); }
+    #controls button.rock.on::after { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
     #controls button.guide-toggle { color: var(--text-2); }
     #controls button.guide-toggle.on { border-color: rgba(56,232,255,0.6); color: var(--cyan); background: rgba(56,232,255,0.08); }
     #controls button.guide-toggle.on::after { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
@@ -334,13 +336,13 @@
     }
 
     /* ===== 弹窗 ===== */
-    #import-modal, #beatmap-select, #help-modal, #more-modal {
+    #import-modal, #beatmap-select, #help-modal, #more-modal, #mods-modal {
       display: none; position: fixed; inset: 0; z-index: 100;
       background: rgba(3,6,12,0.78); backdrop-filter: blur(3px);
       justify-content: center; align-items: center;
     }
-    #import-modal.active, #beatmap-select.active, #help-modal.active, #more-modal.active { display: flex; }
-    #import-panel, #beatmap-panel, #help-panel, #more-panel {
+    #import-modal.active, #beatmap-select.active, #help-modal.active, #more-modal.active, #mods-modal.active { display: flex; }
+    #import-panel, #beatmap-panel, #help-panel, #more-panel, #mods-panel {
       position: relative;
       background: linear-gradient(180deg, rgba(11,18,32,0.97), rgba(7,12,22,0.97));
       border: 1px solid rgba(56,232,255,0.26);
@@ -349,11 +351,11 @@
       max-height: 82vh; overflow-y: auto; text-align: center;
       clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
     }
-    #import-panel::before, #beatmap-panel::before, #help-panel::before, #more-panel::before {
+    #import-panel::before, #beatmap-panel::before, #help-panel::before, #more-panel::before, #mods-panel::before {
       content: ""; position: absolute; left: 8px; top: 8px; width: 14px; height: 14px;
       border-top: 1.5px solid var(--cyan); border-left: 1.5px solid var(--cyan); pointer-events: none;
     }
-    #import-panel h3, #beatmap-panel h3, #help-panel h3, #more-panel h3 {
+    #import-panel h3, #beatmap-panel h3, #help-panel h3, #more-panel h3, #mods-panel h3 {
       font-size: 16px; letter-spacing: 3px; color: #fff; font-weight: 600;
       border-left: 3px solid var(--cyan); padding-left: 11px; text-align: left;
       margin-bottom: 14px;
@@ -673,7 +675,7 @@
       <button id="pause-btn">暂停</button>
       <button id="autoplay-btn">自动游玩: 关</button>
       <button id="autoplay-exit-btn">退出</button>
-      <button id="help-btn">游戏说明</button>
+      <button id="help-btn">游戏说明（一定要读）</button>
       <button id="help-top-btn">回到首页</button>
       <button id="intro-import-btn">导入谱面</button>
       <div id="pause-overlay"><span>已暂停</span></div>
@@ -781,7 +783,7 @@
       <h3>游戏说明</h3>
       <p>
         <br />跳舞的线模拟器，可以导入osu!谱面来生成道路，尤其推荐osu!taiko谱面，可以在<a href="https://osu.sayobot.cn/home" target="_blank">
-          https://osu.sayobot.cn/home</a>下载谱面。搜索前最好筛选谱面类型为Taiko，不推荐另外三种类型的谱面。下载谱面的时候记得选“无视频”或“mini”。如果是电脑端，按鼠标、空格、↑、任意字母键来控制线，←重开，↓暂停。
+          https://osu.sayobot.cn/home</a>下载谱面。搜索前最好筛选谱面类型为Taiko，实在不行std也行，真的不推荐catch和mania的谱面！下载谱面的时候记得选“无视频”或“mini”。如果是电脑端，按鼠标、空格、↑、任意字母键来控制线，←重开，↓暂停。
           <br /><br />
           原作：跳舞的线 Cheetah Mobile。
           <br /><br />
@@ -807,6 +809,10 @@
 有问题目前可以先去B站 BV11xj66vEEz 来反映哦
 
 更新记录：
+2026/6/24 Beta 0.3.4
+修复了导入catch和mania谱面时会有引导框重叠的bug，但是！咱依旧非常非常不推荐游玩catch和mania的谱，效果真的远远不如taiko和std好
+把百分比往路旁边挪了挪，避免它挡住引导框
+
 2026/6/24 Beta 0.3.3
 修复了默认ui下有科技ui残留的bug
 
@@ -905,14 +911,14 @@ kiai time的背景亮度略微降低
       const SQUARE_SIZE = 18;
       const IS_MOBILE_UI = /Android|iPhone|iPad|iPod|HarmonyOS|Mobile/i.test(navigator.userAgent || '') || ('ontouchstart' in window && Math.min(window.innerWidth, window.innerHeight) < 900);
       let baseLineColor = '#00b8d4';
-      const GUIDE_BOX_SIZE = IS_MOBILE_UI ? (SQUARE_SIZE + 10) : ((SQUARE_SIZE + 10) * 1.2);
+      const GUIDE_BOX_SIZE = IS_MOBILE_UI ? SQUARE_SIZE * 1.2 : (SQUARE_SIZE + 10) * 1.2;
       const HIT_RANGE_MULTIPLIER = 1.5;
       const HEAD_SCREEN_RATIO = 0.35;
       const MAX_RENDER_DPR = 1.25;
       let showGuideBoxes = false;
       let rockMode = false;
       let autoplayMode = false;
-      const VERSION_TEXT = 'Beta 0.3.3';
+      const VERSION_TEXT = 'Beta 0.3.4';
       const STORAGE_KEYS = { uiMode: 'html-line-ui-mode', delayMs: 'html-line-delay-ms' };
       let uiMode = 'tech';
 
@@ -1261,32 +1267,50 @@ kiai time的背景亮度略微降低
         return beatmap;
       }
 
+      function compressHitObjects(hitObjects) {
+        if (!hitObjects || hitObjects.length === 0) return [];
+        const compressed = [];
+        for (const obj of hitObjects) {
+          const last = compressed[compressed.length - 1];
+          if (last && last.time === obj.time) {
+            last.type = (last.type || 0) | (obj.type || 0);
+            last.isBig = isBigNote(last.type) || isBigNote(obj.type);
+            continue;
+          }
+          compressed.push({ time: obj.time, type: obj.type || 0, isBig: isBigNote(obj.type) });
+        }
+        return compressed;
+      }
+
       function generateGuideBoxes(beatmap) {
         const boxes = [];
-        if (beatmap.hitObjects.length === 0) return boxes;
+        const hitObjects = compressHitObjects(beatmap.hitObjects);
+        if (hitObjects.length === 0) return boxes;
         let cx = 0, cy = 0, di = 0; let pt = 0;
-        for (let i = 0; i < beatmap.hitObjects.length; i++) {
-          const ht = beatmap.hitObjects[i].time;
+        for (let i = 0; i < hitObjects.length; i++) {
+          const hitObject = hitObjects[i];
+          const ht = hitObject.time;
           const dt = (ht - pt) / 1000; const d = DIRS[di];
           cx += d.dx * dt * LINE_SPEED; cy += d.dy * dt * LINE_SPEED;
-          boxes.push({ x: cx, y: cy, time: ht, active: true, angle: d.angle, isBig: isBigNote(beatmap.hitObjects[i].type), isFinal: i === beatmap.hitObjects.length - 1 });
+          boxes.push({ x: cx, y: cy, time: ht, active: true, angle: d.angle, isBig: !!hitObject.isBig, isFinal: i === hitObjects.length - 1 });
           di = 1 - di; pt = ht;
         }
         return boxes;
       }
 
       function generateCollectibles(beatmap) {
+        const hitObjects = compressHitObjects(beatmap?.hitObjects || []);
         diamonds = []; crowns = [];
         collectedDiamondSet = new Set(); collectedCrownSet = new Set();
         lostDiamondSet = new Set(); lostCrownSet = new Set();
-        if (!beatmap || beatmap.hitObjects.length === 0) return;
-        const totalDuration = beatmap.hitObjects[beatmap.hitObjects.length - 1].time;
+        if (!beatmap || hitObjects.length === 0) return;
+        const totalDuration = hitObjects[hitObjects.length - 1].time;
         const seed = hashString(`${beatmap.filename}|${beatmap.title}|${beatmap.version}|diamonds`);
         const rng = createSeededRandom(seed);
         for (let i = 0; i < 10; i++) {
           const lo = i * 10 + 1, hi = (i + 1) * 10 - 1;
           const pct = lo + rng() * (hi - lo);
-          const pos = getPositionAtTime(totalDuration * (pct / 100), beatmap.hitObjects);
+          const pos = getPositionAtTime(totalDuration * (pct / 100), hitObjects);
           diamonds.push({ id: 'd' + i, x: pos.x, y: pos.y, time: totalDuration * (pct / 100) });
         }
         const crownSeed = hashString(`${beatmap.filename}|${beatmap.title}|${beatmap.version}|crowns`);
@@ -1294,7 +1318,7 @@ kiai time的背景亮度略微降低
         for (let i = 0; i < 3; i++) {
           const cp = [25, 50, 75][i];
           const pct = cp + (crownRng() - 0.5) * 10;
-          const pos = getPositionAtTime(totalDuration * (pct / 100), beatmap.hitObjects);
+          const pos = getPositionAtTime(totalDuration * (pct / 100), hitObjects);
           const side = crownRng() < 0.5 ? -1 : 1;
           crowns.push({ id: 'c' + i, x: pos.x, y: pos.y, time: totalDuration * (pct / 100), side });
         }
@@ -1318,11 +1342,18 @@ kiai time的背景亮度略微降低
       }
 
       function generateProgressMarkers(beatmap) {
+        const hitObjects = compressHitObjects(beatmap?.hitObjects || []);
         const markers = [];
-        if (beatmap.hitObjects.length === 0) return markers;
-        const td = beatmap.hitObjects[beatmap.hitObjects.length - 1].time;
+        if (hitObjects.length === 0) return markers;
+        const td = hitObjects[hitObjects.length - 1].time;
         if (td <= 0) return markers;
-        for (const pct of [10, 20, 30, 40, 50, 60, 70, 80, 90]) { const pos = getPositionAtTime(td * (pct / 100), beatmap.hitObjects); markers.push({ pct, x: pos.x, y: pos.y }); }
+        const seed = hashString(`${beatmap.filename}|${beatmap.title}|${beatmap.version}|progress-markers`);
+        const rng = createSeededRandom(seed);
+        for (const pct of [10, 20, 30, 40, 50, 60, 70, 80, 90]) {
+          const pos = getPositionAtTime(td * (pct / 100), hitObjects);
+          const side = rng() < 0.5 ? -1 : 1;
+          markers.push({ pct, x: pos.x, y: pos.y, side });
+        }
         return markers;
       }
 
@@ -1515,7 +1546,7 @@ kiai time的背景亮度略微降低
         } else { infoText.textContent = IS_MOBILE_UI ? ('点击屏幕以开始' + modeText + autoText) : ('点击屏幕以开始 | 字母/符号键或空格操控 | ← 重开 | → 复活 | ↓ 暂停' + modeText + autoText); }
       }
 
-      function toggleRockMode() { if (gameStarted && !gameFinished) return; rockMode = !rockMode; rockBtn.textContent = rockMode ? '摇滚模式: 开' : '摇滚模式: 关'; rockBtn.classList.toggle('active', rockMode); updateInfoText(); resetGame(); }
+      function toggleRockMode() { if (gameStarted && !gameFinished) return; rockMode = !rockMode; rockBtn.textContent = rockMode ? '摇滚模式: 开' : '摇滚模式: 关'; rockBtn.classList.toggle('active', rockMode); rockBtn.classList.toggle('on', rockMode); updateInfoText(); resetGame(); }
       function exitAutoplay() { if (!autoplayMode) return; autoplayMode = false; if (gameStarted && animFrameId) { cancelAnimationFrame(animFrameId); } pauseAudioPlayback(); resetGame(); autoplayBtn.textContent = '自动游玩'; autoplayBtn.classList.remove('active'); updateAutoplayVisibility(); updateInfoText(); drawFrame(); }
       function toggleAutoplay() { if (gameStarted && !gameFinished) return; autoplayMode = !autoplayMode; autoplayBtn.textContent = autoplayMode ? '自动游玩: 开' : '自动游玩: 关'; autoplayBtn.classList.toggle('active', autoplayMode); updateAutoplayVisibility(); updateInfoText(); if (!gameStarted) drawFrame(); }
       function returnToHome() {
@@ -1815,7 +1846,16 @@ kiai time的背景亮度略微降低
           ctx.drawImage(csprite, csc.x - cdw / 2, csc.y - cdh / 2 - crownSize * 0.08, cdw, cdh);
           ctx.restore();
         }
-        for (const marker of progressMarkers) { if (!isWorldPointInViewport(marker.x, marker.y, viewport)) continue; const sc = worldToScreen(marker.x, marker.y); ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '60px "PingFang SC","Microsoft YaHei",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(marker.pct + '%', sc.x, sc.y); }
+        for (const marker of progressMarkers) {
+          if (!isWorldPointInViewport(marker.x, marker.y, viewport)) continue;
+          const sc = worldToScreen(marker.x, marker.y);
+          const off = (currentTrackConfig ? currentTrackConfig.laneWidth / 2 + 34 : 60) * (marker.side || 1);
+          ctx.fillStyle = 'rgba(255,255,255,0.5)';
+          ctx.font = '60px "PingFang SC","Microsoft YaHei",sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(marker.pct + '%', sc.x + off, sc.y);
+        }
         const headX = lineMoving ? squareX : trailPoints[0].x; const headY = lineMoving ? squareY : trailPoints[0].y;
         if (showGuideBoxes) { for (const effect of hitEffects) { const elapsed = now - effect.startTime; if (elapsed > effect.duration) continue; const progress = elapsed / effect.duration; const sc = worldToScreen(effect.x, effect.y); const size = GUIDE_BOX_SIZE + progress * 40; ctx.save(); ctx.globalAlpha = 1 - progress; ctx.translate(sc.x, sc.y); ctx.rotate(effect.angle || DIR_UP_RIGHT.angle); ctx.fillStyle = '#ffd700'; ctx.fillRect(-size / 2, -size / 2, size, size); ctx.restore(); } }
         if (showGuideBoxes) { const gdr = getGuideBoxDrawRange(); for (let bi = gdr.first; bi <= gdr.last; bi++) { const box = guideBoxes[bi]; if (!box || !box.active) continue; const sc = worldToScreen(box.x, box.y); if (!isScreenPointInView(sc.x, sc.y, 120)) continue; const halfGB = GUIDE_BOX_SIZE / 2; ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(box.angle); ctx.strokeStyle = box.isFinal ? 'rgba(255,215,0,0.96)' : 'rgba(255,255,255,0.7)'; ctx.lineWidth = box.isFinal ? 3 : 2; ctx.strokeRect(-halfGB, -halfGB, GUIDE_BOX_SIZE, GUIDE_BOX_SIZE); ctx.restore(); } }
@@ -1866,12 +1906,12 @@ kiai time的背景亮度略微降低
       function drawPlayerTrailFast(hx, hy, col) { if (!trailPoints || trailPoints.length === 0) return; if (trailPoints.length < 2 && !lineMoving) return; const zoom = getViewZoom(); const tr = { tx: canvasWidth / getCanvasDpr() / 2, ty: canvasHeight / getCanvasDpr() / 2 + getCameraOffsetY() }; const viewport = getWorldViewport(220); let startIdx = 0; const endIdx = trailPoints.length - 1; while (startIdx < endIdx) { const a = trailPoints[startIdx], b = trailPoints[startIdx + 1]; const segMinX = Math.min(a.x, b.x), segMaxX = Math.max(a.x, b.x), segMinY = Math.min(a.y, b.y), segMaxY = Math.max(a.y, b.y); if (segMaxX >= viewport.minX && segMinX <= viewport.maxX && segMaxY >= viewport.minY && segMinY <= viewport.maxY) break; startIdx++; } if (startIdx >= endIdx && !lineMoving) return; if (startIdx > 2) startIdx = Math.max(0, startIdx - 2); ctx.save(); ctx.translate(tr.tx, tr.ty); ctx.scale(zoom, zoom); ctx.translate(-cameraX, -cameraY); ctx.lineWidth = SQUARE_SIZE; ctx.lineCap = 'butt'; ctx.lineJoin = 'miter'; ctx.miterLimit = 2.0; ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0; ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(trailPoints[startIdx].x, trailPoints[startIdx].y); for (let i = startIdx + 1; i < trailPoints.length; i++) ctx.lineTo(trailPoints[i].x, trailPoints[i].y); if (lineMoving) ctx.lineTo(hx, hy); ctx.stroke(); ctx.restore(); }
       function drawBoundaryCrashEffects(now) { if (!boundaryCrashEffects.length) return; const n = []; for (const p of boundaryCrashEffects) { const e = now - p.startTime; if (e >= p.duration) continue; const t = e / p.duration, sec = e / 1000, x = p.x + p.vx * sec, y = p.y + p.vy * sec + 150 * sec * sec, alpha = Math.max(0, 1 - t); const sc = worldToScreen(x, y); if (!isScreenPointInView(sc.x, sc.y, 120)) { if (t < 0.72) n.push(p); continue; } ctx.save(); ctx.globalAlpha = alpha; ctx.translate(sc.x, sc.y); ctx.rotate(p.rot + p.vr * sec); ctx.fillStyle = '#00e5ff'; ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1; ctx.strokeRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.restore(); n.push(p); } boundaryCrashEffects = n; }
 
-      function generateTrackAndObstaclesFromBeatmap(beatmap) { laneSegments = []; trackPoints = []; obstacles = []; currentTrackConfig = null; trackRenderCache = null; trackRenderCacheKey = ''; if (!beatmap || beatmap.hitObjects.length === 0) return; const cfg = OBSTACLE_DIFFICULTY_CONFIG[resolveObstacleDifficulty(beatmap)]; currentTrackConfig = { ...cfg, resolvedDifficulty: resolveObstacleDifficulty(beatmap) }; let cx = 0, cy = 0, di = 0, pt = 0, lot = -Infinity; const seed = hashString(`${beatmap.filename}|${beatmap.title}|${beatmap.version}|${currentTrackConfig.resolvedDifficulty}|${beatmap.hitObjects.length}`); const rng = createSeededRandom(seed); trackPoints.push({ x: 0, y: 0, time: 0, index: -1 }); const BACKWARD_EXTEND_MS = 5000; const bwDist = LINE_SPEED * BACKWARD_EXTEND_MS / 1000; const bd0 = DIRS[0]; laneSegments.push({ x1: -bd0.dx * bwDist, y1: -bd0.dy * bwDist, x2: 0, y2: 0, width: cfg.laneWidth, angle: bd0.angle, index: -1, startTime: -BACKWARD_EXTEND_MS, endTime: 0, length: bwDist }); for (let i = 0; i < beatmap.hitObjects.length; i++) { const obj = beatmap.hitObjects[i], d = DIRS[di], dt = Math.max(0, (obj.time - pt) / 1000), dist = LINE_SPEED * dt; const sx = cx, sy = cy, ex = cx + d.dx * dist, ey = cy + d.dy * dist; if (dist > 1) { laneSegments.push({ x1: sx, y1: sy, x2: ex, y2: ey, width: cfg.laneWidth, angle: d.angle, index: i, startTime: pt, endTime: obj.time, length: dist }); trackPoints.push({ x: ex, y: ey, time: obj.time, index: i }); } if (dist > 25 && obj.time - lot >= cfg.minSpacingMs && rng() < cfg.obstacleProbability) { const t = 0.25 + rng() * 0.5, bx = sx + (ex - sx) * t, by = sy + (ey - sy) * t, px = -d.dy, py = d.dx, side = rng() < 0.5 ? -1 : 1, offset = side * (cfg.laneWidth / 2 + cfg.sideGap + rng() * 22), size = cfg.obstacleSize * (0.85 + rng() * 0.35); obstacles.push({ x: bx + px * offset, y: by + py * offset, size, angle: d.angle, kind: isBigNote(obj.type) ? 'big' : 'normal' }); lot = obj.time; } cx = ex; cy = ey; di = 1 - di; pt = obj.time; } if (beatmap.hitObjects.length > 0) { const lo = beatmap.hitObjects[beatmap.hitObjects.length - 1], ld = DIRS[di], et = 2000, ed = LINE_SPEED * (et / 1000), ex = cx + ld.dx * ed, ey = cy + ld.dy * ed; laneSegments.push({ x1: cx, y1: cy, x2: ex, y2: ey, width: currentTrackConfig.laneWidth, angle: ld.angle, index: beatmap.hitObjects.length, startTime: lo.time, endTime: lo.time + et, length: ed }); trackPoints.push({ x: ex, y: ey, time: lo.time + et, index: beatmap.hitObjects.length }); } updateObstacleDifficultyDesc(); }
+      function generateTrackAndObstaclesFromBeatmap(beatmap) { laneSegments = []; trackPoints = []; obstacles = []; currentTrackConfig = null; trackRenderCache = null; trackRenderCacheKey = ''; if (!beatmap || beatmap.hitObjects.length === 0) return; const cfg = OBSTACLE_DIFFICULTY_CONFIG[resolveObstacleDifficulty(beatmap)]; const hitObjects = compressHitObjects(beatmap.hitObjects); currentTrackConfig = { ...cfg, resolvedDifficulty: resolveObstacleDifficulty(beatmap) }; let cx = 0, cy = 0, di = 0, pt = 0, lot = -Infinity; const seed = hashString(`${beatmap.filename}|${beatmap.title}|${beatmap.version}|${currentTrackConfig.resolvedDifficulty}|${hitObjects.length}`); const rng = createSeededRandom(seed); trackPoints.push({ x: 0, y: 0, time: 0, index: -1 }); const BACKWARD_EXTEND_MS = 5000; const bwDist = LINE_SPEED * BACKWARD_EXTEND_MS / 1000; const bd0 = DIRS[0]; laneSegments.push({ x1: -bd0.dx * bwDist, y1: -bd0.dy * bwDist, x2: 0, y2: 0, width: cfg.laneWidth, angle: bd0.angle, index: -1, startTime: -BACKWARD_EXTEND_MS, endTime: 0, length: bwDist }); for (let i = 0; i < hitObjects.length; i++) { const obj = hitObjects[i], d = DIRS[di], dt = Math.max(0, (obj.time - pt) / 1000), dist = LINE_SPEED * dt; const sx = cx, sy = cy, ex = cx + d.dx * dist, ey = cy + d.dy * dist; if (dist > 1) { laneSegments.push({ x1: sx, y1: sy, x2: ex, y2: ey, width: cfg.laneWidth, angle: d.angle, index: i, startTime: pt, endTime: obj.time, length: dist }); trackPoints.push({ x: ex, y: ey, time: obj.time, index: i }); } if (dist > 25 && obj.time - lot >= cfg.minSpacingMs && rng() < cfg.obstacleProbability) { const t = 0.25 + rng() * 0.5, bx = sx + (ex - sx) * t, by = sy + (ey - sy) * t, px = -d.dy, py = d.dx, side = rng() < 0.5 ? -1 : 1, offset = side * (cfg.laneWidth / 2 + cfg.sideGap + rng() * 22), size = cfg.obstacleSize * (0.85 + rng() * 0.35); obstacles.push({ x: bx + px * offset, y: by + py * offset, size, angle: d.angle, kind: isBigNote(obj.type) ? 'big' : 'normal' }); lot = obj.time; } cx = ex; cy = ey; di = 1 - di; pt = obj.time; } if (hitObjects.length > 0) { const lo = hitObjects[hitObjects.length - 1], ld = DIRS[di], et = 2000, ed = LINE_SPEED * (et / 1000), ex = cx + ld.dx * ed, ey = cy + ld.dy * ed; laneSegments.push({ x1: cx, y1: cy, x2: ex, y2: ey, width: currentTrackConfig.laneWidth, angle: ld.angle, index: hitObjects.length, startTime: lo.time, endTime: lo.time + et, length: ed }); trackPoints.push({ x: ex, y: ey, time: lo.time + et, index: hitObjects.length }); } updateObstacleDifficultyDesc(); }
       const OBSTACLE_DIFFICULTY_CONFIG = { easy: { label: '好粗', laneWidth: 130, obstacleProbability: 0.10, obstacleSize: 15, sideGap: 42, minSpacingMs: 900 }, normal: { label: '粗', laneWidth: 105, obstacleProbability: 0.18, obstacleSize: 19, sideGap: 34, minSpacingMs: 650 }, hard: { label: '细', laneWidth: 82, obstacleProbability: 0.30, obstacleSize: 23, sideGap: 26, minSpacingMs: 450 }, extreme: { label: '好细', laneWidth: 62, obstacleProbability: 0.42, obstacleSize: 27, sideGap: 18, minSpacingMs: 300 }, washpool: { label: '洗笔池', laneWidth: SQUARE_SIZE * 1.25, obstacleProbability: 0.50, obstacleSize: 29, sideGap: 14, minSpacingMs: 260 } };
       function hashString(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
       function createSeededRandom(seed) { let a = seed >>> 0; return function () { a += 0x6D2B79F5; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
       function resolveObstacleDifficulty(beatmap) { if (obstacleDifficulty !== 'auto') return obstacleDifficulty; const info = getBeatmapDensityInfo(beatmap); if (info.notesPerSecond < 2.2 && info.noteCount < 450) return 'easy'; if (info.notesPerSecond < 4.0 && info.noteCount < 800) return 'normal'; if (info.notesPerSecond < 6.2 && info.noteCount < 1300) return 'hard'; return 'extreme'; }
-      function getBeatmapDensityInfo(beatmap) { if (!beatmap || beatmap.hitObjects.length === 0) return { noteCount: 0, durationSec: 0, notesPerSecond: 0 }; const first = beatmap.hitObjects[0].time || 0, last = beatmap.hitObjects[beatmap.hitObjects.length - 1].time || first; return { noteCount: beatmap.hitObjects.length, durationSec: Math.max(1, (last - first) / 1000), notesPerSecond: beatmap.hitObjects.length / Math.max(1, (last - first) / 1000) }; }
+      function getBeatmapDensityInfo(beatmap) { const hitObjects = compressHitObjects(beatmap?.hitObjects || []); if (hitObjects.length === 0) return { noteCount: 0, durationSec: 0, notesPerSecond: 0 }; const first = hitObjects[0].time || 0, last = hitObjects[hitObjects.length - 1].time || first; return { noteCount: hitObjects.length, durationSec: Math.max(1, (last - first) / 1000), notesPerSecond: hitObjects.length / Math.max(1, (last - first) / 1000) }; }
       function updateObstacleDifficultyDesc() { if (!obstacleDifficultyDesc) return; const r = beatmapData ? resolveObstacleDifficulty(beatmapData) : null; if (obstacleDifficulty === 'auto') { if (r) obstacleDifficultyDesc.textContent = `自动模式：当前谱面判定为 ${OBSTACLE_DIFFICULTY_CONFIG[r].label}，轨道宽度 ${OBSTACLE_DIFFICULTY_CONFIG[r].laneWidth}px。`; else obstacleDifficultyDesc.textContent = '自动模式会根据谱面音符密度推断轨道宽度和障碍物密度。'; } else if (obstacleDifficulty === 'washpool') obstacleDifficultyDesc.textContent = `洗笔池：轨道宽度 ${OBSTACLE_DIFFICULTY_CONFIG.washpool.laneWidth}px，仅为线宽的 1.5 倍，必须手动开启。`; else obstacleDifficultyDesc.textContent = `${OBSTACLE_DIFFICULTY_CONFIG[obstacleDifficulty].label}：轨道宽度 ${OBSTACLE_DIFFICULTY_CONFIG[obstacleDifficulty].laneWidth}px，障碍密度 ${(OBSTACLE_DIFFICULTY_CONFIG[obstacleDifficulty].obstacleProbability * 100).toFixed(0)}%。`; }
       function syncObstacleDifficultySelects(v) { obstacleDifficulty = v; if (obstacleDifficultySelect && obstacleDifficultySelect.value !== v) obstacleDifficultySelect.value = v; if (obstacleDifficultyLiveSelect && obstacleDifficultyLiveSelect.value !== v) obstacleDifficultyLiveSelect.value = v; updateObstacleDifficultyDesc(); }
       async function extractLineColorFromImage(blob) { return new Promise(res => { const img = new Image(); img.onload = () => { const sc = 0.1, w = Math.max(1, Math.floor(img.width * sc)), h = Math.max(1, Math.floor(img.height * sc)); const offC = document.createElement('canvas'); offC.width = w; offC.height = h; const offCtx = offC.getContext('2d'); offCtx.drawImage(img, 0, 0, w, h); const data = offCtx.getImageData(0, 0, w, h).data; let r = 0, g = 0, b = 0, c = 0; for (let i = 0; i < data.length; i += 4) { r += data[i]; g += data[i + 1]; b += data[i + 2]; c++; } r = Math.floor(r / c); g = Math.floor(g / c); b = Math.floor(b / c); const brighten = c => Math.min(255, Math.floor(c + (255 - c) * 0.25)); res(`rgb(${brighten(r)},${brighten(g)},${brighten(b)})`); }; img.onerror = () => res(null); img.src = URL.createObjectURL(blob); }); }
