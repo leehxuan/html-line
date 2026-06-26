@@ -68,7 +68,7 @@
 
     /* ===== 通用 HUD 按钮 ===== */
     #pause-btn, #autoplay-btn, #menu-btn, #ui-mode-btn, #help-btn, #help-top-btn, #intro-import-btn,
-    #autoplay-exit-btn, #revive-btn, #result-restart-btn, #controls button, #settings-rock-btn,
+    #autoplay-exit-btn, #revive-btn, #result-restart-btn, #controls button, #settings-rock-btn, #settings-static-camera-btn,
     #close-modal-btn, #close-beatmap-btn, #close-help-btn, #close-more-btn, #close-settings-btn {
       position: relative;
       background: var(--panel);
@@ -83,19 +83,19 @@
     }
     #pause-btn::before, #autoplay-btn::before, #menu-btn::before, #ui-mode-btn::before, #help-btn::before, #help-top-btn::before,
     #intro-import-btn::before, #autoplay-exit-btn::before, #revive-btn::before,
-    #result-restart-btn::before, #controls button::before, #settings-rock-btn::before {
+    #result-restart-btn::before, #controls button::before, #settings-rock-btn::before, #settings-static-camera-btn::before {
       content: ""; position: absolute; left: 0; top: 0; width: 8px; height: 1.5px;
       background: var(--cyan); opacity: .5; transition: opacity .18s; pointer-events: none;
     }
     #pause-btn:hover, #autoplay-btn:hover, #menu-btn:hover, #ui-mode-btn:hover, #help-btn:hover, #help-top-btn:hover,
-    #intro-import-btn:hover, #controls button:hover, #result-restart-btn:hover, #settings-rock-btn:hover,
+    #intro-import-btn:hover, #controls button:hover, #result-restart-btn:hover, #settings-rock-btn:hover, #settings-static-camera-btn:hover,
     #close-modal-btn:hover, #close-beatmap-btn:hover, #close-help-btn:hover, #close-more-btn:hover {
       border-color: var(--line-2); color: #fff;
       background: rgba(20, 36, 54, 0.82);
       box-shadow: 0 0 0 1px rgba(56,232,255,0.1);
     }
     #pause-btn:hover::before, #autoplay-btn:hover::before, #menu-btn:hover::before, #ui-mode-btn:hover::before, #help-top-btn:hover::before,
-    #controls button:hover::before, #settings-rock-btn:hover::before { opacity: 1; }
+    #controls button:hover::before, #settings-rock-btn:hover::before, #settings-static-camera-btn:hover::before { opacity: 1; }
     #controls button:active { transform: translateY(1px) scale(0.98); }
 
     #pause-btn { position: absolute; bottom: 16px; left: 16px; z-index: 20; padding: 9px 16px; font-size: 13px; }
@@ -425,7 +425,7 @@
     .settings-block { margin: 10px 0 14px; text-align: left; }
     .settings-label { color: var(--text-2); font-size: 12px; letter-spacing: 1px; margin-bottom: 8px; }
     #settings-panel { text-align: left; }
-    #settings-rock-btn {
+    #settings-rock-btn, #settings-static-camera-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -438,13 +438,13 @@
       background: rgba(10, 18, 34, 0.92);
       border: 1px solid rgba(56,232,255,0.2);
     }
-    #settings-rock-btn.on {
+    #settings-rock-btn.on, #settings-static-camera-btn.on {
       color: var(--cyan);
       border-color: rgba(56,232,255,0.7);
       background: rgba(56,232,255,0.12);
       box-shadow: 0 0 16px rgba(56,232,255,0.22), 0 0 0 1px rgba(56,232,255,0.16) inset;
     }
-    #settings-rock-btn.on::before {
+    #settings-rock-btn.on::before, #settings-static-camera-btn.on::before {
       opacity: 1;
       background: var(--cyan);
       box-shadow: 0 0 10px var(--cyan);
@@ -550,7 +550,8 @@
     body.ui-default #close-help-btn,
     body.ui-default #close-more-btn,
     body.ui-default #close-settings-btn,
-    body.ui-default #settings-rock-btn {
+    body.ui-default #settings-rock-btn,
+    body.ui-default #settings-static-camera-btn {
       background: rgba(53, 55, 78, 0.92);
       border: 1px solid rgba(255, 255, 255, 0.14);
       color: #fff;
@@ -575,6 +576,7 @@
     body.ui-default #result-restart-btn::before,
     body.ui-default #controls button::before,
     body.ui-default #settings-rock-btn::before,
+    body.ui-default #settings-static-camera-btn::before,
     body.ui-default #controls::before,
     body.ui-default #import-panel::before,
     body.ui-default #beatmap-panel::before,
@@ -601,12 +603,14 @@
     body.ui-default #close-help-btn:hover,
     body.ui-default #close-more-btn:hover,
     body.ui-default #close-settings-btn:hover,
-    body.ui-default #settings-rock-btn:hover {
+    body.ui-default #settings-rock-btn:hover,
+    body.ui-default #settings-static-camera-btn:hover {
       background: rgba(66, 69, 96, 0.96);
       border-color: rgba(255, 255, 255, 0.24);
       box-shadow: 0 12px 28px rgba(8, 9, 20, 0.22);
     }
-    body.ui-default #settings-rock-btn.on {
+    body.ui-default #settings-rock-btn.on,
+    body.ui-default #settings-static-camera-btn.on {
       background: rgba(255, 207, 92, 0.2);
       border-color: rgba(255, 207, 92, 0.65);
       color: #ffe39f;
@@ -877,6 +881,9 @@
 有问题目前可以先去B站 BV11xj66vEEz 来反映哦
 
 更新记录：
+2026/6/26 Beta 0.3.6
+又加了一个静止视角的模式，刚刚忘记加了
+
 2026/6/26 Beta 0.3.5
 新增了mods界面，把摇滚模式放进去了，然后新增了一个调倍速的功能
 嗯，这下可玩性又多了（）高倍速的人声变成小孩音真的很难绷你们知道吗（（（
@@ -931,6 +938,9 @@ kiai time的背景亮度略微降低
       <h3>mods</h3>
       <div class="settings-block">
         <button id="settings-rock-btn" class="mod-btn rock">摇滚模式: 关</button>
+      </div>
+      <div class="settings-block">
+        <button id="settings-static-camera-btn" class="mod-btn rock">静止视角: 关</button>
       </div>
       <div class="settings-block">
         <div class="settings-label">游玩倍速</div>
@@ -1009,6 +1019,7 @@ kiai time的背景亮度略微降低
       const importStatus = document.getElementById('import-status');
       const beatmapList = document.getElementById('beatmap-list');
       const settingsRockBtn = document.getElementById('settings-rock-btn');
+      const settingsStaticCameraBtn = document.getElementById('settings-static-camera-btn');
       const speedSelect = document.getElementById('speed-select');
       const resultMods = document.getElementById('result-mods');
       const resultModsRow = document.getElementById('result-mods-row');
@@ -1024,10 +1035,11 @@ kiai time的背景亮度略微降低
       const MAX_RENDER_DPR = 1.25;
       let showGuideBoxes = false;
       let rockMode = false;
+      let staticCameraMode = false;
       let speedMultiplier = 1;
       let autoplayMode = false;
-      const VERSION_TEXT = 'Beta 0.3.5';
-      const STORAGE_KEYS = { uiMode: 'html-line-ui-mode', delayMs: 'html-line-delay-ms' };
+      const VERSION_TEXT = 'Beta 0.3.6';
+      const STORAGE_KEYS = { uiMode: 'html-line-ui-mode', delayMs: 'html-line-delay-ms', staticCameraMode: 'html-line-static-camera-mode' };
       const SPEED_OPTIONS = [0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2];
       let uiMode = 'tech';
 
@@ -1143,6 +1155,7 @@ kiai time的背景亮度略微降低
           if (savedUiMode === 'tech' || savedUiMode === 'default') uiMode = savedUiMode;
           const savedDelay = parseInt(localStorage.getItem(STORAGE_KEYS.delayMs) || '', 10);
           if (!Number.isNaN(savedDelay) && delayInput) delayInput.value = String(Math.max(-500, Math.min(500, savedDelay)));
+          staticCameraMode = localStorage.getItem(STORAGE_KEYS.staticCameraMode) === 'true';
         } catch (e) { }
       }
       function getDelayMs() { const v = parseInt(delayInput.value); return isNaN(v) ? 0 : v; }
@@ -1150,8 +1163,9 @@ kiai time的背景亮度略微降低
       function getSpeedLabel() { const speed = getSpeedMultiplier(); return Math.abs(speed - 1) < 0.001 ? '原速' : `${speed.toFixed(1)}x`; }
       function getActiveModsSummary() {
         const parts = [];
-        if (rockMode) parts.push('摇滚模式');
-        if (Math.abs(getSpeedMultiplier() - 1) > 0.001) parts.push(`倍速 ${getSpeedLabel()}`);
+        if (rockMode) parts.push('摇滚');
+        if (Math.abs(getSpeedMultiplier() - 1) > 0.001) parts.push(getSpeedLabel());
+        if (staticCameraMode) parts.push('静视');
         return parts.length ? parts.join(' / ') : '无';
       }
       function applyPlaybackRate() {
@@ -1678,8 +1692,37 @@ kiai time的背景亮度略微降低
         } else { infoText.textContent = IS_MOBILE_UI ? ('点击屏幕以开始' + modeText + autoText) : ('点击屏幕以开始 | 字母/符号键或空格操控 | ← 重开 | → 复活 | ↓ 暂停' + modeText + autoText); }
       }
 
-      function syncSettingsUi() { if (settingsRockBtn) { settingsRockBtn.textContent = rockMode ? '摇滚模式: 开' : '摇滚模式: 关'; settingsRockBtn.classList.toggle('active', rockMode); settingsRockBtn.classList.toggle('on', rockMode); } if (speedSelect) speedSelect.value = String(getSpeedMultiplier()); }
-      function toggleRockMode() { if (gameStarted && !gameFinished) return; rockMode = !rockMode; syncSettingsUi(); updateInfoText(); resetGame(); }
+      function syncSettingsUi() {
+        if (settingsRockBtn) {
+          settingsRockBtn.textContent = rockMode ? '摇滚模式: 开' : '摇滚模式: 关';
+          settingsRockBtn.classList.toggle('active', rockMode);
+          settingsRockBtn.classList.toggle('on', rockMode);
+        }
+        if (settingsStaticCameraBtn) {
+          settingsStaticCameraBtn.textContent = staticCameraMode ? '静止视角: 开' : '静止视角: 关';
+          settingsStaticCameraBtn.classList.toggle('active', staticCameraMode);
+          settingsStaticCameraBtn.classList.toggle('on', staticCameraMode);
+        }
+        if (speedSelect) speedSelect.value = String(getSpeedMultiplier());
+      }
+      function toggleRockMode() {
+        if (gameStarted && !gameFinished) return;
+        rockMode = !rockMode;
+        if (rockMode) staticCameraMode = false;
+        savePreference(STORAGE_KEYS.staticCameraMode, staticCameraMode);
+        syncSettingsUi();
+        updateInfoText();
+        resetGame();
+      }
+      function toggleStaticCameraMode() {
+        if (gameStarted && !gameFinished) return;
+        staticCameraMode = !staticCameraMode;
+        if (staticCameraMode) rockMode = false;
+        savePreference(STORAGE_KEYS.staticCameraMode, staticCameraMode);
+        syncSettingsUi();
+        updateInfoText();
+        resetGame();
+      }
       function exitAutoplay() { if (!autoplayMode) return; autoplayMode = false; if (gameStarted && animFrameId) { cancelAnimationFrame(animFrameId); } pauseAudioPlayback(); resetGame(); autoplayBtn.textContent = '自动游玩'; autoplayBtn.classList.remove('active'); updateAutoplayVisibility(); updateInfoText(); drawFrame(); }
       function toggleAutoplay() { if (gameStarted && !gameFinished) return; autoplayMode = !autoplayMode; autoplayBtn.textContent = autoplayMode ? '自动游玩: 开' : '自动游玩: 关'; autoplayBtn.classList.toggle('active', autoplayMode); updateAutoplayVisibility(); updateInfoText(); if (!gameStarted) drawFrame(); }
       function returnToHome() {
@@ -1748,6 +1791,7 @@ kiai time的背景亮度略微降低
       }
 
       function triggerBigNoteEffect() {
+        if (staticCameraMode) return;
         const now = performance.now(); let ts = cumulativeScale, tr = cumulativeRotation;
         const a = bigNoteSequence % 4;
         if (a === 0) ts = cumulativeScale - BIG_ZOOM_STEP;
@@ -2245,6 +2289,7 @@ kiai time的背景亮度略微降低
       if (moreModal) moreModal.addEventListener('click', e => { if (e.target === moreModal) moreModal.classList.remove('active'); });
       if (settingsModal) settingsModal.addEventListener('click', e => { if (e.target === settingsModal) settingsModal.classList.remove('active'); });
       if (settingsRockBtn) settingsRockBtn.addEventListener('click', e => { e.stopPropagation(); toggleRockMode(); });
+      if (settingsStaticCameraBtn) settingsStaticCameraBtn.addEventListener('click', e => { e.stopPropagation(); toggleStaticCameraMode(); });
       if (speedSelect) speedSelect.addEventListener('change', e => {
         if (gameStarted && !gameFinished) { syncSettingsUi(); return; }
         const nextSpeed = Number(e.target.value || '1');
