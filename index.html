@@ -68,8 +68,8 @@
 
     /* ===== 通用 HUD 按钮 ===== */
     #pause-btn, #autoplay-btn, #menu-btn, #ui-mode-btn, #help-btn, #help-top-btn, #intro-import-btn,
-    #autoplay-exit-btn, #revive-btn, #result-restart-btn, #controls button,
-    #close-modal-btn, #close-beatmap-btn, #close-help-btn, #close-more-btn {
+    #autoplay-exit-btn, #revive-btn, #result-restart-btn, #controls button, #settings-rock-btn,
+    #close-modal-btn, #close-beatmap-btn, #close-help-btn, #close-more-btn, #close-settings-btn {
       position: relative;
       background: var(--panel);
       border: 1px solid var(--line);
@@ -83,19 +83,19 @@
     }
     #pause-btn::before, #autoplay-btn::before, #menu-btn::before, #ui-mode-btn::before, #help-btn::before, #help-top-btn::before,
     #intro-import-btn::before, #autoplay-exit-btn::before, #revive-btn::before,
-    #result-restart-btn::before, #controls button::before {
+    #result-restart-btn::before, #controls button::before, #settings-rock-btn::before {
       content: ""; position: absolute; left: 0; top: 0; width: 8px; height: 1.5px;
       background: var(--cyan); opacity: .5; transition: opacity .18s; pointer-events: none;
     }
     #pause-btn:hover, #autoplay-btn:hover, #menu-btn:hover, #ui-mode-btn:hover, #help-btn:hover, #help-top-btn:hover,
-    #intro-import-btn:hover, #controls button:hover, #result-restart-btn:hover,
+    #intro-import-btn:hover, #controls button:hover, #result-restart-btn:hover, #settings-rock-btn:hover,
     #close-modal-btn:hover, #close-beatmap-btn:hover, #close-help-btn:hover, #close-more-btn:hover {
       border-color: var(--line-2); color: #fff;
       background: rgba(20, 36, 54, 0.82);
       box-shadow: 0 0 0 1px rgba(56,232,255,0.1);
     }
     #pause-btn:hover::before, #autoplay-btn:hover::before, #menu-btn:hover::before, #ui-mode-btn:hover::before, #help-top-btn:hover::before,
-    #controls button:hover::before { opacity: 1; }
+    #controls button:hover::before, #settings-rock-btn:hover::before { opacity: 1; }
     #controls button:active { transform: translateY(1px) scale(0.98); }
 
     #pause-btn { position: absolute; bottom: 16px; left: 16px; z-index: 20; padding: 9px 16px; font-size: 13px; }
@@ -236,6 +236,7 @@
     #result-panel .value.hit { color: var(--green); }
     #result-panel .value.miss { color: var(--red); }
     #result-panel .value.rate { color: var(--cyan); }
+    #result-mods { font-family: var(--font-cjk); }
     #result-panel .value.diamond { color: var(--cyan); }
     #result-panel .value.crown { color: var(--amber); display: inline-flex; align-items: center; gap: 5px; }
     #result-panel .rc-crown { width: 26px; height: 26px; object-fit: contain; display: block; }
@@ -336,13 +337,13 @@
     }
 
     /* ===== 弹窗 ===== */
-    #import-modal, #beatmap-select, #help-modal, #more-modal, #mods-modal {
+    #import-modal, #beatmap-select, #help-modal, #more-modal, #settings-modal {
       display: none; position: fixed; inset: 0; z-index: 100;
       background: rgba(3,6,12,0.78); backdrop-filter: blur(3px);
       justify-content: center; align-items: center;
     }
-    #import-modal.active, #beatmap-select.active, #help-modal.active, #more-modal.active, #mods-modal.active { display: flex; }
-    #import-panel, #beatmap-panel, #help-panel, #more-panel, #mods-panel {
+    #import-modal.active, #beatmap-select.active, #help-modal.active, #more-modal.active, #settings-modal.active { display: flex; }
+    #import-panel, #beatmap-panel, #help-panel, #more-panel, #settings-panel {
       position: relative;
       background: linear-gradient(180deg, rgba(11,18,32,0.97), rgba(7,12,22,0.97));
       border: 1px solid rgba(56,232,255,0.26);
@@ -351,11 +352,11 @@
       max-height: 82vh; overflow-y: auto; text-align: center;
       clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
     }
-    #import-panel::before, #beatmap-panel::before, #help-panel::before, #more-panel::before, #mods-panel::before {
+    #import-panel::before, #beatmap-panel::before, #help-panel::before, #more-panel::before, #settings-panel::before {
       content: ""; position: absolute; left: 8px; top: 8px; width: 14px; height: 14px;
       border-top: 1.5px solid var(--cyan); border-left: 1.5px solid var(--cyan); pointer-events: none;
     }
-    #import-panel h3, #beatmap-panel h3, #help-panel h3, #more-panel h3, #mods-panel h3 {
+    #import-panel h3, #beatmap-panel h3, #help-panel h3, #more-panel h3, #settings-panel h3 {
       font-size: 16px; letter-spacing: 3px; color: #fff; font-weight: 600;
       border-left: 3px solid var(--cyan); padding-left: 11px; text-align: left;
       margin-bottom: 14px;
@@ -405,9 +406,59 @@
     #import-panel input[type="file"] { display: none; }
     #import-status { margin: 8px 0; font-family: var(--font-mono); font-size: 12px; min-height: 16px; color: var(--cyan); }
 
-    #close-modal-btn, #close-beatmap-btn, #close-help-btn, #close-more-btn {
+    #close-modal-btn, #close-beatmap-btn, #close-help-btn, #close-more-btn, #close-settings-btn {
       margin-top: 14px; padding: 11px 28px; width: 100%; font-size: 14px; letter-spacing: 2px;
     }
+
+    #settings-panel {
+      position: relative;
+      background: linear-gradient(180deg, rgba(11,18,32,0.97), rgba(7,12,22,0.97));
+      border: 1px solid rgba(56,232,255,0.26);
+      box-shadow: 0 0 26px rgba(56,232,255,0.06);
+      padding: 22px 24px;
+      max-width: 430px;
+      width: 92%;
+      color: var(--text);
+      text-align: center;
+      clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+    }
+    .settings-block { margin: 10px 0 14px; text-align: left; }
+    .settings-label { color: var(--text-2); font-size: 12px; letter-spacing: 1px; margin-bottom: 8px; }
+    #settings-panel { text-align: left; }
+    #settings-rock-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: auto;
+      min-width: 240px;
+      max-width: 100%;
+      padding: 10px 34px;
+      margin: 0;
+      color: var(--text);
+      background: rgba(10, 18, 34, 0.92);
+      border: 1px solid rgba(56,232,255,0.2);
+    }
+    #settings-rock-btn.on {
+      color: var(--cyan);
+      border-color: rgba(56,232,255,0.7);
+      background: rgba(56,232,255,0.12);
+      box-shadow: 0 0 16px rgba(56,232,255,0.22), 0 0 0 1px rgba(56,232,255,0.16) inset;
+    }
+    #settings-rock-btn.on::before {
+      opacity: 1;
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+    #speed-select {
+      width: 100%;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--line);
+      color: var(--cyan);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: 10px 12px;
+    }
+    #speed-select option { background: var(--panel-solid); color: var(--text); }
 
     .beatmap-item {
       padding: 13px 15px; margin: 8px 0; background: rgba(8,13,24,0.7);
@@ -497,7 +548,9 @@
     body.ui-default #close-modal-btn,
     body.ui-default #close-beatmap-btn,
     body.ui-default #close-help-btn,
-    body.ui-default #close-more-btn {
+    body.ui-default #close-more-btn,
+    body.ui-default #close-settings-btn,
+    body.ui-default #settings-rock-btn {
       background: rgba(53, 55, 78, 0.92);
       border: 1px solid rgba(255, 255, 255, 0.14);
       color: #fff;
@@ -506,6 +559,9 @@
       clip-path: none;
       border-radius: 12px;
       box-shadow: 0 10px 24px rgba(8, 9, 20, 0.18);
+    }
+    body.ui-default #settings-panel {
+      text-align: left;
     }
     body.ui-default #pause-btn::before,
     body.ui-default #autoplay-btn::before,
@@ -518,11 +574,13 @@
     body.ui-default #revive-btn::before,
     body.ui-default #result-restart-btn::before,
     body.ui-default #controls button::before,
+    body.ui-default #settings-rock-btn::before,
     body.ui-default #controls::before,
     body.ui-default #import-panel::before,
     body.ui-default #beatmap-panel::before,
     body.ui-default #help-panel::before,
     body.ui-default #more-panel::before,
+    body.ui-default #settings-panel::before,
     body.ui-default #result-panel .hud-corner,
     body.ui-default #result-panel .res-gridbg,
     body.ui-default #result-panel .res-sweep,
@@ -541,10 +599,18 @@
     body.ui-default #close-modal-btn:hover,
     body.ui-default #close-beatmap-btn:hover,
     body.ui-default #close-help-btn:hover,
-    body.ui-default #close-more-btn:hover {
+    body.ui-default #close-more-btn:hover,
+    body.ui-default #close-settings-btn:hover,
+    body.ui-default #settings-rock-btn:hover {
       background: rgba(66, 69, 96, 0.96);
       border-color: rgba(255, 255, 255, 0.24);
       box-shadow: 0 12px 28px rgba(8, 9, 20, 0.22);
+    }
+    body.ui-default #settings-rock-btn.on {
+      background: rgba(255, 207, 92, 0.2);
+      border-color: rgba(255, 207, 92, 0.65);
+      color: #ffe39f;
+      box-shadow: 0 12px 28px rgba(255, 207, 92, 0.16);
     }
     body.ui-default #controls {
       background: linear-gradient(180deg, rgba(28, 29, 45, 0) 0%, rgba(34, 36, 56, 0.84) 30%, rgba(40, 42, 64, 0.98) 100%);
@@ -570,6 +636,7 @@
     body.ui-default #beatmap-panel,
     body.ui-default #help-panel,
     body.ui-default #more-panel,
+    body.ui-default #settings-panel,
     body.ui-default #result-panel {
       background: linear-gradient(180deg, rgba(48, 50, 72, 0.97), rgba(39, 41, 60, 0.97));
       border: 1px solid rgba(255,255,255,0.14);
@@ -716,6 +783,7 @@
                 id="result-diamonds">0/10</span></div>
             <div class="result-row"><span class="label">皇冠 <em>CROWN</em></span><span class="value crown"
                 id="result-crowns">0/3</span></div>
+            <div class="result-row" id="result-mods-row"><span class="label">mods</span><span class="value rate" id="result-mods">无</span></div>
           </div>
         </div>
         <div id="result-actions">
@@ -734,7 +802,7 @@
     <div id="controls">
       <button id="beatmap-btn" class="primary">选择难度</button>
       <button id="load-btn">导入谱面</button>
-      <button id="rock-btn" class="rock">摇滚模式: 关</button>
+      <button id="rock-btn" class="rock">mods</button>
       <button id="guide-toggle-btn" class="guide-toggle">引导线: 关</button>
       <div id="delay-group"><label for="delay-input">延迟(ms)</label><input type="number" id="delay-input" value="0"
           min="-500" max="500" step="10"></div>
@@ -809,7 +877,11 @@
 有问题目前可以先去B站 BV11xj66vEEz 来反映哦
 
 更新记录：
-2026/6/24 Beta 0.3.4
+2026/6/26 Beta 0.3.5
+新增了mods界面，把摇滚模式放进去了，然后新增了一个调倍速的功能
+嗯，这下可玩性又多了（）高倍速的人声变成小孩音真的很难绷你们知道吗（（（
+
+2026/6/25 Beta 0.3.4
 修复了导入catch和mania谱面时会有引导框重叠的bug，但是！咱依旧非常非常不推荐游玩catch和mania的谱，效果真的远远不如taiko和std好
 把百分比往路旁边挪了挪，避免它挡住引导框
 
@@ -852,6 +924,36 @@ kiai time的背景亮度略微降低
 发布了第一个beta版，终于是可以玩了</p>
       </div>
       <button id="close-more-btn">关闭</button>
+    </div>
+  </div>
+  <div id="settings-modal">
+    <div id="settings-panel">
+      <h3>mods</h3>
+      <div class="settings-block">
+        <button id="settings-rock-btn" class="mod-btn rock">摇滚模式: 关</button>
+      </div>
+      <div class="settings-block">
+        <div class="settings-label">游玩倍速</div>
+        <select id="speed-select">
+          <option value="0.5">0.5x</option>
+          <option value="0.6">0.6x</option>
+          <option value="0.7">0.7x</option>
+          <option value="0.8">0.8x</option>
+          <option value="0.9">0.9x</option>
+          <option value="1" selected>原速</option>
+          <option value="1.1">1.1x</option>
+          <option value="1.2">1.2x</option>
+          <option value="1.3">1.3x</option>
+          <option value="1.4">1.4x</option>
+          <option value="1.5">1.5x</option>
+          <option value="1.6">1.6x</option>
+          <option value="1.7">1.7x</option>
+          <option value="1.8">1.8x</option>
+          <option value="1.9">1.9x</option>
+          <option value="2">2.0x</option>
+        </select>
+      </div>
+      <button id="close-settings-btn">关闭</button>
     </div>
   </div>
 
@@ -900,11 +1002,16 @@ kiai time的背景亮度略微降低
       const beatmapSelect = document.getElementById('beatmap-select');
       const helpModal = document.getElementById('help-modal');
       const moreModal = document.getElementById('more-modal');
+      const settingsModal = document.getElementById('settings-modal');
       const oszFileInput = document.getElementById('osz-file');
       const osuFileInput = document.getElementById('osu-file');
       const audioFileInput = document.getElementById('audio-file');
       const importStatus = document.getElementById('import-status');
       const beatmapList = document.getElementById('beatmap-list');
+      const settingsRockBtn = document.getElementById('settings-rock-btn');
+      const speedSelect = document.getElementById('speed-select');
+      const resultMods = document.getElementById('result-mods');
+      const resultModsRow = document.getElementById('result-mods-row');
 
       let canvasWidth, canvasHeight;
       const LINE_SPEED = 240;
@@ -917,9 +1024,11 @@ kiai time的背景亮度略微降低
       const MAX_RENDER_DPR = 1.25;
       let showGuideBoxes = false;
       let rockMode = false;
+      let speedMultiplier = 1;
       let autoplayMode = false;
-      const VERSION_TEXT = 'Beta 0.3.4';
+      const VERSION_TEXT = 'Beta 0.3.5';
       const STORAGE_KEYS = { uiMode: 'html-line-ui-mode', delayMs: 'html-line-delay-ms' };
+      const SPEED_OPTIONS = [0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2];
       let uiMode = 'tech';
 
       function updateResultActionLayout() {
@@ -1037,6 +1146,24 @@ kiai time的背景亮度略微降低
         } catch (e) { }
       }
       function getDelayMs() { const v = parseInt(delayInput.value); return isNaN(v) ? 0 : v; }
+      function getSpeedMultiplier() { return Number.isFinite(speedMultiplier) && speedMultiplier > 0 ? speedMultiplier : 1; }
+      function getSpeedLabel() { const speed = getSpeedMultiplier(); return Math.abs(speed - 1) < 0.001 ? '原速' : `${speed.toFixed(1)}x`; }
+      function getActiveModsSummary() {
+        const parts = [];
+        if (rockMode) parts.push('摇滚模式');
+        if (Math.abs(getSpeedMultiplier() - 1) > 0.001) parts.push(`倍速 ${getSpeedLabel()}`);
+        return parts.length ? parts.join(' / ') : '无';
+      }
+      function applyPlaybackRate() {
+        const speed = getSpeedMultiplier();
+        if (audioElement) {
+          try { audioElement.playbackRate = speed; } catch (_) { }
+        }
+        if (audioSourceNode && audioSourceNode.source && audioSourceNode.source.playbackRate) {
+          try { audioSourceNode.source.playbackRate.value = speed; } catch (_) { }
+        }
+        if (speedSelect) speedSelect.value = String(speed);
+      }
       function getVolumeValue() { const v = parseInt(volumeInput.value); return Math.max(0, Math.min(1, (isNaN(v) ? 100 : v) / 100)); }
       function applyAudioVolume() {
         if (audioElement) audioElement.volume = getVolumeValue();
@@ -1096,7 +1223,7 @@ kiai time的背景亮度略微降低
       function getDecodedAudioCurrentTimeMs() {
         if (!audioCtx) return audioResumeAnchorMs;
         if (paused || !audioIsPlaying) return audioResumeAnchorMs;
-        const elapsed = (audioCtx.currentTime - audioStartAtCtxTime) * 1000;
+        const elapsed = (audioCtx.currentTime - audioStartAtCtxTime) * 1000 * getSpeedMultiplier();
         const durationMs = audioBuffer ? audioBuffer.duration * 1000 : Infinity;
         return Math.max(0, Math.min(audioStartOffsetMs + elapsed, durationMs));
       }
@@ -1109,6 +1236,7 @@ kiai time的背景亮度略微降低
         gainNode.gain.value = getVolumeValue();
         const source = ctx.createBufferSource();
         source.buffer = audioBuffer;
+        source.playbackRate.value = getSpeedMultiplier();
         source.connect(gainNode);
         gainNode.connect(ctx.destination);
         const offsetSec = Math.max(0, Math.min((timeMs || 0) / 1000, Math.max(0, audioBuffer.duration - 0.001)));
@@ -1141,6 +1269,7 @@ kiai time的背景亮度略微降低
         if (canUseDecodedAudio()) return await playDecodedAudioFromMs(timeMs);
         if (audioElement) {
           audioElement.currentTime = Math.max(0, (timeMs || 0) / 1000);
+          try { audioElement.playbackRate = getSpeedMultiplier(); } catch (_) { }
           audioResumeAnchorMs = Math.max(0, timeMs || 0);
           try {
             const p = audioElement.play();
@@ -1420,6 +1549,9 @@ kiai time的背景亮度略微降低
         resultPct.style.textShadow = (isWin && pct === 100 && allCollected) ? '0 0 14px rgba(255,213,74,0.45)' : 'none';
         if (shouldFlash) resultFlashStartTime = performance.now(); else resultFlashStartTime = 0;
         resultDiamonds.textContent = collectedDiamondSet.size + '/10'; renderResultCrowns(collectedCrownSet.size, 3);
+        const activeModsSummary = getActiveModsSummary();
+        if (resultMods) resultMods.textContent = activeModsSummary;
+        if (resultModsRow) resultModsRow.style.display = activeModsSummary === '无' ? 'none' : 'flex';
         resultHitRow.style.display = 'flex'; resultMissRow.style.display = 'flex';
         updateResultActionLayout();
         resultPanel.classList.add('active');
@@ -1473,7 +1605,7 @@ kiai time的背景亮度略微降低
         }
         gameStarted = false; gameStartTime = 0; lineMoving = false; gameFinished = false;
         paused = false; pauseStartTime = 0; totalPauseTime = 0; pausedAudioTime = 0; audioResumeAnchorMs = 0; delayMs = getDelayMs();
-        if (beatmapData && delayMs !== 0) { const delayOffsetDist = LINE_SPEED * delayMs / 1000; squareX -= currentDir.dx * delayOffsetDist; squareY -= currentDir.dy * delayOffsetDist; trailPoints = [{ x: squareX, y: squareY }]; }
+        if (beatmapData && delayMs !== 0) { const delayOffsetDist = LINE_SPEED * delayMs / 1000 * getSpeedMultiplier(); squareX -= currentDir.dx * delayOffsetDist; squareY -= currentDir.dy * delayOffsetDist; trailPoints = [{ x: squareX, y: squareY }]; }
         ignoreMouseUntil = 0;
         hitEffects = []; boundaryCrashEffects = []; lastResultReason = null; resultFlashStartTime = 0;
         fullCollectGoldShiftStart = 0;
@@ -1500,7 +1632,7 @@ kiai time的背景亮度略微降低
         const reviveTimeMs = crowns.find(c => c.id === info.crownId)?.time || 0;
         squareX = info.x; squareY = info.y;
         currentDir = DIRS[info.dirIndex];
-        const reviveDelayOffsetDist = LINE_SPEED * getDelayMs() / 1000;
+        const reviveDelayOffsetDist = LINE_SPEED * getDelayMs() / 1000 * getSpeedMultiplier();
         if (reviveDelayOffsetDist !== 0) { squareX -= currentDir.dx * reviveDelayOffsetDist; squareY -= currentDir.dy * reviveDelayOffsetDist; }
         trailPoints = [{ x: squareX, y: squareY }];
         cameraX = squareX; cameraY = squareY;
@@ -1546,7 +1678,8 @@ kiai time的背景亮度略微降低
         } else { infoText.textContent = IS_MOBILE_UI ? ('点击屏幕以开始' + modeText + autoText) : ('点击屏幕以开始 | 字母/符号键或空格操控 | ← 重开 | → 复活 | ↓ 暂停' + modeText + autoText); }
       }
 
-      function toggleRockMode() { if (gameStarted && !gameFinished) return; rockMode = !rockMode; rockBtn.textContent = rockMode ? '摇滚模式: 开' : '摇滚模式: 关'; rockBtn.classList.toggle('active', rockMode); rockBtn.classList.toggle('on', rockMode); updateInfoText(); resetGame(); }
+      function syncSettingsUi() { if (settingsRockBtn) { settingsRockBtn.textContent = rockMode ? '摇滚模式: 开' : '摇滚模式: 关'; settingsRockBtn.classList.toggle('active', rockMode); settingsRockBtn.classList.toggle('on', rockMode); } if (speedSelect) speedSelect.value = String(getSpeedMultiplier()); }
+      function toggleRockMode() { if (gameStarted && !gameFinished) return; rockMode = !rockMode; syncSettingsUi(); updateInfoText(); resetGame(); }
       function exitAutoplay() { if (!autoplayMode) return; autoplayMode = false; if (gameStarted && animFrameId) { cancelAnimationFrame(animFrameId); } pauseAudioPlayback(); resetGame(); autoplayBtn.textContent = '自动游玩'; autoplayBtn.classList.remove('active'); updateAutoplayVisibility(); updateInfoText(); drawFrame(); }
       function toggleAutoplay() { if (gameStarted && !gameFinished) return; autoplayMode = !autoplayMode; autoplayBtn.textContent = autoplayMode ? '自动游玩: 开' : '自动游玩: 关'; autoplayBtn.classList.toggle('active', autoplayMode); updateAutoplayVisibility(); updateInfoText(); if (!gameStarted) drawFrame(); }
       function returnToHome() {
@@ -1701,7 +1834,7 @@ kiai time的背景亮度略微降低
           if (!gameFinished && laneSegments.length > 0) { const lastLane = laneSegments[laneSegments.length - 1]; if (gameTimeMs > lastLane.endTime + 120) { gameFinished = true; lastResultReason = 'end'; showResults(getCurrentProgressPercent()); } }
           if (isAudioPlaybackEnded() && !gameFinished) { gameFinished = true; lastResultReason = 'complete'; showResults(100); }
         }
-        if (!gameFinished || lastResultReason === 'complete') { squareX += currentDir.dx * LINE_SPEED * dt; squareY += currentDir.dy * LINE_SPEED * dt; if (!gameFinished) checkTrackBoundaryCollision(timestamp); }
+        if (!gameFinished || lastResultReason === 'complete') { squareX += currentDir.dx * LINE_SPEED * dt * getSpeedMultiplier(); squareY += currentDir.dy * LINE_SPEED * dt * getSpeedMultiplier(); if (!gameFinished) checkTrackBoundaryCollision(timestamp); }
 
         if (!gameFinished && beatmapData && lineMoving) {
           while (bigNoteScanIndex < guideBoxes.length && guideBoxes[bigNoteScanIndex].time <= gameTimeMs) { const box = guideBoxes[bigNoteScanIndex]; if (box && box.isBig && !triggeredBigNotes.has(box.time)) { triggeredBigNotes.add(box.time); triggerBigNoteEffect(); } bigNoteScanIndex++; }
@@ -1710,7 +1843,8 @@ kiai time的背景亮度略微降低
           while (allNoteScanIndex < guideBoxes.length && guideBoxes[allNoteScanIndex].time <= gameTimeMs) { const box = guideBoxes[allNoteScanIndex]; if (box && !triggeredAllNotes.has(box.time) && !triggeredBigNotes.has(box.time)) { triggeredAllNotes.add(box.time); triggerBigNoteEffect(); } allNoteScanIndex++; }
         }
         if (!gameFinished) {
-          const followSteps = dt * CAMERA_FOLLOW_HZ;
+          const speedFollowBoost = Math.max(1, Math.min(2.4, getSpeedMultiplier()));
+          const followSteps = dt * CAMERA_FOLLOW_HZ * speedFollowBoost;
           const followFactor = 1 - Math.pow(1 - CAMERA_SMOOTH, followSteps);
           cameraX += (squareX - cameraX) * followFactor;
           cameraY += (squareY - cameraY) * followFactor;
@@ -2100,16 +2234,28 @@ kiai time的背景亮度略微降低
       loadBtn.addEventListener('click', e => { e.stopPropagation(); importModal.classList.add('active'); syncObstacleDifficultySelects(obstacleDifficulty); importStatus.textContent = ''; pendingOsuContent = null; pendingAudioFile = null; osuFileInput.value = ''; audioFileInput.value = ''; oszFileInput.value = ''; });
       introImportBtn.addEventListener('click', e => { e.stopPropagation(); importModal.classList.add('active'); syncObstacleDifficultySelects(obstacleDifficulty); importStatus.textContent = ''; pendingOsuContent = null; pendingAudioFile = null; osuFileInput.value = ''; audioFileInput.value = ''; oszFileInput.value = ''; });
       beatmapBtn.addEventListener('click', e => { e.stopPropagation(); if (!preparingTrack && (!gameStarted || gameFinished)) showBeatmapSelect(); });
-      rockBtn.addEventListener('click', e => { e.stopPropagation(); toggleRockMode(); });
+      rockBtn.addEventListener('click', e => { e.stopPropagation(); if (!gameStarted && settingsModal) settingsModal.classList.add('active'); });
       guideToggleBtn.addEventListener('click', e => { e.stopPropagation(); showGuideBoxes = !showGuideBoxes; guideToggleBtn.textContent = showGuideBoxes ? '引导线: 开' : '引导线: 关'; guideToggleBtn.classList.toggle('on', showGuideBoxes); drawFrame(); });
       resultRestartBtn.addEventListener('click', e => { e.stopPropagation(); if (animFrameId) cancelAnimationFrame(animFrameId); resetGame(); });
       document.getElementById('close-modal-btn').addEventListener('click', () => importModal.classList.remove('active'));
       document.getElementById('close-beatmap-btn').addEventListener('click', () => beatmapSelect.classList.remove('active'));
       document.getElementById('close-help-btn').addEventListener('click', () => helpModal.classList.remove('active'));
       document.getElementById('close-more-btn').addEventListener('click', () => { if (moreModal) moreModal.classList.remove('active'); });
+      document.getElementById('close-settings-btn').addEventListener('click', () => { if (settingsModal) settingsModal.classList.remove('active'); });
       if (moreModal) moreModal.addEventListener('click', e => { if (e.target === moreModal) moreModal.classList.remove('active'); });
+      if (settingsModal) settingsModal.addEventListener('click', e => { if (e.target === settingsModal) settingsModal.classList.remove('active'); });
+      if (settingsRockBtn) settingsRockBtn.addEventListener('click', e => { e.stopPropagation(); toggleRockMode(); });
+      if (speedSelect) speedSelect.addEventListener('change', e => {
+        if (gameStarted && !gameFinished) { syncSettingsUi(); return; }
+        const nextSpeed = Number(e.target.value || '1');
+        if (!SPEED_OPTIONS.includes(nextSpeed)) { syncSettingsUi(); return; }
+        speedMultiplier = nextSpeed;
+        applyPlaybackRate();
+        updateInfoText();
+        resetGame();
+      });
       if (uiModeBtn) uiModeBtn.addEventListener('click', e => { e.stopPropagation(); if (!gameStarted) toggleUiMode(); });
-      delayInput.addEventListener('change', () => { if (!gameStarted) { delayMs = getDelayMs(); savePreference(STORAGE_KEYS.delayMs, delayMs); const dOff = LINE_SPEED * delayMs / 1000; currentDir = DIR_UP_RIGHT; squareX = -currentDir.dx * dOff; squareY = -currentDir.dy * dOff; cameraX = 0; cameraY = 0; trailPoints = [{ x: squareX, y: squareY }]; updateInfoText(); drawFrame(); } });
+      delayInput.addEventListener('change', () => { if (!gameStarted) { delayMs = getDelayMs(); savePreference(STORAGE_KEYS.delayMs, delayMs); const dOff = LINE_SPEED * delayMs / 1000 * getSpeedMultiplier(); currentDir = DIR_UP_RIGHT; squareX = -currentDir.dx * dOff; squareY = -currentDir.dy * dOff; cameraX = 0; cameraY = 0; trailPoints = [{ x: squareX, y: squareY }]; updateInfoText(); drawFrame(); } });
       if (reviveBtn) reviveBtn.textContent = IS_MOBILE_UI ? '复活' : '复活 (→)';
       if (resultRestartBtn) resultRestartBtn.textContent = IS_MOBILE_UI ? '重来' : '重来 (←)';
       if (pauseBtn) pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (↓)';
@@ -2122,6 +2268,8 @@ kiai time的背景亮度略微降低
       if (obstacleDifficultySelect) obstacleDifficultySelect.addEventListener('change', e => handleObstacleDifficultyChange(e.target.value));
       if (obstacleDifficultyLiveSelect) obstacleDifficultyLiveSelect.addEventListener('change', e => handleObstacleDifficultyChange(e.target.value));
       loadPreferences();
+      syncSettingsUi();
+      applyPlaybackRate();
       syncObstacleDifficultySelects('auto');
       applyUiMode();
       const resizeObserver = new ResizeObserver(() => setControlsHidden(controls && controls.classList.contains('hidden')));
