@@ -26,6 +26,10 @@ There are still lots of bugs. If you find any, feel free to give feedback. bilib
 - Github
 - CloudFlare
 
+[![版本](https://img.shields.io/github/v/release/leehxuan/html-line?label=版本&color=blue)](https://github.com/leehxuan/html-line/releases)
+[![大小](https://img.shields.io/github/repo-size/leehxuan/html-line?label=大小&color=green)](https://github.com/leehxuan/html-line)
+[![更新](https://img.shields.io/github/last-commit/leehxuan/html-line?label=更新&color=orange)](https://github.com/leehxuan/html-line/commits)
+
 #
 
 ### 简介
