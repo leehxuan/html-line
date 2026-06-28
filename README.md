@@ -56,7 +56,7 @@ bug 依旧很多，发现 bug 欢迎来反馈。哔哩哔哩视频: [BV11xj66vEE
 
 ![版本](https://img.shields.io/github/v/release/leehxuan/html-line?label=版本&color=blue)
 ![大小](https://img.shields.io/github/repo-size/leehxuan/html-line?label=大小&color=green)
-![更新](https://img.shields.io/github/last-commit/leehxuan/html-line?label=Updated&color=orange)
+![更新](https://img.shields.io/github/last-commit/leehxuan/html-line?label=更新&color=orange)
 
 #
 
@@ -84,4 +84,4 @@ PCでブラウザが長時間フォーカスを失うと、再度プレイする
 
 ![バージョン](https://img.shields.io/github/v/release/leehxuan/html-line?label=バージョン&color=blue)
 ![サイズ](https://img.shields.io/github/repo-size/leehxuan/html-line?label=サイズ&color=green)
-![更新日](https://img.shields.io/github/last-commit/leehxuan/html-line?label=Updated&color=orange)
+![更新日](https://img.shields.io/github/last-commit/leehxuan/html-line?label=更新日&color=orange)
