@@ -26,9 +26,9 @@ There are still lots of bugs. If you find any, feel free to give feedback. bilib
 - Github
 - CloudFlare
 
-[![版本](https://img.shields.io/github/v/release/leehxuan/html-line?label=版本&color=blue)](https://github.com/leehxuan/html-line/releases)
-[![大小](https://img.shields.io/github/repo-size/leehxuan/html-line?label=大小&color=green)](https://github.com/leehxuan/html-line)
-[![更新](https://img.shields.io/github/last-commit/leehxuan/html-line?label=更新&color=orange)](https://github.com/leehxuan/html-line/commits)
+![Version](https://img.shields.io/github/v/release/leehxuan/html-line?label=Version&color=blue)
+![Size](https://img.shields.io/github/repo-size/leehxuan/html-line?label=Size&color=green)
+![Updated](https://img.shields.io/github/last-commit/leehxuan/html-line?label=Updated&color=orange)
 
 #
 
@@ -54,6 +54,10 @@ bug 依旧很多，发现 bug 欢迎来反馈。哔哩哔哩视频: [BV11xj66vEE
 - Github
 - CloudFlare
 
+![版本](https://img.shields.io/github/v/release/leehxuan/html-line?label=版本&color=blue)
+![大小](https://img.shields.io/github/repo-size/leehxuan/html-line?label=大小&color=green)
+![更新](https://img.shields.io/github/last-commit/leehxuan/html-line?label=更新&color=orange)
+
 #
 
 ### 紹介
@@ -77,3 +81,7 @@ PCでブラウザが長時間フォーカスを失うと、再度プレイする
 ### 特別に感謝
 - Github
 - CloudFlare
+
+![バージョン](https://img.shields.io/github/v/release/leehxuan/html-line?label=バージョン&color=blue)
+![サイズ](https://img.shields.io/github/repo-size/leehxuan/html-line?label=サイズ&color=green)
+![更新日](https://img.shields.io/github/last-commit/leehxuan/html-line?label=更新日&color=orange)
