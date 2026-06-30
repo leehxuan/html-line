@@ -68,7 +68,7 @@
 
     /* ===== 通用 HUD 按钮 ===== */
     #pause-btn, #autoplay-btn, #menu-btn, #ui-mode-btn, #help-btn, #help-top-btn, #intro-import-btn,
-    #autoplay-exit-btn, #revive-btn, #result-restart-btn, #controls button, #settings-rock-btn, #settings-static-camera-btn,
+    #autoplay-exit-btn, #revive-btn, #result-restart-btn, #controls button, #settings-rock-btn, #settings-static-camera-btn, #settings-blink-btn,
     #close-modal-btn, #close-beatmap-btn, #close-help-btn, #close-more-btn, #close-settings-btn {
       position: relative;
       background: var(--panel);
@@ -83,19 +83,19 @@
     }
     #pause-btn::before, #autoplay-btn::before, #menu-btn::before, #ui-mode-btn::before, #help-btn::before, #help-top-btn::before,
     #intro-import-btn::before, #autoplay-exit-btn::before, #revive-btn::before,
-    #result-restart-btn::before, #controls button::before, #settings-rock-btn::before, #settings-static-camera-btn::before {
+    #result-restart-btn::before, #controls button::before, #settings-rock-btn::before, #settings-static-camera-btn::before, #settings-blink-btn::before {
       content: ""; position: absolute; left: 0; top: 0; width: 8px; height: 1.5px;
       background: var(--cyan); opacity: .5; transition: opacity .18s; pointer-events: none;
     }
     #pause-btn:hover, #autoplay-btn:hover, #menu-btn:hover, #ui-mode-btn:hover, #help-btn:hover, #help-top-btn:hover,
-    #intro-import-btn:hover, #controls button:hover, #result-restart-btn:hover, #settings-rock-btn:hover, #settings-static-camera-btn:hover,
+    #intro-import-btn:hover, #controls button:hover, #result-restart-btn:hover, #settings-rock-btn:hover, #settings-static-camera-btn:hover, #settings-blink-btn:hover,
     #close-modal-btn:hover, #close-beatmap-btn:hover, #close-help-btn:hover, #close-more-btn:hover {
       border-color: var(--line-2); color: #fff;
       background: rgba(20, 36, 54, 0.82);
       box-shadow: 0 0 0 1px rgba(56,232,255,0.1);
     }
     #pause-btn:hover::before, #autoplay-btn:hover::before, #menu-btn:hover::before, #ui-mode-btn:hover::before, #help-top-btn:hover::before,
-    #controls button:hover::before, #settings-rock-btn:hover::before, #settings-static-camera-btn:hover::before { opacity: 1; }
+    #controls button:hover::before, #settings-rock-btn:hover::before, #settings-static-camera-btn:hover::before, #settings-blink-btn:hover::before { opacity: 1; }
     #controls button:active { transform: translateY(1px) scale(0.98); }
 
     #pause-btn { position: absolute; bottom: 16px; left: 16px; z-index: 20; padding: 9px 16px; font-size: 13px; }
@@ -425,7 +425,7 @@
     .settings-block { margin: 10px 0 14px; text-align: left; }
     .settings-label { color: var(--text-2); font-size: 12px; letter-spacing: 1px; margin-bottom: 8px; }
     #settings-panel { text-align: left; }
-    #settings-rock-btn, #settings-static-camera-btn {
+    #settings-rock-btn, #settings-static-camera-btn, #settings-blink-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -438,13 +438,13 @@
       background: rgba(10, 18, 34, 0.92);
       border: 1px solid rgba(56,232,255,0.2);
     }
-    #settings-rock-btn.on, #settings-static-camera-btn.on {
+    #settings-rock-btn.on, #settings-static-camera-btn.on, #settings-blink-btn.on {
       color: var(--cyan);
       border-color: rgba(56,232,255,0.7);
       background: rgba(56,232,255,0.12);
       box-shadow: 0 0 16px rgba(56,232,255,0.22), 0 0 0 1px rgba(56,232,255,0.16) inset;
     }
-    #settings-rock-btn.on::before, #settings-static-camera-btn.on::before {
+    #settings-rock-btn.on::before, #settings-static-camera-btn.on::before, #settings-blink-btn.on::before {
       opacity: 1;
       background: var(--cyan);
       box-shadow: 0 0 10px var(--cyan);
@@ -551,7 +551,8 @@
     body.ui-default #close-more-btn,
     body.ui-default #close-settings-btn,
     body.ui-default #settings-rock-btn,
-    body.ui-default #settings-static-camera-btn {
+    body.ui-default #settings-static-camera-btn,
+    body.ui-default #settings-blink-btn {
       background: rgba(53, 55, 78, 0.92);
       border: 1px solid rgba(255, 255, 255, 0.14);
       color: #fff;
@@ -577,6 +578,7 @@
     body.ui-default #controls button::before,
     body.ui-default #settings-rock-btn::before,
     body.ui-default #settings-static-camera-btn::before,
+    body.ui-default #settings-blink-btn::before,
     body.ui-default #controls::before,
     body.ui-default #import-panel::before,
     body.ui-default #beatmap-panel::before,
@@ -604,13 +606,15 @@
     body.ui-default #close-more-btn:hover,
     body.ui-default #close-settings-btn:hover,
     body.ui-default #settings-rock-btn:hover,
-    body.ui-default #settings-static-camera-btn:hover {
+    body.ui-default #settings-static-camera-btn:hover,
+    body.ui-default #settings-blink-btn:hover {
       background: rgba(66, 69, 96, 0.96);
       border-color: rgba(255, 255, 255, 0.24);
       box-shadow: 0 12px 28px rgba(8, 9, 20, 0.22);
     }
     body.ui-default #settings-rock-btn.on,
-    body.ui-default #settings-static-camera-btn.on {
+    body.ui-default #settings-static-camera-btn.on,
+    body.ui-default #settings-blink-btn.on {
       background: rgba(255, 207, 92, 0.2);
       border-color: rgba(255, 207, 92, 0.65);
       color: #ffe39f;
@@ -881,6 +885,10 @@
 有问题目前可以先去B站 BV11xj66vEEz 来反映哦
 
 更新记录：
+2026/6/30 Beta 0.3.7
+修复了不能单独导入音频文件和osu文件的bug
+新增了“闪动模式”，路径会跟随节拍来闪动！（光敏性癫痫患者请不要使用）
+
 2026/6/26 Beta 0.3.6
 又加了一个静止视角的模式，刚刚忘记加了
 
@@ -941,6 +949,9 @@ kiai time的背景亮度略微降低
       </div>
       <div class="settings-block">
         <button id="settings-static-camera-btn" class="mod-btn rock">静止视角: 关</button>
+      </div>
+      <div class="settings-block">
+        <button id="settings-blink-btn" class="mod-btn rock">闪动模式: 关</button>
       </div>
       <div class="settings-block">
         <div class="settings-label">游玩倍速</div>
@@ -1020,6 +1031,7 @@ kiai time的背景亮度略微降低
       const beatmapList = document.getElementById('beatmap-list');
       const settingsRockBtn = document.getElementById('settings-rock-btn');
       const settingsStaticCameraBtn = document.getElementById('settings-static-camera-btn');
+      const settingsBlinkBtn = document.getElementById('settings-blink-btn');
       const speedSelect = document.getElementById('speed-select');
       const resultMods = document.getElementById('result-mods');
       const resultModsRow = document.getElementById('result-mods-row');
@@ -1036,10 +1048,11 @@ kiai time的背景亮度略微降低
       let showGuideBoxes = false;
       let rockMode = false;
       let staticCameraMode = false;
+      let blinkMode = false;
       let speedMultiplier = 1;
       let autoplayMode = false;
-      const VERSION_TEXT = 'Beta 0.3.6';
-      const STORAGE_KEYS = { uiMode: 'html-line-ui-mode', delayMs: 'html-line-delay-ms', staticCameraMode: 'html-line-static-camera-mode' };
+      const VERSION_TEXT = 'Beta 0.3.7';
+      const STORAGE_KEYS = { uiMode: 'html-line-ui-mode', delayMs: 'html-line-delay-ms', staticCameraMode: 'html-line-static-camera-mode', blinkMode: 'html-line-blink-mode' };
       const SPEED_OPTIONS = [0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2];
       let uiMode = 'tech';
 
@@ -1063,6 +1076,7 @@ kiai time的背景亮度略微降低
       const CAMERA_FOLLOW_HZ = 120;
 
       let gameStarted = false, gameStartTime = 0, delayMs = 0, lineMoving = false;
+      let reviveAwaitingStart = false;
       let gameTimeOffset = 0;
       let lastFrameTime = 0, animFrameId = null, gameFinished = false;
       let paused = false, pauseStartTime = 0, totalPauseTime = 0, pausedAudioTime = 0;
@@ -1156,6 +1170,7 @@ kiai time的背景亮度略微降低
           const savedDelay = parseInt(localStorage.getItem(STORAGE_KEYS.delayMs) || '', 10);
           if (!Number.isNaN(savedDelay) && delayInput) delayInput.value = String(Math.max(-500, Math.min(500, savedDelay)));
           staticCameraMode = localStorage.getItem(STORAGE_KEYS.staticCameraMode) === 'true';
+          blinkMode = localStorage.getItem(STORAGE_KEYS.blinkMode) === 'true';
         } catch (e) { }
       }
       function getDelayMs() { const v = parseInt(delayInput.value); return isNaN(v) ? 0 : v; }
@@ -1166,7 +1181,31 @@ kiai time的背景亮度略微降低
         if (rockMode) parts.push('摇滚');
         if (Math.abs(getSpeedMultiplier() - 1) > 0.001) parts.push(getSpeedLabel());
         if (staticCameraMode) parts.push('静视');
+        if (blinkMode) parts.push('闪动');
         return parts.length ? parts.join(' / ') : '无';
+      }
+      function getBeatTimingAtTime(timeMs) {
+        const points = beatmapData?.timingPoints || [];
+        let beatLength = 500;
+        let beatStartTime = 0;
+        for (let i = 0; i < points.length; i++) {
+          const tp = points[i];
+          if (tp.time > timeMs) break;
+          if (tp.beatLength > 0) {
+            beatLength = tp.beatLength;
+            beatStartTime = tp.time;
+          }
+        }
+        return { beatLength: Math.max(1, beatLength), beatStartTime: Math.max(0, beatStartTime) };
+      }
+      function isBlinkModeVisible(timeMs) {
+        if (!blinkMode || !beatmapData) return true;
+        if (reviveAwaitingStart) return true;
+        const { beatLength, beatStartTime } = getBeatTimingAtTime(timeMs);
+        const kiaiFactor = getCurrentKiaiFactor(timeMs);
+        const cycleBeats = kiaiFactor > 0 ? 0.5 : 1;
+        const cycleMs = Math.max(1, beatLength * cycleBeats);
+        return Math.floor(Math.max(0, timeMs - beatStartTime) / cycleMs) % 2 === 0;
       }
       function applyPlaybackRate() {
         const speed = getSpeedMultiplier();
@@ -1621,6 +1660,7 @@ kiai time的背景亮度略微降低
         paused = false; pauseStartTime = 0; totalPauseTime = 0; pausedAudioTime = 0; audioResumeAnchorMs = 0; delayMs = getDelayMs();
         if (beatmapData && delayMs !== 0) { const delayOffsetDist = LINE_SPEED * delayMs / 1000 * getSpeedMultiplier(); squareX -= currentDir.dx * delayOffsetDist; squareY -= currentDir.dy * delayOffsetDist; trailPoints = [{ x: squareX, y: squareY }]; }
         ignoreMouseUntil = 0;
+        reviveAwaitingStart = false;
         hitEffects = []; boundaryCrashEffects = []; lastResultReason = null; resultFlashStartTime = 0;
         fullCollectGoldShiftStart = 0;
         setControlsHidden(false);
@@ -1670,6 +1710,7 @@ kiai time的背景亮度略微降低
         }
         gameTimeOffset = reviveTimeMs;
         gameStarted = false; gameStartTime = 0; lineMoving = false;
+        reviveAwaitingStart = true;
         delayMs = 0; totalPauseTime = 0; pauseStartTime = 0; pausedAudioTime = 0; audioResumeAnchorMs = reviveTimeMs;
           pauseOverlay.classList.remove('active'); pauseBtn.textContent = IS_MOBILE_UI ? '暂停' : '暂停 (↓)';
         pauseAudioPlayback(); seekAudioToMs(reviveTimeMs); audioEndedByPlayback = false;
@@ -1703,6 +1744,11 @@ kiai time的背景亮度略微降低
           settingsStaticCameraBtn.classList.toggle('active', staticCameraMode);
           settingsStaticCameraBtn.classList.toggle('on', staticCameraMode);
         }
+        if (settingsBlinkBtn) {
+          settingsBlinkBtn.textContent = blinkMode ? '闪动模式: 开' : '闪动模式: 关';
+          settingsBlinkBtn.classList.toggle('active', blinkMode);
+          settingsBlinkBtn.classList.toggle('on', blinkMode);
+        }
         if (speedSelect) speedSelect.value = String(getSpeedMultiplier());
       }
       function toggleRockMode() {
@@ -1719,6 +1765,14 @@ kiai time的背景亮度略微降低
         staticCameraMode = !staticCameraMode;
         if (staticCameraMode) rockMode = false;
         savePreference(STORAGE_KEYS.staticCameraMode, staticCameraMode);
+        syncSettingsUi();
+        updateInfoText();
+        resetGame();
+      }
+      function toggleBlinkMode() {
+        if (gameStarted && !gameFinished) return;
+        blinkMode = !blinkMode;
+        savePreference(STORAGE_KEYS.blinkMode, blinkMode);
         syncSettingsUi();
         updateInfoText();
         resetGame();
@@ -1761,6 +1815,7 @@ kiai time的背景亮度略微降低
 
       function startGame() {
         if (preparingTrack || inputLockedUntilReady || gameStarted) return;
+        reviveAwaitingStart = false;
         gameStarted = true; gameStartTime = performance.now();
         lineMoving = true; gameFinished = false; paused = false; totalPauseTime = 0;
         cumulativeScale = 1; cumulativeRotation = 0; bigEffectAnim = null; bigNoteSequence = 0;
@@ -1988,8 +2043,9 @@ kiai time的背景亮度略微降低
         const currentLineColor = getRenderedLineColor(now);
         const currentKiaiSquareColor = getBrightenedLineColor(currentLineColor, 0.14);
         const gameTimeMs = getCurrentGameTimeMs(now);
+        const blinkVisible = isBlinkModeVisible(gameTimeMs);
         const viewport = getWorldViewport(220);
-        drawGeneratedTrackAndObstacles();
+        drawGeneratedTrackAndObstacles(blinkVisible);
         const itemSize = SQUARE_SIZE * getViewZoom();
         const crownSize = itemSize * 2;
         for (const c of crowns) { if (!isCrownActuallyCollected(c) || !isWorldPointInViewport(c.x, c.y, viewport)) continue; const sc = worldToScreen(c.x, c.y); if (!isScreenPointInView(sc.x, sc.y, 300)) continue; const sideOffset = c.side * (currentTrackConfig ? currentTrackConfig.laneWidth / 2 + 40 : 60); drawCrownEmoji(sc.x + sideOffset, sc.y, crownSize); }
@@ -2035,10 +2091,10 @@ kiai time的背景亮度略微降低
           ctx.fillText(marker.pct + '%', sc.x + off, sc.y);
         }
         const headX = lineMoving ? squareX : trailPoints[0].x; const headY = lineMoving ? squareY : trailPoints[0].y;
-        if (showGuideBoxes) { for (const effect of hitEffects) { const elapsed = now - effect.startTime; if (elapsed > effect.duration) continue; const progress = elapsed / effect.duration; const sc = worldToScreen(effect.x, effect.y); const size = GUIDE_BOX_SIZE + progress * 40; ctx.save(); ctx.globalAlpha = 1 - progress; ctx.translate(sc.x, sc.y); ctx.rotate(effect.angle || DIR_UP_RIGHT.angle); ctx.fillStyle = '#ffd700'; ctx.fillRect(-size / 2, -size / 2, size, size); ctx.restore(); } }
-        if (showGuideBoxes) { const gdr = getGuideBoxDrawRange(); for (let bi = gdr.first; bi <= gdr.last; bi++) { const box = guideBoxes[bi]; if (!box || !box.active) continue; const sc = worldToScreen(box.x, box.y); if (!isScreenPointInView(sc.x, sc.y, 120)) continue; const halfGB = GUIDE_BOX_SIZE / 2; ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(box.angle); ctx.strokeStyle = box.isFinal ? 'rgba(255,215,0,0.96)' : 'rgba(255,255,255,0.7)'; ctx.lineWidth = box.isFinal ? 3 : 2; ctx.strokeRect(-halfGB, -halfGB, GUIDE_BOX_SIZE, GUIDE_BOX_SIZE); ctx.restore(); } }
+        if (showGuideBoxes && blinkVisible) { for (const effect of hitEffects) { const elapsed = now - effect.startTime; if (elapsed > effect.duration) continue; const progress = elapsed / effect.duration; const sc = worldToScreen(effect.x, effect.y); const size = GUIDE_BOX_SIZE + progress * 40; ctx.save(); ctx.globalAlpha = 1 - progress; ctx.translate(sc.x, sc.y); ctx.rotate(effect.angle || DIR_UP_RIGHT.angle); ctx.fillStyle = '#ffd700'; ctx.fillRect(-size / 2, -size / 2, size, size); ctx.restore(); } }
+        if (showGuideBoxes && blinkVisible) { const gdr = getGuideBoxDrawRange(); for (let bi = gdr.first; bi <= gdr.last; bi++) { const box = guideBoxes[bi]; if (!box || !box.active) continue; const sc = worldToScreen(box.x, box.y); if (!isScreenPointInView(sc.x, sc.y, 120)) continue; const halfGB = GUIDE_BOX_SIZE / 2; ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(box.angle); ctx.strokeStyle = box.isFinal ? 'rgba(255,215,0,0.96)' : 'rgba(255,255,255,0.7)'; ctx.lineWidth = box.isFinal ? 3 : 2; ctx.strokeRect(-halfGB, -halfGB, GUIDE_BOX_SIZE, GUIDE_BOX_SIZE); ctx.restore(); } }
         const finalGuideBox = guideBoxes.find(box => box && box.isFinal && box.active);
-        if (finalGuideBox && !showGuideBoxes) { const sc = worldToScreen(finalGuideBox.x, finalGuideBox.y); if (isScreenPointInView(sc.x, sc.y, 120)) { const halfGB = GUIDE_BOX_SIZE / 2; ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(finalGuideBox.angle); ctx.strokeStyle = 'rgba(255,215,0,0.96)'; ctx.lineWidth = 3; ctx.strokeRect(-halfGB, -halfGB, GUIDE_BOX_SIZE, GUIDE_BOX_SIZE); ctx.restore(); } }
+        if (finalGuideBox && !showGuideBoxes && blinkVisible) { const sc = worldToScreen(finalGuideBox.x, finalGuideBox.y); if (isScreenPointInView(sc.x, sc.y, 120)) { const halfGB = GUIDE_BOX_SIZE / 2; ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(finalGuideBox.angle); ctx.strokeStyle = 'rgba(255,215,0,0.96)'; ctx.lineWidth = 3; ctx.strokeRect(-halfGB, -halfGB, GUIDE_BOX_SIZE, GUIDE_BOX_SIZE); ctx.restore(); } }
         drawPlayerTrailFast(headX, headY, currentLineColor);
         const zoom = getViewZoom(); const sc = worldToScreen(headX, headY); ctx.save(); ctx.translate(sc.x, sc.y); ctx.rotate(currentDir.angle); ctx.fillStyle = currentLineColor; ctx.fillRect(-SQUARE_SIZE / 2 * zoom, -SQUARE_SIZE / 2 * zoom, SQUARE_SIZE * zoom, SQUARE_SIZE * zoom); if (!lineMoving) { const arrowOffset = SQUARE_SIZE * 1.1 * zoom, arrowSize = SQUARE_SIZE * 0.56 * zoom; ctx.beginPath(); ctx.moveTo(arrowOffset + arrowSize, 0); ctx.lineTo(arrowOffset - arrowSize * 0.45, -arrowSize * 0.72); ctx.lineTo(arrowOffset - arrowSize * 0.45, -arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 1.05, -arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 1.05, arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 0.45, arrowSize * 0.24); ctx.lineTo(arrowOffset - arrowSize * 0.45, arrowSize * 0.72); ctx.closePath(); ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.shadowColor = 'rgba(255,255,255,0.65)'; ctx.shadowBlur = 10; ctx.fill(); ctx.lineWidth = 1.2; ctx.strokeStyle = 'rgba(0,184,212,0.9)'; ctx.stroke(); } ctx.restore();
         if (kiaiSquares.length > 0) { while (kiaiSquareDrawIdx < kiaiSquares.length) { const sq = kiaiSquares[kiaiSquareDrawIdx]; if (gameTimeMs < sq.appearTime + 4000) break; if (!isWorldPointInViewport(sq.x, sq.y, viewport)) { kiaiSquareDrawIdx++; } else break; } for (let i = kiaiSquareDrawIdx; i < kiaiSquares.length; i++) { const sq = kiaiSquares[i]; if (gameTimeMs < sq.appearTime) continue; if (sq.appearTime > gameTimeMs + 3000) break; if (!isWorldPointInViewport(sq.x, sq.y, viewport)) continue; const sqSc = worldToScreen(sq.x, sq.y); if (!isScreenPointInView(sqSc.x, sqSc.y, 180)) continue; ctx.save(); ctx.globalAlpha = 0.8; ctx.translate(sqSc.x, sqSc.y); ctx.rotate(sq.rotation + backgroundPhase * 0.22); ctx.shadowColor = 'rgba(0,0,0,0.32)'; ctx.shadowBlur = 8; ctx.shadowOffsetX = 1.5; ctx.shadowOffsetY = 2.5; ctx.fillStyle = currentKiaiSquareColor; ctx.fillRect(-sq.size / 2, -sq.size / 2, sq.size, sq.size); ctx.restore(); } }
@@ -2093,9 +2149,77 @@ kiai time的背景亮度略微降低
       function updateObstacleDifficultyDesc() { if (!obstacleDifficultyDesc) return; const r = beatmapData ? resolveObstacleDifficulty(beatmapData) : null; if (obstacleDifficulty === 'auto') { if (r) obstacleDifficultyDesc.textContent = `自动模式：当前谱面判定为 ${OBSTACLE_DIFFICULTY_CONFIG[r].label}，轨道宽度 ${OBSTACLE_DIFFICULTY_CONFIG[r].laneWidth}px。`; else obstacleDifficultyDesc.textContent = '自动模式会根据谱面音符密度推断轨道宽度和障碍物密度。'; } else if (obstacleDifficulty === 'washpool') obstacleDifficultyDesc.textContent = `洗笔池：轨道宽度 ${OBSTACLE_DIFFICULTY_CONFIG.washpool.laneWidth}px，仅为线宽的 1.5 倍，必须手动开启。`; else obstacleDifficultyDesc.textContent = `${OBSTACLE_DIFFICULTY_CONFIG[obstacleDifficulty].label}：轨道宽度 ${OBSTACLE_DIFFICULTY_CONFIG[obstacleDifficulty].laneWidth}px，障碍密度 ${(OBSTACLE_DIFFICULTY_CONFIG[obstacleDifficulty].obstacleProbability * 100).toFixed(0)}%。`; }
       function syncObstacleDifficultySelects(v) { obstacleDifficulty = v; if (obstacleDifficultySelect && obstacleDifficultySelect.value !== v) obstacleDifficultySelect.value = v; if (obstacleDifficultyLiveSelect && obstacleDifficultyLiveSelect.value !== v) obstacleDifficultyLiveSelect.value = v; updateObstacleDifficultyDesc(); }
       async function extractLineColorFromImage(blob) { return new Promise(res => { const img = new Image(); img.onload = () => { const sc = 0.1, w = Math.max(1, Math.floor(img.width * sc)), h = Math.max(1, Math.floor(img.height * sc)); const offC = document.createElement('canvas'); offC.width = w; offC.height = h; const offCtx = offC.getContext('2d'); offCtx.drawImage(img, 0, 0, w, h); const data = offCtx.getImageData(0, 0, w, h).data; let r = 0, g = 0, b = 0, c = 0; for (let i = 0; i < data.length; i += 4) { r += data[i]; g += data[i + 1]; b += data[i + 2]; c++; } r = Math.floor(r / c); g = Math.floor(g / c); b = Math.floor(b / c); const brighten = c => Math.min(255, Math.floor(c + (255 - c) * 0.25)); res(`rgb(${brighten(r)},${brighten(g)},${brighten(b)})`); }; img.onerror = () => res(null); img.src = URL.createObjectURL(blob); }); }
-      let pendingOsuContent = null, pendingAudioFile = null, importedBeatmaps = [];
-      function processOszFile(file) { importStatus.textContent = '正在解压谱面包...'; importStatus.style.color = '#ff9800'; const reader = new FileReader(); reader.onload = function (e) { JSZip.loadAsync(e.target.result).then(function (zip) { const osuFiles = [], audioFiles = [], imageFiles = [], promises = []; zip.forEach(function (rp, entry) { const name = rp.split('/').pop(); if (name.endsWith('.osu')) promises.push(entry.async('string').then(c => osuFiles.push({ name, content: c }))); else if (name.match(/\.(mp3|ogg|wav|m4a|aac)$/i)) promises.push(entry.async('blob').then(b => audioFiles.push({ name, blob: b }))); else if (name.match(/\.(jpg|jpeg|png|gif|bmp)$/i)) promises.push(entry.async('blob').then(b => imageFiles.push({ name, blob: b }))); }); Promise.all(promises).then(async () => { importStatus.textContent = `找到 ${osuFiles.length} 个谱面, ${audioFiles.length} 个音频`; importStatus.style.color = '#4caf50'; const allBeatmaps = []; for (const osuFile of osuFiles) { const bm = parseBeatmap(osuFile.content, osuFile.name); let matchedAudio = null; if (bm.audioFilename && audioFiles.length > 0) { const an = bm.audioFilename.replace(/^.*[\\\/]/, ''); matchedAudio = audioFiles.find(a => a.name === an || a.name === bm.audioFilename); if (!matchedAudio && audioFiles.length === 1) matchedAudio = audioFiles[0]; } let matchedImage = null; if (bm.backgroundFilename && imageFiles.length > 0) { const iname = bm.backgroundFilename.replace(/^.*[\\\/]/, ''); matchedImage = imageFiles.find(img => img.name === iname); } if (matchedImage) importedBackgroundBlobs[bm.filename + '|' + bm.version] = matchedImage.blob; allBeatmaps.push({ ...bm, osuContent: osuFile.content, audioBlob: matchedAudio ? matchedAudio.blob : null, audioFileName: matchedAudio ? matchedAudio.name : null, backgroundBlob: matchedImage ? matchedImage.blob : null }); } importedBeatmaps = allBeatmaps; importModal.classList.remove('active'); showBeatmapSelect(); }); }).catch(err => { importStatus.textContent = '解压失败: ' + err.message; importStatus.style.color = '#f44336'; }); }; reader.readAsArrayBuffer(file); }
-      function checkManualImport() { if (pendingOsuContent) { const beatmap = parseBeatmap(pendingOsuContent, osuFileInput.files[0]?.name || 'unknown.osu'); const entry = { ...beatmap, osuContent: pendingOsuContent, audioBlob: pendingAudioFile, audioFileName: pendingAudioFile?.name || null }; const existing = importedBeatmaps.findIndex(b => b.filename === entry.filename); if (existing >= 0) importedBeatmaps[existing] = entry; else importedBeatmaps.push(entry); importStatus.textContent = '✅ 谱面已就绪' + (pendingAudioFile ? ' (含音频)' : ' (无音频)'); importStatus.style.color = '#4caf50'; importModal.classList.remove('active'); showBeatmapSelect(); pendingOsuContent = null; pendingAudioFile = null; osuFileInput.value = ''; audioFileInput.value = ''; } }
+      let pendingOsuContent = null, pendingOsuName = '', pendingAudioFile = null, importedBeatmaps = [];
+      function resetManualImportState(clearImportedBeatmaps = false) {
+        pendingOsuContent = null;
+        pendingOsuName = '';
+        pendingAudioFile = null;
+        if (clearImportedBeatmaps) importedBeatmaps = [];
+        if (osuFileInput) osuFileInput.value = '';
+        if (audioFileInput) audioFileInput.value = '';
+      }
+      function processOszFile(file) {
+        resetManualImportState();
+        importStatus.textContent = '正在解压谱面包...';
+        importStatus.style.color = '#ff9800';
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          JSZip.loadAsync(e.target.result).then(function (zip) {
+            const osuFiles = [], audioFiles = [], imageFiles = [], promises = [];
+            zip.forEach(function (rp, entry) {
+              const name = rp.split('/').pop();
+              if (name.endsWith('.osu')) promises.push(entry.async('string').then(c => osuFiles.push({ name, content: c })));
+              else if (name.match(/\.(mp3|ogg|wav|m4a|aac)$/i)) promises.push(entry.async('blob').then(b => audioFiles.push({ name, blob: b })));
+              else if (name.match(/\.(jpg|jpeg|png|gif|bmp)$/i)) promises.push(entry.async('blob').then(b => imageFiles.push({ name, blob: b })));
+            });
+            Promise.all(promises).then(async () => {
+              importStatus.textContent = `找到 ${osuFiles.length} 个谱面, ${audioFiles.length} 个音频`;
+              importStatus.style.color = '#4caf50';
+              const allBeatmaps = [];
+              for (const osuFile of osuFiles) {
+                const bm = parseBeatmap(osuFile.content, osuFile.name);
+                let matchedAudio = null;
+                if (bm.audioFilename && audioFiles.length > 0) {
+                  const an = bm.audioFilename.replace(/^.*[\\\/]/, '');
+                  matchedAudio = audioFiles.find(a => a.name === an || a.name === bm.audioFilename);
+                  if (!matchedAudio && audioFiles.length === 1) matchedAudio = audioFiles[0];
+                }
+                let matchedImage = null;
+                if (bm.backgroundFilename && imageFiles.length > 0) {
+                  const iname = bm.backgroundFilename.replace(/^.*[\\\/]/, '');
+                  matchedImage = imageFiles.find(img => img.name === iname);
+                }
+                if (matchedImage) importedBackgroundBlobs[bm.filename + '|' + bm.version] = matchedImage.blob;
+                allBeatmaps.push({ ...bm, osuContent: osuFile.content, audioBlob: matchedAudio ? matchedAudio.blob : null, audioFileName: matchedAudio ? matchedAudio.name : null, backgroundBlob: matchedImage ? matchedImage.blob : null });
+              }
+              importedBeatmaps = allBeatmaps;
+              importModal.classList.remove('active');
+              showBeatmapSelect();
+            });
+          }).catch(err => {
+            importStatus.textContent = '解压失败: ' + err.message;
+            importStatus.style.color = '#f44336';
+          });
+        };
+        reader.readAsArrayBuffer(file);
+      }
+      function checkManualImport() {
+        if (!pendingOsuContent) {
+          if (pendingAudioFile) {
+            importStatus.textContent = '已选择音频，请再选择 .osu 文件';
+            importStatus.style.color = '#ff9800';
+          }
+          return;
+        }
+        const beatmap = parseBeatmap(pendingOsuContent, pendingOsuName || 'unknown.osu');
+        const entry = { ...beatmap, osuContent: pendingOsuContent, audioBlob: pendingAudioFile, audioFileName: pendingAudioFile?.name || null };
+        importedBeatmaps = [entry];
+        importStatus.textContent = '✅ 谱面已就绪' + (pendingAudioFile ? ' (含音频)' : ' (无音频)');
+        importStatus.style.color = '#4caf50';
+        importModal.classList.remove('active');
+        showBeatmapSelect();
+        resetManualImportState();
+      }
       function showBeatmapSelect() { beatmapList.innerHTML = ''; const list = importedBeatmaps; if (list.length === 0) { beatmapList.innerHTML = '<p style="text-align:center;color:rgba(255,255,255,0.4);">未找到谱面，请先导入 .osz 或 .osu 文件</p>'; } for (const bm of list) { const div = document.createElement('div'); div.className = 'beatmap-item'; if (beatmapData && bm.filename === beatmapData.filename && bm.version === beatmapData.version) div.classList.add('current'); const modeLabel = bm.mode === 1 ? 'Taiko' : (bm.mode === 0 ? 'osu!' : '模式' + bm.mode); const densityInfo = getBeatmapDensityInfo(bm); const densityText = densityInfo.notesPerSecond > 0 ? densityInfo.notesPerSecond.toFixed(1) + ' 次/秒' : '无数据'; div.innerHTML = `<div class="version">${bm.version || 'Unknown'} ${beatmapData && bm.filename === beatmapData.filename && bm.version === beatmapData.version ? '👈 当前' : ''}</div><div class="meta">${bm.artist || 'Unknown'} - ${bm.title || 'Unknown'}</div><div class="notes">音符: ${bm.hitObjects.length} | ${bm.audioBlob ? '🎵 ' + (bm.audioFileName || '有音频') : '🔇 无音频'} | ${modeLabel} <span class="density-info">| 密度: ${densityText}</span></div>`; div.addEventListener('click', () => selectBeatmap(bm)); beatmapList.appendChild(div); } beatmapSelect.classList.add('active'); }
       async function selectBeatmap(beatmap) {
         if (preparingTrack) return;
@@ -2203,9 +2327,9 @@ kiai time的背景亮度略微降低
       function intersectLines(p, dx, dy, q, ex, ey) { const den = dx * ey - dy * ex; if (Math.abs(den) < 0.001) return p; const t = ((q.x - p.x) * ey - (q.y - p.y) * ex) / den; return { x: p.x + dx * t, y: p.y + dy * t }; }
       function makeTrackRangePaths(start, end, half) { const segs = laneSegments.slice(start, end + 1); if (segs.length === 0) return null; const centerPts = [{ x: segs[0].x1, y: segs[0].y1 }]; for (const s of segs) centerPts.push({ x: s.x2, y: s.y2 }); const left = centerPts.map(p => ({ x: p.x + half, y: p.y })); const right = centerPts.map(p => ({ x: p.x - half, y: p.y })); const capPath = new Path2D(); if (start === 0) { const first = segs[0], side = getSegmentSidePoints(first, first.x1, first.y1, half), dx = first.x2 - first.x1, dy = first.y2 - first.y1, ex = side.right.x - side.left.x, ey = side.right.y - side.left.y; left[0] = intersectLines(left[0], dx, dy, side.left, ex, ey); right[0] = intersectLines(right[0], dx, dy, side.left, ex, ey); capPath.moveTo(left[0].x, left[0].y); capPath.lineTo(right[0].x, right[0].y); } if (end === laneSegments.length - 1) { const last = segs[segs.length - 1], side = getSegmentSidePoints(last, last.x2, last.y2, half), dx = last.x2 - last.x1, dy = last.y2 - last.y1, ex = side.right.x - side.left.x, ey = side.right.y - side.left.y, li = left.length - 1, ri = right.length - 1; left[li] = intersectLines(left[li], dx, dy, side.left, ex, ey); right[ri] = intersectLines(right[ri], dx, dy, side.left, ex, ey); capPath.moveTo(left[li].x, left[li].y); capPath.lineTo(right[ri].x, right[ri].y); } return { centerPath: makePathFromWorldPoints(centerPts), leftPath: makePathFromWorldPoints(left), rightPath: makePathFromWorldPoints(right), capPath }; }
       function strokeTrackPaths(renderCtx, paths, half) { renderCtx.strokeStyle = 'rgba(6,12,22,0.82)'; renderCtx.lineWidth = half * 2 + 18; renderCtx.stroke(paths.centerPath); renderCtx.strokeStyle = 'rgba(26,43,57,0.96)'; renderCtx.lineWidth = half * 2; renderCtx.stroke(paths.centerPath); renderCtx.strokeStyle = 'rgba(54,83,104,0.34)'; renderCtx.lineWidth = Math.max(half * 1.38, half * 2 - 26); renderCtx.stroke(paths.centerPath); renderCtx.strokeStyle = 'rgba(255,255,255,0.045)'; renderCtx.lineWidth = 1.2; renderCtx.stroke(paths.centerPath); renderCtx.strokeStyle = 'rgba(0,229,255,0.20)'; renderCtx.lineWidth = 11; renderCtx.stroke(paths.leftPath); renderCtx.stroke(paths.rightPath); renderCtx.stroke(paths.capPath); renderCtx.strokeStyle = 'rgba(220,250,255,0.88)'; renderCtx.lineWidth = 3; renderCtx.stroke(paths.leftPath); renderCtx.stroke(paths.rightPath); renderCtx.stroke(paths.capPath); }
-      function drawGeneratedTrackAndObstacles() {
+      function drawGeneratedTrackAndObstacles(blinkVisible = true) {
         if (!currentTrackConfig || laneSegments.length === 0) return;
-        if (trackRenderCache && trackRenderCache.ready && trackRenderCache.key === makeTrackCacheKey(beatmapData)) {
+        if (blinkVisible && trackRenderCache && trackRenderCache.ready && trackRenderCache.key === makeTrackCacheKey(beatmapData)) {
           const size = getScreenSizeCss();
           const offY = getCameraOffsetY();
           const zoom = getViewZoom();
@@ -2275,8 +2399,8 @@ kiai time的背景亮度略微降低
       helpBtn.addEventListener('click', e => { e.stopPropagation(); helpModal.classList.add('active'); });
       if (helpTopBtn) helpTopBtn.addEventListener('click', e => { e.stopPropagation(); returnToHome(); });
       if (menuBtn) menuBtn.addEventListener('click', e => { e.stopPropagation(); if (!gameStarted && moreModal) moreModal.classList.add('active'); });
-      loadBtn.addEventListener('click', e => { e.stopPropagation(); importModal.classList.add('active'); syncObstacleDifficultySelects(obstacleDifficulty); importStatus.textContent = ''; pendingOsuContent = null; pendingAudioFile = null; osuFileInput.value = ''; audioFileInput.value = ''; oszFileInput.value = ''; });
-      introImportBtn.addEventListener('click', e => { e.stopPropagation(); importModal.classList.add('active'); syncObstacleDifficultySelects(obstacleDifficulty); importStatus.textContent = ''; pendingOsuContent = null; pendingAudioFile = null; osuFileInput.value = ''; audioFileInput.value = ''; oszFileInput.value = ''; });
+      loadBtn.addEventListener('click', e => { e.stopPropagation(); importModal.classList.add('active'); syncObstacleDifficultySelects(obstacleDifficulty); importStatus.textContent = ''; resetManualImportState(); oszFileInput.value = ''; });
+      introImportBtn.addEventListener('click', e => { e.stopPropagation(); importModal.classList.add('active'); syncObstacleDifficultySelects(obstacleDifficulty); importStatus.textContent = ''; resetManualImportState(); oszFileInput.value = ''; });
       beatmapBtn.addEventListener('click', e => { e.stopPropagation(); if (!preparingTrack && (!gameStarted || gameFinished)) showBeatmapSelect(); });
       rockBtn.addEventListener('click', e => { e.stopPropagation(); if (!gameStarted && settingsModal) settingsModal.classList.add('active'); });
       guideToggleBtn.addEventListener('click', e => { e.stopPropagation(); showGuideBoxes = !showGuideBoxes; guideToggleBtn.textContent = showGuideBoxes ? '引导线: 开' : '引导线: 关'; guideToggleBtn.classList.toggle('on', showGuideBoxes); drawFrame(); });
@@ -2290,6 +2414,7 @@ kiai time的背景亮度略微降低
       if (settingsModal) settingsModal.addEventListener('click', e => { if (e.target === settingsModal) settingsModal.classList.remove('active'); });
       if (settingsRockBtn) settingsRockBtn.addEventListener('click', e => { e.stopPropagation(); toggleRockMode(); });
       if (settingsStaticCameraBtn) settingsStaticCameraBtn.addEventListener('click', e => { e.stopPropagation(); toggleStaticCameraMode(); });
+      if (settingsBlinkBtn) settingsBlinkBtn.addEventListener('click', e => { e.stopPropagation(); toggleBlinkMode(); });
       if (speedSelect) speedSelect.addEventListener('change', e => {
         if (gameStarted && !gameFinished) { syncSettingsUi(); return; }
         const nextSpeed = Number(e.target.value || '1');
@@ -2307,8 +2432,20 @@ kiai time的背景亮度略微降低
       delayInput.addEventListener('input', () => { let v = delayInput.value.replace(/[^\d-]/g, ''); const fd = v.indexOf('-'); if (fd > 0) v = v.replace(/-/g, ''); else if (fd === 0) v = '-' + v.slice(1).replace(/-/g, ''); delayInput.value = v; });
       volumeInput.addEventListener('input', applyAudioVolume);
       oszFileInput.addEventListener('change', function (e) { if (e.target.files[0]) { processOszFile(e.target.files[0]); oszFileInput.value = ''; } });
-      osuFileInput.addEventListener('change', function (e) { if (e.target.files[0]) { const reader = new FileReader(); reader.onload = ev => { pendingOsuContent = ev.target.result; checkManualImport(); }; reader.readAsText(e.target.files[0]); } });
-      audioFileInput.addEventListener('change', function (e) { if (e.target.files[0]) { pendingAudioFile = e.target.files[0]; checkManualImport(); } });
+      osuFileInput.addEventListener('change', function (e) {
+        if (e.target.files[0]) {
+          pendingOsuName = e.target.files[0].name || 'unknown.osu';
+          const reader = new FileReader();
+          reader.onload = ev => { pendingOsuContent = ev.target.result; checkManualImport(); };
+          reader.readAsText(e.target.files[0]);
+        }
+      });
+      audioFileInput.addEventListener('change', function (e) {
+        if (e.target.files[0]) {
+          pendingAudioFile = e.target.files[0];
+          checkManualImport();
+        }
+      });
       async function handleObstacleDifficultyChange(value) { syncObstacleDifficultySelects(value); if (beatmapData) { if (gameStarted && !gameFinished) { infoText.textContent = '请先重开或结束当前游戏后再切换障碍难度'; return; } if (preparingTrack) return; await prepareSelectedBeatmapAsync(beatmapData); resetGame(); updateInfoText(); drawFrame(); } }
       if (obstacleDifficultySelect) obstacleDifficultySelect.addEventListener('change', e => handleObstacleDifficultyChange(e.target.value));
       if (obstacleDifficultyLiveSelect) obstacleDifficultyLiveSelect.addEventListener('change', e => handleObstacleDifficultyChange(e.target.value));
