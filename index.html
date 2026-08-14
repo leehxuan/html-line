@@ -885,6 +885,9 @@
 有问题目前可以先去B站 BV11xj66vEEz 来反映哦
 
 更新记录：
+2026/8/14 Beta 0.3.8
+在kiai time添加了左右两边跟随节拍闪动的光
+
 2026/6/30 Beta 0.3.7
 修复了不能单独导入音频文件和osu文件的bug
 新增了“闪动模式”，路径会跟随节拍来闪动！（光敏性癫痫患者请不要使用）
@@ -1051,7 +1054,7 @@ kiai time的背景亮度略微降低
       let blinkMode = false;
       let speedMultiplier = 1;
       let autoplayMode = false;
-      const VERSION_TEXT = 'Beta 0.3.7';
+      const VERSION_TEXT = 'Beta 0.3.8';
       const STORAGE_KEYS = { uiMode: 'html-line-ui-mode', delayMs: 'html-line-delay-ms', staticCameraMode: 'html-line-static-camera-mode', blinkMode: 'html-line-blink-mode' };
       const SPEED_OPTIONS = [0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2];
       let uiMode = 'tech';
@@ -1580,6 +1583,47 @@ kiai time的背景亮度略微降低
         }
         return factor;
       }
+      function getActiveKiaiPeriod(timeMs) {
+        const periods = beatmapData?.kiaiPeriods || [];
+        for (let i = 0; i < periods.length; i++) {
+          const period = periods[i];
+          if (timeMs >= period.start && timeMs < period.end) return { period, index: i };
+        }
+        return null;
+      }
+      function getKiaiBeatPulse(timeMs, activeKiai) {
+        const points = beatmapData?.timingPoints || [];
+        let { beatLength } = getBeatTimingAtTime(activeKiai.period.start);
+        let segmentStart = activeKiai.period.start;
+        let beatIndex = 0;
+        for (const point of points) {
+          if (point.time <= activeKiai.period.start || point.time > timeMs || point.beatLength <= 0) continue;
+          beatIndex += Math.floor(Math.max(0, point.time - segmentStart) / beatLength);
+          segmentStart = point.time;
+          beatLength = point.beatLength;
+        }
+        const elapsed = Math.max(0, timeMs - segmentStart);
+        beatIndex += Math.floor(elapsed / beatLength);
+        const progress = (elapsed % beatLength) / beatLength;
+        const startsFromLeft = (hashString(`${beatmapData.filename}|${beatmapData.version}|kiai-flash|${activeKiai.index}`) & 1) === 0;
+        return { progress, fromLeft: beatIndex % 2 === 0 ? startsFromLeft : !startsFromLeft };
+      }
+      function drawKiaiSideFlash(w, h, timeMs) {
+        if (!gameStarted || gameFinished) return;
+        const activeKiai = getActiveKiaiPeriod(timeMs);
+        if (!activeKiai) return;
+        const pulse = getKiaiBeatPulse(timeMs, activeKiai);
+        const fade = 1 - pulse.progress;
+        ctx.save();
+        ctx.globalAlpha = fade;
+        const gradient = pulse.fromLeft ? ctx.createLinearGradient(0, 0, w / 2, 0) : ctx.createLinearGradient(w, 0, w / 2, 0);
+        gradient.addColorStop(0, 'rgba(255,255,255,0.8)');
+        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = gradient;
+        if (pulse.fromLeft) ctx.fillRect(0, 0, w / 2, h);
+        else ctx.fillRect(w / 2, 0, w / 2, h);
+        ctx.restore();
+      }
 
       function getCurrentProgressPercent() {
         if (!beatmapData || beatmapData.hitObjects.length === 0) return 0;
@@ -2038,11 +2082,12 @@ kiai time的背景亮度略微降低
       function drawFrame() {
         const dpr = getCanvasDpr(); const w = canvasWidth / dpr, h = canvasHeight / dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); const now = performance.now(); drawMusicReactiveBackground(w, h, now); const kiaiUiActive = kiaiTransitionFactor > 0.12; if (pauseBtn) pauseBtn.classList.toggle('kiai-active', kiaiUiActive); if (resultRestartBtn) resultRestartBtn.classList.toggle('kiai-active', kiaiUiActive); if (autoplayExitBtn) autoplayExitBtn.classList.toggle('kiai-active', kiaiUiActive);
         if (autoplayMode && gameStarted && lineMoving && !gameFinished) { ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.font = 'bold 64px "PingFang SC","Microsoft YaHei",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('自动游玩中', w / 2, h * 0.7); }
+        const gameTimeMs = getCurrentGameTimeMs(now);
+        drawKiaiSideFlash(w, h, gameTimeMs);
         let currentS = cumulativeScale, currentR = cumulativeRotation; if (bigEffectAnim) { const elapsed = now - bigEffectAnim.startTime; if (elapsed >= bigEffectAnim.duration) { currentS = bigEffectAnim.targetScale; currentR = bigEffectAnim.targetRot; bigEffectAnim = null; } else { const t = elapsed / bigEffectAnim.duration; const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; currentS = bigEffectAnim.startScale + (bigEffectAnim.targetScale - bigEffectAnim.startScale) * eased; currentR = bigEffectAnim.startRot + (bigEffectAnim.targetRot - bigEffectAnim.startRot) * eased; } }
         ctx.save(); if (currentS !== 1 || currentR !== 0) { ctx.translate(w / 2, h / 2); ctx.scale(currentS, currentS); ctx.rotate(currentR); ctx.translate(-w / 2, -h / 2); }
         const currentLineColor = getRenderedLineColor(now);
         const currentKiaiSquareColor = getBrightenedLineColor(currentLineColor, 0.14);
-        const gameTimeMs = getCurrentGameTimeMs(now);
         const blinkVisible = isBlinkModeVisible(gameTimeMs);
         const viewport = getWorldViewport(220);
         drawGeneratedTrackAndObstacles(blinkVisible);
